@@ -1,0 +1,35 @@
+//@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+//@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Parisienne&display=swap');
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+.navbar {
+    background: grey;
+    display: grid;
+    grid-template-columns: 32% 68%;
+
+    &-link {
+        align-self: center;
+        text-align: center;
+    }
+
+    &-links-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    &-title {
+        font-family: 'Parisienne', cursive;
+        font-size: 3.5rem;
+        font-weight: bold;
+    
+        span {
+            // the word 'anywhere' in the title
+            color: white;
+            text-shadow: 1px 1px 3px black;
+        }
+    }
+}
