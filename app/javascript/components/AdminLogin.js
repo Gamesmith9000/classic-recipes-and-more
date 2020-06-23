@@ -1,15 +1,15 @@
 import React from 'react'
 import Navbar from './Navbar'
 
-class About extends React.Component {
+class AdminLogin extends React.Component {
     render() {
         return (
-            <div className="about">
+            <div className="admin-login">
                 <Navbar />
-                About (Component)
+                Admin Login
             </div>
         )
     }
 }
 
-export default About
+export default AdminLogin
