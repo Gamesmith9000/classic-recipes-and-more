@@ -4,7 +4,7 @@ import Navbar from './Navbar'
 class Content extends React.Component {
     render() {
         return (
-            <div class="content">
+            <div className="content">
                 <Navbar />
                 Content Management
             </div>
