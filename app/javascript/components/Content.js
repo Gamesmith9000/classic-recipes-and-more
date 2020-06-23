@@ -1,15 +1,15 @@
 import React from 'react'
 import Navbar from './Navbar'
 
-class About extends React.Component {
+class Content extends React.Component {
     render() {
         return (
-            <div class="about">
+            <div class="content">
                 <Navbar />
-                About (Component)
+                Content Management
             </div>
         )
     }
 }
 
-export default About
+export default Content

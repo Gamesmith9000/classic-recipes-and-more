@@ -4,7 +4,7 @@ import Navbar from './Navbar'
 class Home extends React.Component {
     render() {
         return (
-            <div>
+            <div className="home">
                 <Navbar />
                 Home Page (Component)
             </div>
