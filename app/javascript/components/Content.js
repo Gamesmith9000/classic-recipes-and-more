@@ -4,21 +4,6 @@ import firebaseApp from 'FirebaseInit'
 import { Link } from 'react-router-dom'
 
 class Content extends React.Component {
-    getPageContent () {
-        if(this.isAuthenticated === true){
-            return(
-                <div>Authenticated</div>    // Temporary content
-            )
-        } else {
-            return(                         // Temporary jsx setup
-                <div>Login Required
-                    <br/>     
-                    <Link to="/content/login">Login</Link>
-                </div>
-            )
-        }
-    }
-
     isAuthenticated () {
         return (firebaseApp.auth().currentUser !== null);
     }
@@ -28,7 +13,16 @@ class Content extends React.Component {
             <div className="content">
                 <Navbar />
                 Content Management
-                { this.getPageContent() }
+                {
+                    this.isAuthenticated === true ?
+                    <div>Authenticated</div>
+                    :
+                    <div>
+                        Login Required
+                        <br/>     
+                        <Link to="/content/login">Login</Link>
+                    </div>
+                }
             </div>
         )
     }
