@@ -1,19 +1,17 @@
 import React from 'react'
-import Navbar from './Navbar'
 import firebaseApp from 'FirebaseInit'
 
 class AdminLogin extends React.Component {
     submitCredentials = (event) => {
         firebaseApp.auth().signInWithEmailAndPassword(this.email.value, this.password.value)
-        .then( (res) => console.log('Success. You logged in.'))
-        .catch((err) => console.log('Error. Login not successful'));
+        .then( (res) => this.props.setCurrentUser(firebaseApp.auth().currentUser))
+        .catch((err) => console.log(err));
 
         event.preventDefault();
     }
     render() {
         return (
             <div className="admin-login">
-                <Navbar />
                 Admin Login
                 <div className="login-section">
                     <h1>Sign In</h1>

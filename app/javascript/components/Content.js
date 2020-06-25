@@ -1,11 +1,17 @@
 import React from 'react'
 import Navbar from './Navbar'
-import firebaseApp from 'FirebaseInit'
-import { Link } from 'react-router-dom'
+import AdminLogin from './AdminLogin';
 
 class Content extends React.Component {
-    isAuthenticated () {
-        return (firebaseApp.auth().currentUser !== null);
+    constructor() {
+        super();
+        this.state = {
+            currentUser: null
+        }
+    }
+
+    setCurrentUser = (userData) => {
+        this.setState({ currentUser: userData });
     }
 
     render() {
@@ -14,14 +20,17 @@ class Content extends React.Component {
                 <Navbar />
                 Content Management
                 {
-                    this.isAuthenticated === true ?
-                    <div>Authenticated</div>
+                    this.state.currentUser !== null ?
+                    <div>{this.state.currentUser.email} is logged in.</div>
                     :
+                    <AdminLogin setCurrentUser={this.setCurrentUser} />
+                    /*
                     <div>
                         Login Required
                         <br/>     
                         <Link to="/content/login">Login</Link>
                     </div>
+                    */
                 }
             </div>
         )
