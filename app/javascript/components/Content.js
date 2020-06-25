@@ -10,7 +10,17 @@ class Content extends React.Component {
         }
     }
 
+    componentDidMount() {
+        if(this.state.currentUser == null){
+            const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+            if(storedUser !== null) {
+                this.setCurrentUser(storedUser);
+            }
+        }
+    }
+
     setCurrentUser = (userData) => {
+        localStorage.setItem('currentUser', JSON.stringify(userData));
         this.setState({ currentUser: userData });
     }
 
@@ -24,13 +34,6 @@ class Content extends React.Component {
                     <div>{this.state.currentUser.email} is logged in.</div>
                     :
                     <AdminLogin setCurrentUser={this.setCurrentUser} />
-                    /*
-                    <div>
-                        Login Required
-                        <br/>     
-                        <Link to="/content/login">Login</Link>
-                    </div>
-                    */
                 }
             </div>
         )
