@@ -1,9 +1,9 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import Home from './Home'
-import About from './About'
-import Content from './Content'
-import AdminLogin from './AdminLogin'
+import Home from './Pages/Home'
+import About from './Pages/About'
+import Content from './Pages/Content'
+import AdminLogin from './CMS/AdminLogin'
 
 class App extends React.Component {
     render () {

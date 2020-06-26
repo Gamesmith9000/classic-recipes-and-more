@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from './Navbar'
-import AdminLogin from './AdminLogin';
-import ContentManager from './ContentManager';
+import Navbar from '../Navbar'
+import AdminLogin from '../CMS/AdminLogin';
+import ContentManager from '../CMS/ContentManager';
 
 class Content extends React.Component {
     constructor() {
