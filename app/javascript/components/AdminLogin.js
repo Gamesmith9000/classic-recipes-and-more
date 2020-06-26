@@ -12,7 +12,7 @@ class AdminLogin extends React.Component {
     render() {
         return (
             <div className="admin-login">
-                Admin Login
+                [Admin Login Component]
                 <div className="login-section">
                     <h1>Sign In</h1>
                     <form onSubmit={this.submitCredentials} className="login-form">

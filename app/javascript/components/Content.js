@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from './Navbar'
 import AdminLogin from './AdminLogin';
+import ContentManager from './ContentManager';
 
 class Content extends React.Component {
     constructor() {
@@ -11,9 +12,9 @@ class Content extends React.Component {
     }
 
     componentDidMount() {
-        if(this.state.currentUser == null){
+        if(this.state.currentUser === null || this.state.currentUser.email === null || this.state.currentUser.lastLoginAt === null || this.state.currentUser.uid === null){
             const storedUser = JSON.parse(localStorage.getItem('currentUser'));
-            if(storedUser !== null) {
+            if(storedUser !== null && storedUser.email !== null && storedUser.lastLoginAt !== null && storedUser.uid !== null) {
                 this.setCurrentUser(storedUser);
             }
         }
@@ -28,10 +29,13 @@ class Content extends React.Component {
         return (
             <div className="content">
                 <Navbar />
-                Content Management
+                [Content Component]
                 {
                     this.state.currentUser !== null ?
-                    <div>{this.state.currentUser.email} is logged in.</div>
+                    <div>
+                        {this.state.currentUser.email} is logged in.
+                        <ContentManager />
+                        </div>
                     :
                     <AdminLogin setCurrentUser={this.setCurrentUser} />
                 }
