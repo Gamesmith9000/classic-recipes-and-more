@@ -1,6 +1,5 @@
 import React from 'react'
-import Navbar from '../Navbar'
-import AdminLogin from '../CMS/AdminLogin';
+import AdminLogin from './AdminLogin';
 import ContentManager from '../CMS/ContentManager';
 
 class Content extends React.Component {
@@ -28,14 +27,13 @@ class Content extends React.Component {
     render() {
         return (
             <div className="content">
-                <Navbar />
                 [Content Component]
                 {
                     this.state.currentUser !== null ?
-                    <div>
+                    <React.Fragment>
                         {this.state.currentUser.email} is logged in.
                         <ContentManager />
-                        </div>
+                    </React.Fragment>
                     :
                     <AdminLogin setCurrentUser={this.setCurrentUser} />
                 }
