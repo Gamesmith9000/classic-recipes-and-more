@@ -13,6 +13,8 @@ class Navbar extends React.Component {
                     <Link to="/recipe-photos" className="navbar-link">Photo Gallery</Link>
                     <Link to="/seasonal" className="navbar-link">Seasonal Recipes</Link>
                     <Link to="/cooking-videos" className="navbar-link">Videos</Link>
+                    
+                    <Link to="/sandbox" className="navbar-link">CONTENT MANAGER SANDBOX</Link>
                 </div>
                 <br />
             </nav>

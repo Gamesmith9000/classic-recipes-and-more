@@ -4,7 +4,7 @@ class CookingVideos extends React.Component {
     render() {
         return (
             <div className="cooking-videos">
-                [CookingVideos Component]
+                <p>[CookingVideos Component]</p>
             </div>
         )
     }

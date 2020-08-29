@@ -4,7 +4,7 @@ class Cookbook extends React.Component {
     render() {
         return (
             <div className="cookbook">
-                [Cookbook Component]
+                <p>[Cookbook Component]</p>
             </div>
         )
     }

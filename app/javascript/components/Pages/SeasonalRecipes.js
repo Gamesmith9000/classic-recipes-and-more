@@ -4,7 +4,7 @@ class SeasonalRecipes extends React.Component {
     render() {
         return (
             <div className="seasonal-recipes">
-                [SeasonalRecipes Component]
+                <p>[SeasonalRecipes Component]</p>
             </div>
         )
     }

@@ -1,12 +1,14 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 
-import Home from './Pages/Home'
 import About from './Pages/About'
 import Cookbook from './Pages/Cookbook'
 import CookingVideos from './Pages/CookingVideos'
+import Home from './Pages/Home'
 import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
+
+import ContentManagerSandbox from './Pages/ContentManagerSandbox'
 
 class App extends React.Component {
     render () {
@@ -19,6 +21,8 @@ class App extends React.Component {
                     <Route exact path="/cooking-videos" component={CookingVideos} />
                     <Route exact path="/recipe-photos" component={RecipePhotos} />
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
+
+                    <Route exact path="/sandbox" component={ContentManagerSandbox} />
                 </Switch>
             </div>
         );
