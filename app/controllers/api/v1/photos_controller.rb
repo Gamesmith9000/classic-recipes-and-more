@@ -4,22 +4,22 @@ module Api
             def index
                 photos = Photo.all
 
-                PhotoSerializer.new(photos).serialized_json
+                render json: PhotoSerializer.new(photos).serialized_json
             end
 
             def show
                 photo = Photo.find_by_id(params[:id])
 
-                PhotoSerializer.new(photo).serialized_json
+                render json: PhotoSerializer.new(photo).serialized_json
             end
 
             def create
                 photo = Photo.new(photo_params)
 
                 if photo.save
-                    PhotoSerializer.new(photo).serialized_json     
+                    render json: PhotoSerializer.new(photo).serialized_json     
                 else
-                    render json {error: photo.error.messages}, status: 422
+                    render json: {error: photo.errors.messages}, status: 422
                 end
             end
 
@@ -27,9 +27,9 @@ module Api
                 photo = Photo.find_by_id(params[:id])
 
                 if photo.update(photo_params)
-                    PhotoSerializer.new(photo).serialized_json     
+                    render json: PhotoSerializer.new(photo).serialized_json     
                 else
-                    render json {error: photo.error.messages}, status: 422
+                    render json: {error: photo.errors.messages}, status: 422
                 end
             end
 
@@ -39,7 +39,7 @@ module Api
                 if photo.destroy
                     head :no_content
                 else
-                    render json {error: photo.error.messages}, status: 422
+                    render json: {error: photo.error.messages}, status: 422
                 end
             end
 

@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :admins
   namespace :api do
     namespace :v1 do
-      resources :photos, only: [:create]
+      resources :photos, only: [:index, :show, :create, :update, :destroy]
     end
   end
   
