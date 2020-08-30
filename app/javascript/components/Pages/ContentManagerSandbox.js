@@ -17,7 +17,7 @@ class ContentManagerSandbox extends React.Component {
         axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
         axios.post( '/photos', {
-            actual_file: this.imageFileInput.current.files[0],
+            file: this.imageFileInput.current.files[0],
             caption: this.captionInput.current.value
         })
         .then(res => console.log(res))
