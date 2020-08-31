@@ -1,8 +1,10 @@
-Aws.config.update({
-  region: 'us-east-2',
-  credentials: Aws::Credentials.new(
-      ENV['AWS_ACCESS_KEY_ID'], 
-      ENV['AWS_SECRET_ACCESS_KEY'])
-})
+# Aws.config.update({
+#   region: 'us-east-2',
+#   credentials: Aws::Credentials.new(
+#       ENV['AWS_ACCESS_KEY_ID'], 
+#       ENV['AWS_SECRET_ACCESS_KEY'])
+# })
 
-S3_BUCKET = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+# S3_BUCKET = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+# [NOTE] This file has been disabled, as it may not be needed at all

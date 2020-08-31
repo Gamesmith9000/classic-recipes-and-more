@@ -13,10 +13,10 @@ class ContentManagerSandbox extends React.Component {
         console.log(this.imageFileInput.current.files[0]);
         console.log(this.captionInput.current.value);
 
-        const csrfToken = document.querySelector('[name=csrf-token]').textContent;
+        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
         axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
-        axios.post( '/photos', {
+        axios.post( 'api/v1/photos', {
             file: this.imageFileInput.current.files[0],
             caption: this.captionInput.current.value
         })
@@ -28,7 +28,7 @@ class ContentManagerSandbox extends React.Component {
         return (
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={this.handleSubmit}>m 
                     <label>
                         Image uploader example
                         <input type="file" ref={this.imageFileInput} />
@@ -45,6 +45,6 @@ class ContentManagerSandbox extends React.Component {
     }
 }
 
-// Note: there is currently no production build. Authentication is not yet implemented for this reason.
+// [NOTE] there is currently no production build. Authentication is not yet implemented for this reason.
 
 export default ContentManagerSandbox
