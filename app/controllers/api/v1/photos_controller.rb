@@ -1,23 +1,25 @@
 module Api
     module V1
         class PhotosController < ApplicationController
+            protect_from_forgery with: :null_session
+
             def index
                 photos = Photo.all
 
-                render json: PhotoSerializer.new(photos).serialized_json
+                render_serialized_json(photos)
             end
 
             def show
                 photo = Photo.find_by_id(params[:id])
 
-                render json: PhotoSerializer.new(photo).serialized_json
+                render_serialized_json(photo)
             end
 
             def create
                 photo = Photo.new(photo_params)
 
                 if photo.save
-                    render json: PhotoSerializer.new(photo).serialized_json     
+                    render_serialized_json(photo)
                 else
                     render json: {error: photo.errors.messages}, status: 422
                 end
@@ -27,7 +29,7 @@ module Api
                 photo = Photo.find_by_id(params[:id])
 
                 if photo.update(photo_params)
-                    render json: PhotoSerializer.new(photo).serialized_json     
+                    render_serialized_json(photo)   
                 else
                     render json: {error: photo.errors.messages}, status: 422
                 end
@@ -46,7 +48,11 @@ module Api
             private
 
             def photo_params
-                params.require(:photo).permit(:caption, :file, :url)
+                params.require(:photo).permit(:caption, :file)
+            end
+
+            def render_serialized_json (values)
+                render json: PhotoSerializer.new(values).serialized_json
             end
         end
     end
