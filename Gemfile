@@ -28,11 +28,14 @@ gem 'jbuilder', '~> 2.7'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'aws-sdk-rails'
 gem 'carrierwave', '~> 2.0'
+gem 'carrierwave-aws'
 gem 'devise'
 gem 'fast_jsonapi'
-gem 'fog-aws'
+#  gem 'fog-aws'
 gem 'figaro'
+gem 'mini_magick'
 gem 'rack-cors'
 
 group :development, :test do
