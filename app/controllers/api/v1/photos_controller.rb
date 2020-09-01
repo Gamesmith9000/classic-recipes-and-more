@@ -15,14 +15,26 @@ module Api
                 render_serialized_json(photo)
             end
 
-            def create
-                photo = Photo.new(photo_params)
+            def new
+                @photo = Photo.new
+            end
 
-                if photo.save
-                    render_serialized_json(photo)
+            def create
+                @photo = Photo.create(photo_params)
+
+                if @photo.valid?
+                    redirect_to root_path
                 else
-                    render json: {error: photo.errors.messages}, status: 422
+                    render :new, status: :unprocessable_entity
                 end
+
+                # photo = Photo.new(photo_params)
+
+                # if photo.save
+                #     render_serialized_json(photo)
+                # else
+                #     render json: {error: photo.errors.messages}, status: 422
+                # end
             end
 
             def update

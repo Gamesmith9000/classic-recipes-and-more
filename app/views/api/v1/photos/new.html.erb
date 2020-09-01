@@ -1,0 +1,13 @@
+<h2>Temporary Routes and views<h2>
+<h2>Carrierwave & S3 Upload Testing<h2>
+
+<%= form_for @photo, url: api_v1_photos_path do |f| %>
+    <%= f.label :file, "Upload the image" %>
+    <%= f.file_field :file %>
+
+    <%= f.label :caption, "Add a caption" %>
+    <%= f.text_field :caption %>
+
+    <%= f.submit%>
+
+<% end %>
