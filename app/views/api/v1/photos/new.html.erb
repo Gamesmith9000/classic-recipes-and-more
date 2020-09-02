@@ -5,9 +5,11 @@
     <%= f.label :file, "Upload the image" %>
     <%= f.file_field :file %>
 
-    <%= f.label :caption, "Add a caption" %>
-    <%= f.text_field :caption %>
+    <%= f.label :title, "Image title" %>
+    <%= f.text_field :title %>
+
+    <%= f.label :notes, "Notes" %>
+    <%= f.text_field :notes %>
 
     <%= f.submit%>
-
 <% end %>

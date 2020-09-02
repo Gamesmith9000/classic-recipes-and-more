@@ -2,8 +2,8 @@ class CreatePhotos < ActiveRecord::Migration[6.0]
   def change
     create_table :photos do |t|
       t.string :file
-      t.string :caption
-      t.string :url
+      t.string :notes
+      t.string :title
 
       t.timestamps
     end
