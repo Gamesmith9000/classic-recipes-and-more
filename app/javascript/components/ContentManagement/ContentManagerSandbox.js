@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
+import RecipeForm from './RecipeForm';
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -101,12 +102,15 @@ class ContentManagerSandbox extends React.Component {
         return (
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
+                <hr />
+                <RecipeForm />
                 {imageUploadForm}
                 <Fragment>
                     <h4>All Saved Photos</h4>
                     <ul className="all-photos-list">
                         { this.mapPhotos (this.state.allPhotos) }
-                    </ul>                  
+                    </ul>
+                    <hr/>
                 </Fragment>
             </div>
         )

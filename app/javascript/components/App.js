@@ -8,7 +8,7 @@ import Home from './Pages/Home'
 import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
 
-import ContentManagerSandbox from './Pages/ContentManagerSandbox'
+import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
 
 class App extends React.Component {
     render () {
