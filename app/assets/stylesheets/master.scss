@@ -8,6 +8,27 @@ body {
     margin: 0;
 }
 
+.content-manager-sandbox {
+
+    li.photo-info-entry {
+        border: solid 1.5px;
+        list-style-type: none;
+
+        img {
+            max-width: 10vw;
+        }
+        p > span {
+            font-weight: 800;
+        }
+    }
+
+    ul.all-photos-list {
+        display: flex;
+        margin: 15px;
+        padding: 0;
+    }
+}
+
 .navbar {
     background: grey;
     display: grid;

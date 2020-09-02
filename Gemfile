@@ -28,12 +28,13 @@ gem 'jbuilder', '~> 2.7'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'aws-sdk-rails'
 gem 'carrierwave', '~> 2.0'
+gem 'carrierwave-aws'
 gem 'devise'
 gem 'fast_jsonapi'
-gem 'fog-aws'
 gem 'figaro'
-gem 'rack-cors'
+gem 'mini_magick'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -51,5 +52,3 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-
-# gem "aws-sdk-s3", "~> 1.79"
