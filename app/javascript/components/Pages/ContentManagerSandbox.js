@@ -4,21 +4,24 @@ import axios from 'axios'
 class ContentManagerSandbox extends React.Component {
     constructor() {
         super();
-        this.captionInput = React.createRef();
         this.imageFileInput = React.createRef();
+        this.titleInput = React.createRef();
+        this.notesInput = React.createRef();
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
         console.log(this.imageFileInput.current.files[0]);
-        console.log(this.captionInput.current.value);
+        console.log(this.titleInput.current.value);
+        console.log(this.notesInput.current.value);
 
         const csrfToken = document.querySelector('meta[name=csrf-token]').content;
         axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
-        axios.post( 'api/v1/photos', {
+        axios.post('api/v1/photos', {
             file: this.imageFileInput.current.files[0],
-            caption: this.captionInput.current.value
+            title: this.titleInput.current.value,
+            notes: this.notesInput.current.value
         })
         .then(res => console.log(res))
         .catch(err => console.log(err));
@@ -28,14 +31,18 @@ class ContentManagerSandbox extends React.Component {
         return (
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
-                <form onSubmit={this.handleSubmit}>m 
+                <form onSubmit={this.handleSubmit}>
                     <label>
                         Image uploader example
                         <input type="file" ref={this.imageFileInput} />
                     </label>
                     <label>
-                        Caption
-                        <input type="text" ref={this.captionInput} />
+                        Title
+                        <input type="text" ref={this.titleInput} />
+                    </label>
+                    <label>
+                        Notes
+                        <input type="text" ref={this.notesInput} />
                     </label>
                     <br/>
                     <button type="submit">Upload</button>

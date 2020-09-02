@@ -12,7 +12,7 @@ class PhotoUploader < CarrierWave::Uploader::Base
   # This is a sensible default for uploaders that are meant to be mounted:
 
   def store_dir
-    top_folder = Rails.env.production ? 'uploads' : 'dev-uploads'
+    top_folder = Rails.env.production? ? 'uploads' : 'dev-uploads'
     "#{top_folder}/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
