@@ -5,11 +5,22 @@ class ContentManagerSandbox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            allPhotos: [],
             photoFile: null,
             photoTitle: null,
             photoNotes: null
         }
     }
+
+    componentDidMount () {
+        axios.get('/api/v1/photos.json')
+        .then(res => {
+            console.log(res);
+            this.setState({ allPhotos: res.data.data })
+        })
+        .catch(err => console.log(err));
+    }
+
 
     handlePhotoUploadSubmit = (event) => {
         event.preventDefault();
@@ -29,6 +40,23 @@ class ContentManagerSandbox extends React.Component {
         .catch(err => console.log(err));
     }
 
+    mapPhotos = (photosList) => {
+        if(!photosList || photosList.length === 0) {
+            return;
+        }
+
+        let mappedPhotos = photosList.map ( item => {
+            return(
+                <li key={item.id} className="photo-info-entry">
+                    <p><span>Title: </span>{item.attributes.title}</p>
+                    <img src={item.attributes.file.url} />
+                    <p><span>Notes: </span>{item.attributes.notes}</p>
+                </li>);
+        });
+
+        return mappedPhotos;
+    }
+
     onPhotoFileInputChange = (event) => {
         console.log(event.target.files);
         console.log(event.target.files[0]);
@@ -45,7 +73,7 @@ class ContentManagerSandbox extends React.Component {
     }
 
     render() {
-        let imageUploadForm = <Fragment>
+        let imageUploadForm = <div className="photo-uploader">
             <hr/>
             <form onSubmit={this.handlePhotoUploadSubmit}>
                 <h4>Photo Uploader</h4>
@@ -64,15 +92,22 @@ class ContentManagerSandbox extends React.Component {
                     <input type="text" onChange={this.onPhotoNotesInputChange} />
                 </label>
                 <br/>
+                <br/>
                 <button type="submit">Upload</button>
             </form>
             <hr/>
-        </Fragment>
+        </div>
 
         return (
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
                 {imageUploadForm}
+                <Fragment>
+                    <h4>All Saved Photos</h4>
+                    <ul className="all-photos-list">
+                        { this.mapPhotos (this.state.allPhotos) }
+                    </ul>                  
+                </Fragment>
             </div>
         )
     }
