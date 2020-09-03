@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -23,6 +24,23 @@ class RecipeForm extends React.Component {
         let updatedParagraphsState = this.state.paragraphs;
         updatedParagraphsState.push('');
         this.setState({paragraphs: updatedParagraphsState});
+    }
+
+    handleFormSubmit = (event) => {
+        event.preventDefault();
+        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+
+        const requestType = this.state.existingRecipe ? 'patch' : 'post';
+        const requestUrl = this.state.existingRecipe ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
+
+        axios({
+            method: requestType,
+            url: requestUrl,
+            data: this.state
+        })
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
     }
 
     handleIngredientInputChange = (event, index) => {
@@ -81,8 +99,9 @@ class RecipeForm extends React.Component {
     componentDidMount () {
         console.log(`recipeId: ${this.props.recipeId}`);
         if(this.props.recipeId !== null) {
-            // try to get item from database
-            // if successful, set the existingRecipe to true (along with other state)
+            // what will happen here:
+            // try to get item from database.
+            // if successful, set existingRecipe to true (along with other state data)
         }
     }
 
@@ -90,8 +109,8 @@ class RecipeForm extends React.Component {
         const { recipeId } = this.props;
 
         return (
-            <form className="recipe-form">
-                <h2>{this.state.existingRecipe ? 'Edit' : 'Create'} Recipe</h2>
+            <form className="recipe-form" onSubmit={this.handleFormSubmit}>
+                <h2>{this.state.existingRecipe ? 'Edit' : 'New'} Recipe</h2>
                 <label>
                     Title
                     <input 
@@ -116,6 +135,11 @@ class RecipeForm extends React.Component {
                     {this.mapParagraphInputs(this.state.paragraphs)}
                     <button onClick={this.handleAddParagraph}>+</button>
                 </label>
+                <br/>
+                <br/>
+                <button type="submit">
+                    {this.state.existingRecipe ? 'Update' : 'Create'}
+                </button>
             </form>
         )
     }
