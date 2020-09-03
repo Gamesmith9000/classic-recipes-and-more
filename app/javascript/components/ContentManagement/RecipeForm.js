@@ -10,15 +10,71 @@ class RecipeForm extends React.Component {
         }
     }
 
-    onAddParagraph = (event) => {
+    handleAddIngredient = (event) => {
+        event.preventDefault();
+        let updatedIngredientsState = this.state.ingredients;
+        updatedIngredientsState.push('');
+        this.setState({ingredients: updatedIngredientsState});
+    }
+
+    handleAddParagraph = (event) => {
         event.preventDefault();
         let updatedParagraphsState = this.state.paragraphs;
         updatedParagraphsState.push('');
         this.setState({paragraphs: updatedParagraphsState});
     }
 
-    onTitleInputChange = (event) => {
+    handleIngredientInputChange = (event, index) => {
+        let updatedIngredientsState = this.state.ingredients;
+        updatedIngredientsState[index] = event.target.value;
+        this.setState({ingredients: updatedIngredientsState});
+    }
+
+    handleParagraphInputChange = (event, index) => {
+        let updatedParagraphsState = this.state.paragraphs;
+        updatedParagraphsState[index] = event.target.value;
+        this.setState({paragraphs: updatedParagraphsState});
+    }
+
+    handleTitleInputChange = (event) => {
         this.setState({title: event.target.value});
+    }
+
+    mapIngredientInputs = (ingredientList) => {
+        return ingredientList.map((item, index) => {
+            return (
+            <li className="ingredients-edits" key={index}>
+                <label>
+                    {index}
+                    <input 
+                        className="ingredient-input"
+                        onChange={(event) => this.handleIngredientInputChange(event, index)}
+                        type="text"
+                        value={this.state.ingredients[index]}
+                    />
+                </label>
+            </li>
+            )
+        });
+        // [NOTE] Consider changing li key to something other than index.
+    }
+
+    mapParagraphInputs = (paragraphList) => {
+        return paragraphList.map((item, index) => {
+            return (
+            <li className="paragraph-edits" key={index}>
+                <label>
+                    {index}
+                    <textarea 
+                        className="paragraph-input"
+                        onChange={(event) => this.handleParagraphInputChange(event, index)}
+                        value={this.state.paragraphs[index]}
+                    />
+                </label>
+            </li>
+            )
+        });
+        // [NOTE] Consider changing li key to something other than index.
     }
 
     render() {
@@ -27,13 +83,27 @@ class RecipeForm extends React.Component {
                 <h2>Create Recipe</h2>
                 <label>
                     Title
-                    <input type="text" onChange={this.onTitleInputChange}/>
+                    <input 
+                        className="title-input"
+                        onChange={this.handleTitleInputChange}
+                        type="text"
+                    />
                 </label>
+                <br />
+                <br />
+                <label>
+                    Ingredients
+                    <br />
+                    {this.mapIngredientInputs(this.state.ingredients)}
+                    <button onClick={this.handleAddIngredient}>+</button>
+                </label>
+                <br />
                 <br />
                 <label>
                     Paragraphs
                     <br />
-                    <button onClick={this.onAddParagraph}>+</button>
+                    {this.mapParagraphInputs(this.state.paragraphs)}
+                    <button onClick={this.handleAddParagraph}>+</button>
                 </label>
             </form>
         )
