@@ -9,7 +9,9 @@ class ContentManagerSandbox extends React.Component {
             allPhotos: [],
             photoFile: null,
             photoTitle: null,
-            photoNotes: null
+            photoNotes: null,
+            renderAllPhotos: true,
+            renderPhotoUploadsForm: false
         }
     }
 
@@ -74,12 +76,12 @@ class ContentManagerSandbox extends React.Component {
     }
 
     render() {
-        let imageUploadForm = <div className="photo-uploader">
+        let photoUploadForm = <div className="photo-uploader">
             <hr/>
             <form onSubmit={this.handlePhotoUploadSubmit}>
                 <h4>Photo Uploader</h4>
                 <label>
-                    Image
+                    Photo
                     <input type="file" onChange={this.onPhotoFileInputChange} />
                 </label>
                 <br/>
@@ -99,19 +101,28 @@ class ContentManagerSandbox extends React.Component {
             <hr/>
         </div>
 
+        let savedPhotosDisplay = <Fragment>
+            <h4>All Saved Photos</h4>
+            <ul className="all-photos-list">
+                { this.mapPhotos (this.state.allPhotos) }
+            </ul>
+            <hr/>
+        </Fragment>
+
         return (
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
                 <hr />
-                <RecipeForm />
-                {imageUploadForm}
-                <Fragment>
-                    <h4>All Saved Photos</h4>
-                    <ul className="all-photos-list">
-                        { this.mapPhotos (this.state.allPhotos) }
-                    </ul>
-                    <hr/>
-                </Fragment>
+                <RecipeForm recipeId={null}/>
+                <hr />
+                <RecipeForm recipeId={1} />
+                <hr />
+                {this.state.renderPhotoUploadsForm === true &&
+                    photoUploadForm
+                }
+                {this.state.renderAllPhotos === true &&
+                    savedPhotosDisplay
+                }
             </div>
         )
     }

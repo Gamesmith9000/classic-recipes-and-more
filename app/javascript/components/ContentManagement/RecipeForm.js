@@ -4,6 +4,7 @@ class RecipeForm extends React.Component {
     constructor() {
         super();
         this.state = {
+            existingRecipe: false,
             ingredients: [''],
             paragraphs: [''],
             title: ''
@@ -77,10 +78,20 @@ class RecipeForm extends React.Component {
         // [NOTE] Consider changing li key to something other than index.
     }
 
+    componentDidMount () {
+        console.log(`recipeId: ${this.props.recipeId}`);
+        if(this.props.recipeId !== null) {
+            // try to get item from database
+            // if successful, set the existingRecipe to true (along with other state)
+        }
+    }
+
     render() {
+        const { recipeId } = this.props;
+
         return (
             <form className="recipe-form">
-                <h2>Create Recipe</h2>
+                <h2>{this.state.existingRecipe ? 'Edit' : 'Create'} Recipe</h2>
                 <label>
                     Title
                     <input 
