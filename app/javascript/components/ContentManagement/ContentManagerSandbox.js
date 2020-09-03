@@ -115,7 +115,7 @@ class ContentManagerSandbox extends React.Component {
                 <hr />
                 <RecipeForm recipeId={null}/>
                 <hr />
-                <RecipeForm recipeId={1} />
+                <RecipeForm recipeId={11} />
                 <hr />
                 {this.state.renderPhotoUploadsForm === true &&
                     photoUploadForm

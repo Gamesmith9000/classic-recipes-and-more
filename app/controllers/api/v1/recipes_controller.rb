@@ -48,7 +48,7 @@ module Api
             private
 
             def recipe_params
-                params.require(:recipe).permit(:ingredients, :paragraphs, :title)
+                params.require(:recipe).permit(:title, :ingredients => [], :paragraphs => [])
             end
 
             def render_serialized_json (values)

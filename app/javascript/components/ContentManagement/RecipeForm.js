@@ -97,11 +97,22 @@ class RecipeForm extends React.Component {
     }
 
     componentDidMount () {
-        console.log(`recipeId: ${this.props.recipeId}`);
-        if(this.props.recipeId !== null) {
-            // what will happen here:
-            // try to get item from database.
-            // if successful, set existingRecipe to true (along with other state data)
+        if(this.props.recipeId !== null && this.props.recipeId !== undefined) {
+
+            axios.get(`/api/v1/recipes/${this.props.recipeId}`, { 
+                params: {
+                    id: this.props.recipeId
+                }
+            })
+            .then(res => {
+                this.setState({
+                    existingRecipe: true,
+                    ingredients: res.data.data.attributes.ingredients,
+                    paragraphs: res.data.data.attributes.paragraphs,
+                    title: res.data.data.attributes.title
+                });
+            })
+            .catch(err => console.log(err));
         }
     }
 
@@ -117,6 +128,7 @@ class RecipeForm extends React.Component {
                         className="title-input"
                         onChange={this.handleTitleInputChange}
                         type="text"
+                        value={this.state.title}
                     />
                 </label>
                 <br />
@@ -124,7 +136,9 @@ class RecipeForm extends React.Component {
                 <label>
                     Ingredients
                     <br />
-                    {this.mapIngredientInputs(this.state.ingredients)}
+                    {this.state.ingredients &&
+                        this.mapIngredientInputs(this.state.ingredients)
+                    }
                     <button onClick={this.handleAddIngredient}>+</button>
                 </label>
                 <br />
@@ -132,7 +146,9 @@ class RecipeForm extends React.Component {
                 <label>
                     Paragraphs
                     <br />
-                    {this.mapParagraphInputs(this.state.paragraphs)}
+                    {this.state.paragraphs &&
+                        this.mapParagraphInputs(this.state.paragraphs)
+                    }
                     <button onClick={this.handleAddParagraph}>+</button>
                 </label>
                 <br/>
