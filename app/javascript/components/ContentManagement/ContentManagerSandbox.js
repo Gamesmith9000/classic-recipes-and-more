@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import RecipeForm from './RecipeForm';
+import { object } from 'prop-types';
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -11,7 +12,7 @@ class ContentManagerSandbox extends React.Component {
             photoTitle: null,
             photoNotes: null,
             renderAllPhotos: true,
-            renderPhotoUploadsForm: false
+            renderPhotoUploadsForm: true
         }
     }
 
@@ -27,18 +28,16 @@ class ContentManagerSandbox extends React.Component {
 
     handlePhotoUploadSubmit = (event) => {
         event.preventDefault();
-        console.log(this.state.photoFile);
-        console.log(this.state.photoTitle);
-        console.log(this.state.photoNotes);
 
         const csrfToken = document.querySelector('meta[name=csrf-token]').content;
         axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
-        axios.post('api/v1/photos', {
-            file:  this.state.photoFile,
-            title: this.state.photoTitle,
-            notes: this.state.photoNotes
-        })
+        let formData = new FormData();
+        formData.append('photo[file]', this.state.photoFile);
+        formData.append('photo[title]', this.state.photoTitle);
+        formData.append('photo[notes]', this.state.photoNotes);
+
+        axios.post('api/v1/photos', formData)
         .then(res => console.log(res))
         .catch(err => console.log(err));
     }
