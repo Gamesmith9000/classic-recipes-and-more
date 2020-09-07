@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import RecipeForm from './RecipeForm';
-import { object } from 'prop-types';
+import PhotoUploadForm from './PhotoUploadForm';
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -25,23 +25,6 @@ class ContentManagerSandbox extends React.Component {
         .catch(err => console.log(err));
     }
 
-
-    handlePhotoUploadSubmit = (event) => {
-        event.preventDefault();
-
-        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
-
-        let formData = new FormData();
-        formData.append('photo[file]', this.state.photoFile);
-        formData.append('photo[title]', this.state.photoTitle);
-        formData.append('photo[notes]', this.state.photoNotes);
-
-        axios.post('api/v1/photos', formData)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
-    }
-
     mapPhotos = (photosList) => {
         if(!photosList || photosList.length === 0) {
             return;
@@ -59,47 +42,7 @@ class ContentManagerSandbox extends React.Component {
         return mappedPhotos;
     }
 
-    onPhotoFileInputChange = (event) => {
-        console.log(event.target.files);
-        console.log(event.target.files[0]);
-
-        this.setState({photoFile: event.target.files[0]})
-    }
-
-    onPhotoTitleInputChange = (event) => {
-        this.setState({photoTitle: event.target.value})
-    }
-    
-    onPhotoNotesInputChange = (event) => {
-        this.setState({photoNotes: event.target.value})
-    }
-
     render() {
-        let photoUploadForm = <div className="photo-uploader">
-            <hr/>
-            <form onSubmit={this.handlePhotoUploadSubmit}>
-                <h4>Photo Uploader</h4>
-                <label>
-                    Photo
-                    <input type="file" onChange={this.onPhotoFileInputChange} />
-                </label>
-                <br/>
-                <label>
-                    Title
-                    <input type="text" onChange={this.onPhotoTitleInputChange} />
-                </label>
-                <br/>
-                <label>
-                    Notes
-                    <input type="text" onChange={this.onPhotoNotesInputChange} />
-                </label>
-                <br/>
-                <br/>
-                <button type="submit">Upload</button>
-            </form>
-            <hr/>
-        </div>
-
         let savedPhotosDisplay = <Fragment>
             <h4>All Saved Photos</h4>
             <ul className="all-photos-list">
@@ -117,7 +60,7 @@ class ContentManagerSandbox extends React.Component {
                 <RecipeForm recipeId={11} />
                 <hr />
                 {this.state.renderPhotoUploadsForm === true &&
-                    photoUploadForm
+                    <PhotoUploadForm />
                 }
                 {this.state.renderAllPhotos === true &&
                     savedPhotosDisplay
