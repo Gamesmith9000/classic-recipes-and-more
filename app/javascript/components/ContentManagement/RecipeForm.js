@@ -18,6 +18,26 @@ class RecipeForm extends React.Component {
         }
     }
 
+    bumpArrayElement = (array, index, direction) => {
+        if(direction !== -1 && direction !== 1) {
+            return array;
+        }
+        
+        let start = array.slice(0, index);
+        let end = array.slice(index, array.length);
+        const item = end.shift();
+
+        if(direction === -1) {
+            const poppedItem = start.pop();
+            return start.concat(item).concat(poppedItem).concat(end);
+        }
+        else {
+            const shiftedItem = end.shift();
+            return start.concat(shiftedItem).concat(item).concat(end);
+        }
+        
+    }
+
     handleAddIngredient = (event) => {
         event.preventDefault();
         let updatedIngredientsState = this.state.ingredients;
@@ -115,10 +135,22 @@ class RecipeForm extends React.Component {
                     />
                     {ingredientList.length > 1 &&
                         <Fragment>
-                            <button className={index > 0 ? "move-item" : "move-item hidden"}>
+                            <button 
+                                className={index > 0 ? "move-item" : "move-item hidden"}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    this.setState({ingredients: this.bumpArrayElement(this.state.ingredients, index, -1)});
+                                }}
+                            >
                                 ▲
                             </button>
-                            <button className={index < ingredientList.length - 1 ? "move-item" : "move-item hidden"}>
+                            <button 
+                                className={index < ingredientList.length - 1 ? "move-item" : "move-item hidden"}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    this.setState({ingredients: this.bumpArrayElement(this.state.ingredients, index, 1)});
+                                }}
+                            >
                                 ▼
                             </button>
                             {this.state.readyToDeleteIngredient !== true &&
