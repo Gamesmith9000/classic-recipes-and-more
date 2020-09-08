@@ -1,13 +1,19 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import axios from 'axios'
 
 class RecipeForm extends React.Component {
     constructor() {
         super();
         this.state = {
+            deleteIngredientSliderValue: 3,
+            deleteParagraphSliderValue: 3,
             existingRecipe: false,
             ingredients: [''],
             paragraphs: [''],
+            readyToDeleteIngredient: false,
+            readyToDeleteParagraph: false,
+            selectedIngredientIndex: null,
+            selectedParagraphIndex: null,
             title: ''
         }
     }
@@ -24,6 +30,42 @@ class RecipeForm extends React.Component {
         let updatedParagraphsState = this.state.paragraphs;
         updatedParagraphsState.push('');
         this.setState({paragraphs: updatedParagraphsState});
+    }
+
+    handleDeleteIngredientButtonInput = (event, index) => {
+        event.preventDefault();
+        this.setState({
+            deleteIngredientSliderValue: 3,
+            readyToDeleteIngredient: true,
+            selectedIngredientIndex: index
+        });
+    }
+
+    handleDeleteIngredientSliderInputChange = (event) => {
+        event.preventDefault();
+        const newValue = parseInt(event.target.value);
+
+        if(newValue === 1) {
+            this.setState({
+                readyToDeleteIngredient: false,
+                selectedIngredientIndex: null
+            });
+        }
+        else if (newValue === 5) {
+            let newIngredientsState = this.state.ingredients.slice();
+            newIngredientsState.splice(this.state.selectedIngredientIndex, 1);
+            this.setState({
+                ingredients: newIngredientsState,
+                readyToDeleteIngredient: false,
+                selectedIngredientIndex: null
+            });
+        }
+        else {
+            this.setState({
+                deleteIngredientSliderValue: newValue
+            });
+        }
+        return;
     }
 
     handleFormSubmit = (event) => {
@@ -71,6 +113,34 @@ class RecipeForm extends React.Component {
                         type="text"
                         value={this.state.ingredients[index]}
                     />
+                    {ingredientList.length > 1 &&
+                        <Fragment>
+                            <button className={index > 0 ? "move-item" : "move-item hidden"}>
+                                ▲
+                            </button>
+                            <button className={index < ingredientList.length - 1 ? "move-item" : "move-item hidden"}>
+                                ▼
+                            </button>
+                            {this.state.readyToDeleteIngredient !== true &&
+                                <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, index)}>
+                                    Delete
+                                </button>
+                            }
+                            {this.state.readyToDeleteIngredient === true && this.state.selectedIngredientIndex === index &&
+                                <div className="deletion-slider">
+                                    <label>Cancel</label>
+                                    <input                                         
+                                        max="5"
+                                        min="1"
+                                        onChange={this.handleDeleteIngredientSliderInputChange}
+                                        step="1"
+                                        type="range" 
+                                        value={this.state.deleteIngredientSliderValue} />
+                                    <label>Delete</label>
+                                </div>
+                            }
+                        </Fragment>
+                    }
                 </label>
             </li>
             )

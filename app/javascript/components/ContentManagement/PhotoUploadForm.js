@@ -43,7 +43,7 @@ class PhotoUploadForm extends React.Component {
         return (
             <div className="photo-uploader">
                 <form onSubmit={this.handlePhotoUploadSubmit}>
-                    <h4>Upload Photo</h4>
+                    <h2>Upload Photo</h2>
                     <label>
                         Photo
                         <input type="file" onChange={this.onPhotoFileInputChange} />

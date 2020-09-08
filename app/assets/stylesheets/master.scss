@@ -27,6 +27,16 @@ body {
         margin: 15px;
         padding: 0;
     }
+
+    .ingredients-edits > label, .paragraph-edits > label {
+        display: flex;
+    }
+
+    .move-item {
+        &.hidden {
+            visibility: hidden;
+        }
+    }
 }
 
 .navbar {
