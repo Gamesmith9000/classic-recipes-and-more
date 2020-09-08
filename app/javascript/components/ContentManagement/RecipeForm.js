@@ -61,6 +61,15 @@ class RecipeForm extends React.Component {
         });
     }
 
+    handleDeleteParagraphButtonInput = (event, index) => {
+        event.preventDefault();
+        this.setState({
+            deleteParagraphSliderValue: 3,
+            readyToDeleteParagraph: true,
+            selectedParagraphIndex: index
+        });
+    }
+
     handleDeleteIngredientSliderInputChange = (event) => {
         event.preventDefault();
         const newValue = parseInt(event.target.value);
@@ -83,6 +92,34 @@ class RecipeForm extends React.Component {
         else {
             this.setState({
                 deleteIngredientSliderValue: newValue
+            });
+        }
+        return;
+    }
+
+    handleDeleteParagraphSliderInputChange = (event) => {
+        event.preventDefault();
+        const newValue = parseInt(event.target.value);
+
+        if(newValue === 1) {
+            this.setState({
+                readyToDeleteParagraph: false,
+                selectedParagraphIndex: null
+            });
+        }
+        else if (newValue === 5) {
+            console.log(5);
+            let newParagraphsState = this.state.paragraphs.slice();
+            newParagraphsState.splice(this.state.selectedParagraphIndex, 1);
+            this.setState({
+                paragraphs: newParagraphsState,
+                readyToDeleteParagraph: false,
+                selectedParagraphIndex: null
+            });
+        }
+        else {
+            this.setState({
+                deleteParagraphSliderValue: newValue
             });
         }
         return;
@@ -167,7 +204,8 @@ class RecipeForm extends React.Component {
                                         onChange={this.handleDeleteIngredientSliderInputChange}
                                         step="1"
                                         type="range" 
-                                        value={this.state.deleteIngredientSliderValue} />
+                                        value={this.state.deleteIngredientSliderValue} 
+                                    />
                                     <label>Delete</label>
                                 </div>
                             }
@@ -191,6 +229,49 @@ class RecipeForm extends React.Component {
                         onChange={(event) => this.handleParagraphInputChange(event, index)}
                         value={this.state.paragraphs[index]}
                     />
+
+                    {paragraphList.length > 1 &&
+                        <Fragment>
+                            <button 
+                                className={index > 0 ? "move-item" : "move-item hidden"}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    this.setState({paragraphs: this.bumpArrayElement(this.state.paragraphs, index, -1)});
+                                }}
+                            >
+                                ▲
+                            </button>
+                            <button 
+                                className={index < paragraphList.length - 1 ? "move-item" : "move-item hidden"}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    this.setState({paragraphs: this.bumpArrayElement(this.state.paragraphs, index, 1)});
+                                }}
+                            >
+                                ▼
+                            </button>
+                            {this.state.readyToDeleteParagraph !== true &&
+                                <button className="delete-item" onClick={(event) => this.handleDeleteParagraphButtonInput(event, index)}>
+                                    Delete
+                                </button>
+                            }
+                            {this.state.readyToDeleteParagraph === true && this.state.selectedParagraphIndex === index &&
+                                <div className="deletion-slider">
+                                    <label>Cancel</label>
+                                    <input                                    
+                                        max="5"
+                                        min="1"
+                                        onChange={this.handleDeleteParagraphSliderInputChange}
+                                        step="1"
+                                        type="range" 
+                                        value={this.state.deleteParagraphSliderValue} 
+                                    />
+                                    <label>Delete</label>
+                                </div>
+                            }
+                        </Fragment>
+                    }
+
                 </label>
             </li>
             )
