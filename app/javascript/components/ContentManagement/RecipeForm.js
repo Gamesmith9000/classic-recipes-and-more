@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
+import { array } from 'prop-types';
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -10,12 +11,24 @@ class RecipeForm extends React.Component {
             existingRecipe: false,
             ingredients: [''],
             paragraphs: [''],
+            priorPrimaryState: {
+                ingredients: [''],
+                paragraphs: [''],
+                title: '',
+            },
             readyToDeleteIngredient: false,
             readyToDeleteParagraph: false,
             selectedIngredientIndex: null,
             selectedParagraphIndex: null,
             title: ''
         }
+    }
+
+    arraysHaveMatchingValues = (array1, array2) => {
+        if(array1.length !== array2.length) {
+            return false;
+        }
+        return array1.every((element, index) => element === array2[index]);
     }
 
     bumpArrayElement = (array, index, direction) => {
@@ -158,6 +171,20 @@ class RecipeForm extends React.Component {
         this.setState({title: event.target.value});
     }
 
+    isExistingRecipeWithChanges = () => {
+        if(this.state.existingRecipe !== true) {
+            return false;
+        }
+        if(this.arraysHaveMatchingValues(this.state.ingredients, this.state.priorPrimaryState.ingredients) &&
+        this.arraysHaveMatchingValues(this.state.paragraphs, this.state.priorPrimaryState.paragraphs) &&
+        this.state.title === this.state.priorPrimaryState.title) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     mapIngredientInputs = (ingredientList) => {
         return ingredientList.map((item, index) => {
             return (
@@ -288,10 +315,16 @@ class RecipeForm extends React.Component {
                 }
             })
             .then(res => {
+                console.log('CALLED GET');
                 this.setState({
                     existingRecipe: true,
                     ingredients: res.data.data.attributes.ingredients,
                     paragraphs: res.data.data.attributes.paragraphs,
+                    priorPrimaryState: {
+                        ingredients: res.data.data.attributes.ingredients,
+                        paragraphs: res.data.data.attributes.paragraphs,
+                        title: res.data.data.attributes.title,                        
+                    },
                     title: res.data.data.attributes.title
                 });
             })
@@ -335,10 +368,17 @@ class RecipeForm extends React.Component {
                     <button onClick={this.handleAddParagraph}>+</button>
                 </label>
                 <br/>
-                <br/>
                 <button type="submit">
                     {this.state.existingRecipe ? 'Update' : 'Create'}
                 </button>
+                {this.isExistingRecipeWithChanges() === true ?
+                    <p>
+                        YOU HAVE UNSAVED CHANGES!
+                    </p>
+                    :
+                    <br/>
+                }
+
             </form>
         )
     }
