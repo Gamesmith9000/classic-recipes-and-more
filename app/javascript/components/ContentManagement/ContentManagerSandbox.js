@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import RecipeForm from './RecipeForm';
+import RecipeDisplay from '../RecipeDisplay'
 import PhotoUploadForm from './PhotoUploadForm';
 
 class ContentManagerSandbox extends React.Component {
@@ -12,7 +13,9 @@ class ContentManagerSandbox extends React.Component {
             photoTitle: null,
             photoNotes: null,
             renderAllPhotos: true,
-            renderPhotoUploadsForm: true
+            renderPhotoUploadsForm: true,
+            renderSampleRecipe: true,
+            sampleRecipeId: 11
         }
     }
 
@@ -57,7 +60,14 @@ class ContentManagerSandbox extends React.Component {
                 <hr />
                 <RecipeForm recipeId={null}/>
                 <hr />
-                <RecipeForm recipeId={11} />
+                <RecipeForm recipeId={this.state.sampleRecipeId} />
+                <hr />
+                {this.state.renderSampleRecipe === true &&
+                    <RecipeDisplay 
+                        //recipeId={this.state.sampleRecipeId}
+                    
+                    />
+                }
                 <hr />
                 {this.state.renderPhotoUploadsForm === true &&
                     <PhotoUploadForm />

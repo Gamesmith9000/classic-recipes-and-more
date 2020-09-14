@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { array } from 'prop-types';
+import { arraysHaveMatchingValues, bumpArrayElement } from '../../Helpers'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -22,33 +23,6 @@ class RecipeForm extends React.Component {
             selectedParagraphIndex: null,
             title: ''
         }
-    }
-
-    arraysHaveMatchingValues = (array1, array2) => {
-        if(array1.length !== array2.length) {
-            return false;
-        }
-        return array1.every((element, index) => element === array2[index]);
-    }
-
-    bumpArrayElement = (array, index, direction) => {
-        if(direction !== -1 && direction !== 1) {
-            return array;
-        }
-        
-        let start = array.slice(0, index);
-        let end = array.slice(index, array.length);
-        const item = end.shift();
-
-        if(direction === -1) {
-            const poppedItem = start.pop();
-            return start.concat(item).concat(poppedItem).concat(end);
-        }
-        else {
-            const shiftedItem = end.shift();
-            return start.concat(shiftedItem).concat(item).concat(end);
-        }
-        
     }
 
     handleAddIngredient = (event) => {
@@ -175,8 +149,8 @@ class RecipeForm extends React.Component {
         if(this.state.existingRecipe !== true) {
             return false;
         }
-        if(this.arraysHaveMatchingValues(this.state.ingredients, this.state.priorPrimaryState.ingredients) &&
-        this.arraysHaveMatchingValues(this.state.paragraphs, this.state.priorPrimaryState.paragraphs) &&
+        if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorPrimaryState.ingredients) &&
+        arraysHaveMatchingValues(this.state.paragraphs, this.state.priorPrimaryState.paragraphs) &&
         this.state.title === this.state.priorPrimaryState.title) {
             return false;
         }
@@ -203,7 +177,7 @@ class RecipeForm extends React.Component {
                                 className={index > 0 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({ingredients: this.bumpArrayElement(this.state.ingredients, index, -1)});
+                                    this.setState({ingredients: bumpArrayElement(this.state.ingredients, index, -1)});
                                 }}
                             >
                                 ▲
@@ -212,7 +186,7 @@ class RecipeForm extends React.Component {
                                 className={index < ingredientList.length - 1 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({ingredients: this.bumpArrayElement(this.state.ingredients, index, 1)});
+                                    this.setState({ingredients: bumpArrayElement(this.state.ingredients, index, 1)});
                                 }}
                             >
                                 ▼
@@ -263,7 +237,7 @@ class RecipeForm extends React.Component {
                                 className={index > 0 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({paragraphs: this.bumpArrayElement(this.state.paragraphs, index, -1)});
+                                    this.setState({paragraphs: bumpArrayElement(this.state.paragraphs, index, -1)});
                                 }}
                             >
                                 ▲
@@ -272,7 +246,7 @@ class RecipeForm extends React.Component {
                                 className={index < paragraphList.length - 1 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({paragraphs: this.bumpArrayElement(this.state.paragraphs, index, 1)});
+                                    this.setState({paragraphs: bumpArrayElement(this.state.paragraphs, index, 1)});
                                 }}
                             >
                                 ▼
@@ -315,7 +289,6 @@ class RecipeForm extends React.Component {
                 }
             })
             .then(res => {
-                console.log('CALLED GET');
                 this.setState({
                     existingRecipe: true,
                     ingredients: res.data.data.attributes.ingredients,
