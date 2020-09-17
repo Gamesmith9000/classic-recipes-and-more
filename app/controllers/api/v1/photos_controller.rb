@@ -2,6 +2,7 @@ module Api
     module V1
         class PhotosController < ApplicationController
             protect_from_forgery with: :null_session
+            before_action :authenticate_admin!, only: [:create, :update, :destroy]
 
             def index
                 photos = Photo.all
