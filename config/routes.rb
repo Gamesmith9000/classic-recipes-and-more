@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'general#index'
   devise_for :admins
+  get 'get_current_admin', :to => 'general#get_current_admin', :as => 'get_current_admin'
+
   namespace :api do
     namespace :v1 do
       resources :photos, only: [:index, :show, :create, :update, :destroy]

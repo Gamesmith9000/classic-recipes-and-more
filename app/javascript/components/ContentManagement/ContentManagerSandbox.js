@@ -8,7 +8,10 @@ class ContentManagerSandbox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            adminSignedIn: null,
             allPhotos: [],
+            displayResponseForGetCurrentAdmin: true,
+            currentAdmin: null,
             photoFile: null,
             photoTitle: null,
             photoNotes: null,
@@ -20,6 +23,15 @@ class ContentManagerSandbox extends React.Component {
     }
 
     componentDidMount () {
+        if(this.state.displayResponseForGetCurrentAdmin) {
+            axios.get('/get_current_admin.json')
+            .then(res => {
+                console.log(res);
+                this.setState({ currentAdmin: res.data.email});
+            })
+            .catch(err => console.log(err));
+        }
+
         axios.get('/api/v1/photos.json')
         .then(res => {
             console.log(res);
@@ -57,6 +69,10 @@ class ContentManagerSandbox extends React.Component {
         return (
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
+                <hr />
+                {this.state.displayResponseForGetCurrentAdmin &&
+                    <p>Current admin - email: <strong>{ this.state.currentAdmin }</strong></p>
+                }
                 <hr />
                 <RecipeForm recipeId={null}/>
                 <hr />
