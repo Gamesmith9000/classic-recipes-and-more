@@ -50,7 +50,6 @@ class ContentManagerSandbox extends React.Component {
                 <li key={item.id} className="photo-info-entry">
                     <p><span>Title: </span>{item.attributes.title}</p>
                     <img src={item.attributes.file.url} />
-                    <p><span>Notes: </span>{item.attributes.notes}</p>
                 </li>);
         });
 

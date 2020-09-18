@@ -7,7 +7,6 @@ class PhotoUploadForm extends React.Component {
         this.state = {
             photoFile: null,
             photoTitle: null,
-            photoNotes: null,
         }
     }
 
@@ -20,7 +19,6 @@ class PhotoUploadForm extends React.Component {
         let formData = new FormData();
         formData.append('photo[file]', this.state.photoFile);
         formData.append('photo[title]', this.state.photoTitle);
-        formData.append('photo[notes]', this.state.photoNotes);
 
         axios.post('api/v1/photos', formData)
         .then(res => console.log(res))
@@ -35,10 +33,6 @@ class PhotoUploadForm extends React.Component {
         this.setState({photoTitle: event.target.value})
     }
     
-    onPhotoNotesInputChange = (event) => {
-        this.setState({photoNotes: event.target.value})
-    }
-
     render() {
         return (
             <div className="photo-uploader">
@@ -52,11 +46,6 @@ class PhotoUploadForm extends React.Component {
                     <label>
                         Title
                         <input type="text" onChange={this.onPhotoTitleInputChange} />
-                    </label>
-                    <br/>
-                    <label>
-                        Notes
-                        <input type="text" onChange={this.onPhotoNotesInputChange} />
                     </label>
                     <br/>
                     <br/>

@@ -49,7 +49,7 @@ module Api
             private
 
             def photo_params
-                params.require(:photo).permit(:file, :title, :notes)
+                params.require(:photo).permit(:file, :title)
             end
 
             def render_serialized_json (values)
