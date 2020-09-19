@@ -8,9 +8,7 @@ class ContentManagerSandbox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            adminSignedIn: null,
             allPhotos: [],
-            displayResponseForGetCurrentAdmin: true,
             currentAdmin: null,
             photoFile: null,
             photoTitle: null,
@@ -23,14 +21,7 @@ class ContentManagerSandbox extends React.Component {
     }
 
     componentDidMount () {
-        if(this.state.displayResponseForGetCurrentAdmin) {
-            axios.get('/get_current_admin.json')
-            .then(res => {
-                console.log(res);
-                this.setState({ currentAdmin: res.data.email});
-            })
-            .catch(err => console.log(err));
-        }
+        this.retrieveCurrentAdmin();
 
         axios.get('/api/v1/photos.json')
         .then(res => {
@@ -56,8 +47,33 @@ class ContentManagerSandbox extends React.Component {
         return mappedPhotos;
     }
 
+    retrieveCurrentAdmin = () => {
+        axios.get('/get_current_admin.json')
+        .then(res => {
+            console.log(res);
+            this.setState({ currentAdmin: res?.data?.email});
+        })
+        .catch(err => console.log(err));
+    }
+
+    sendLogoutRequest = () => {
+        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+
+        axios.delete ('/admins/sign_out')
+        .then(res => {
+            console.log(res);
+            this.retrieveCurrentAdmin();
+        })
+        .catch(err => console.log(err));
+    }
+
     render() {
-        let savedPhotosDisplay = <Fragment>
+        const logoutButton = <button onClick={this.sendLogoutRequest}>
+            Logout
+        </button>
+
+        const savedPhotosDisplay = <Fragment>
             <h4>All Saved Photos</h4>
             <ul className="all-photos-list">
                 { this.mapPhotos (this.state.allPhotos) }
@@ -69,8 +85,9 @@ class ContentManagerSandbox extends React.Component {
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
                 <hr />
-                {this.state.displayResponseForGetCurrentAdmin &&
-                    <p>Current admin - email: <strong>{ this.state.currentAdmin }</strong></p>
+                <p>Current admin: &nbsp; <strong>{ this.state.currentAdmin ? this.state.currentAdmin : "[No admin logged in]" }</strong></p>
+                {this.state.currentAdmin &&
+                    logoutButton
                 }
                 <hr />
                 <RecipeForm recipeId={null}/>
@@ -78,10 +95,7 @@ class ContentManagerSandbox extends React.Component {
                 <RecipeForm recipeId={this.state.sampleRecipeId} />
                 <hr />
                 {this.state.renderSampleRecipe === true &&
-                    <RecipeDisplay 
-                        //recipeId={this.state.sampleRecipeId}
-                    
-                    />
+                    <RecipeDisplay />
                 }
                 <hr />
                 {this.state.renderPhotoUploadsForm === true &&
