@@ -23,3 +23,7 @@ export function bumpArrayElement (array, index, direction) {
         return start.concat(shiftedItem).concat(item).concat(end);
     }
 }
+
+export function validationErrorsToString (fieldName, fieldErrorArray) {
+    return fieldName + " " + fieldErrorArray.join (' and ')
+}

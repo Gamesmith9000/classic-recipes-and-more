@@ -1,12 +1,14 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
+import { validationErrorsToString } from '../../Helpers'
 
 class PhotoUploadForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            errors: null,
             photoFile: null,
-            photoTitle: null,
+            photoTitle: "",
         }
     }
 
@@ -21,8 +23,12 @@ class PhotoUploadForm extends React.Component {
         formData.append('photo[title]', this.state.photoTitle);
 
         axios.post('api/v1/photos', formData)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+        .then(res => {
+            this.handlePhotoUploadResponse(res)
+        })
+        .catch(err => {
+            this.handlePhotoUploadResponse(err)
+        })
     }
 
     onPhotoFileInputChange = (event) => {
@@ -32,7 +38,33 @@ class PhotoUploadForm extends React.Component {
     onPhotoTitleInputChange = (event) => {
         this.setState({photoTitle: event.target.value})
     }
+
+    handlePhotoUploadResponse = (res) => {
+
+        console.log(res);
+        console.log(res.response);
+
+        if(res?.status === 200 && res.data) {
+            if(res.data.data?.type === "photo") {
+                // SUCCESS
+                // data: { data: type: "photo" }
+            }
+            else {
+                // NOT SIGNED IN
+                // { data: "A GIANT STRING!" }
+                //      It contains the html for the devise login page
+                //      Need to redirect to login page
+            }
+        }
+        else if (res?.response?.status === 422) {
+            this.setState({errors: res.response.data.error});
+        }
+    }
     
+    mapErrorMessages = () => {
+
+    }
+
     render() {
         return (
             <div className="photo-uploader">
@@ -42,12 +74,24 @@ class PhotoUploadForm extends React.Component {
                         Photo
                         <input type="file" onChange={this.onPhotoFileInputChange} />
                     </label>
-                    <br/>
+                    {this.state.errors?.file ?
+                        <div className="validation-error">
+                            {validationErrorsToString("File", this.state.errors.file)}
+                        </div>
+                    :
+                        <br/>
+                    }
                     <label>
                         Title
                         <input type="text" onChange={this.onPhotoTitleInputChange} />
                     </label>
-                    <br/>
+                    {this.state.errors?.title ?
+                        <div className="validation-error">
+                            {validationErrorsToString("Title", this.state.errors.title)}
+                        </div>
+                    :
+                        <br/>
+                    }
                     <br/>
                     <button type="submit">Upload</button>
                 </form>
