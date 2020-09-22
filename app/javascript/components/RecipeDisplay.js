@@ -14,9 +14,11 @@ class RecipeDisplay extends React.Component {
     }
 
     render() {
+        const { paragraphs, recipes, title } = this.props;
         return (
             <div className="recipe">
                 [RecipeDisplay Component]
+                <h1>{title}</h1>
             </div>
         )
     }

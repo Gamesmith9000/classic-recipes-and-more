@@ -1,8 +1,8 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import RecipeForm from './RecipeForm';
-import RecipeDisplay from '../RecipeDisplay'
 import PhotoUploadForm from './PhotoUploadForm';
+import { getDataAndRenderRecipeDisplay } from '../../ComponentHelpers'
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -95,7 +95,7 @@ class ContentManagerSandbox extends React.Component {
                 <RecipeForm recipeId={this.state.sampleRecipeId} />
                 <hr />
                 {this.state.renderSampleRecipe === true &&
-                    <RecipeDisplay />
+                    getDataAndRenderRecipeDisplay(this.state.sampleRecipeId)
                 }
                 <hr />
                 {this.state.renderPhotoUploadsForm === true &&
