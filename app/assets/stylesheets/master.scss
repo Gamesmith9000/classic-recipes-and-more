@@ -1,42 +1,9 @@
-//@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
-//@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lato&family=Parisienne&display=swap');
 
 body {
     background-color: darkgray;
     font-family: 'Lato', sans-serif;
     margin: 0;
-}
-
-.content-manager-sandbox {
-
-    li.photo-info-entry {
-        border: solid 1.5px;
-        list-style-type: none;
-
-        img {
-            max-width: 10vw;
-        }
-        p > span {
-            font-weight: 800;
-        }
-    }
-
-    ul.all-photos-list {
-        display: flex;
-        margin: 15px;
-        padding: 0;
-    }
-
-    .ingredients-edits > label, .paragraph-edits > label {
-        display: flex;
-    }
-
-    .move-item {
-        &.hidden {
-            visibility: hidden;
-        }
-    }
 }
 
 .navbar {
@@ -60,18 +27,8 @@ body {
         font-weight: bold;
     
         span {
-            // the word 'anywhere' in the title
             color: white;
             text-shadow: 1px 1px 3px black;
         }
     }
-}
-
-.validation-error {
-    background-color: black;
-    border-radius: .5rem;
-    color: white;
-    margin: .5rem;
-    padding: .25rem;
-    width: max-content;
 }

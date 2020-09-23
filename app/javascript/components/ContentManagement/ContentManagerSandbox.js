@@ -3,6 +3,7 @@ import axios from 'axios'
 import RecipeForm from './RecipeForm';
 import PhotoUploadForm from './PhotoUploadForm';
 import { getDataAndRenderRecipeDisplay } from '../../ComponentHelpers'
+import { setAxiosCsrfToken } from '../../Helpers'
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -57,8 +58,7 @@ class ContentManagerSandbox extends React.Component {
     }
 
     sendLogoutRequest = () => {
-        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+        setAxiosCsrfToken();
 
         axios.delete ('/admins/sign_out')
         .then(res => {

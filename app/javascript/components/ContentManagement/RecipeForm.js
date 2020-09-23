@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { array } from 'prop-types';
-import { arraysHaveMatchingValues, bumpArrayElement } from '../../Helpers'
+import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../Helpers'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -53,8 +53,7 @@ class RecipeForm extends React.Component {
 
     handleFormSubmit = (event) => {
         event.preventDefault();
-        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+        setAxiosCsrfToken();
 
         const requestType = this.state.existingRecipe ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';

@@ -14,9 +14,7 @@ class PhotoUploadForm extends React.Component {
 
     handlePhotoUploadSubmit = (event) => {
         event.preventDefault();
-
-        const csrfToken = document.querySelector('meta[name=csrf-token]').content;
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+        setAxiosCsrfToken();
 
         let formData = new FormData();
         formData.append('photo[file]', this.state.photoFile);

@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export function arraysHaveMatchingValues (array1, array2) {
     if(array1.length !== array2.length) {
         return false;
@@ -22,6 +24,11 @@ export function bumpArrayElement (array, index, direction) {
         const shiftedItem = end.shift();
         return start.concat(shiftedItem).concat(item).concat(end);
     }
+}
+
+export function setAxiosCsrfToken () {
+    const csrfToken = document.querySelector('meta[name=csrf-token]').content;
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 }
 
 export function validationErrorsToString (fieldName, fieldErrorArray) {

@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import RecipeDisplay from './components/RecipeDisplay'
 
 export function getDataAndRenderRecipeDisplay (recipeId) {
