@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { array } from 'prop-types';
 import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../Helpers'
 
 class RecipeForm extends React.Component {
@@ -186,7 +185,7 @@ class RecipeForm extends React.Component {
     }
 
     componentDidMount () {
-        if(this.props.recipeId !== null && this.props.recipeId !== undefined) {
+        if(this.props.recipeId) {
 
             axios.get(`/api/v1/recipes/${this.props.recipeId}`, { 
                 params: {

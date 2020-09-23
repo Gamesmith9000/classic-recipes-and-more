@@ -1,19 +1,30 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import axios from 'axios'
 import RecipeDisplay from './components/RecipeDisplay'
 
 export function getDataAndRenderRecipeDisplay (recipeId) {
-    /*  (1) Get recipe data with axios
-        (2) Save the data
-        (3) Pass data into RecipeDisplay as props
-        (4) (and return RecipeDisplay)
+   if(!recipeId) {
+       return <Fragment />
+   }
 
-        // Start with title
-    */
+    axios.get(`/api/v1/recipes/${recipeId}`, { 
+        params: {
+            id: recipeId
+        }
+    })
+    .then(res => {
+        const { ingredients, paragraphs, title } = res.data.data.attributes;
 
-    return (
-        <RecipeDisplay 
-            title="Title Placeholder"
-        />
-    );
+        return (
+            <RecipeDisplay
+                ingredients={ingredients}
+                paragraphs={paragraphs}
+                title={title}
+            />
+        );
+    })
+    .catch(err => {
+        console.log(err);
+        return <Fragment />
+    });
 }

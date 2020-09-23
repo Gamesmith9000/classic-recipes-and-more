@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
-import { validationErrorsToString } from '../../Helpers'
+import { setAxiosCsrfToken, validationErrorsToString } from '../../Helpers'
 
 class PhotoUploadForm extends React.Component {
     constructor(props) {
@@ -90,7 +90,6 @@ class PhotoUploadForm extends React.Component {
                     :
                         <br/>
                     }
-                    <br/>
                     <button type="submit">Upload</button>
                 </form>
                 <hr/>
