@@ -15,29 +15,18 @@ export function embedYoutubeVideo (youtubeVideoId) {
     );
 }
 
-export function getDataAndRenderRecipeDisplay (recipeId) {
-   if(!recipeId) {
-       return <Fragment />
-   }
-
-    axios.get(`/api/v1/recipes/${recipeId}`, { 
-        params: {
-            id: recipeId
-        }
-    })
-    .then(res => {
-        const { ingredients, paragraphs, title } = res.data.data.attributes;
-
-        return (
-            <RecipeDisplay
-                ingredients={ingredients}
-                paragraphs={paragraphs}
-                title={title}
-            />
-        );
-    })
-    .catch(err => {
-        console.log(err);
+export function renderRecipeDisplayFromResponse(responseData){
+    if(!responseData?.data?.data) {
         return <Fragment />
-    });
+    }
+
+    const { ingredients, paragraphs, photoId, title } = responseData.data.data.attributes;
+    return(
+        <RecipeDisplay
+        ingredients={ingredients}
+        paragraphs={paragraphs}
+        photoId={photoId}
+        title={title}
+        />
+    );
 }

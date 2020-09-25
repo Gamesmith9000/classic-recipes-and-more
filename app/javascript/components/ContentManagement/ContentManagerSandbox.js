@@ -2,7 +2,7 @@ import React, {Fragment} from 'react'
 import axios from 'axios'
 import RecipeForm from './RecipeForm';
 import PhotoUploadForm from './PhotoUploadForm';
-import { getDataAndRenderRecipeDisplay } from '../../ComponentHelpers'
+import { renderRecipeDisplayFromResponse } from '../../ComponentHelpers'
 import { setAxiosCsrfToken } from '../../Helpers'
 
 class ContentManagerSandbox extends React.Component {
@@ -17,6 +17,7 @@ class ContentManagerSandbox extends React.Component {
             renderAllPhotos: true,
             renderPhotoUploadsForm: true,
             renderSampleRecipe: true,
+            sampleRecipeResponseData: null,
             sampleRecipeId: 7
         }
     }
@@ -26,10 +27,17 @@ class ContentManagerSandbox extends React.Component {
 
         axios.get('/api/v1/photos.json')
         .then(res => {
-            console.log(res);
-            this.setState({ allPhotos: res.data.data })
+            this.setState({allPhotos: res.data.data});
         })
         .catch(err => console.log(err));
+
+        if(this.state.renderSampleRecipe && this.state.sampleRecipeId) {
+            axios.get(`/api/v1/recipes/${this.state.sampleRecipeId}`)
+            .then(res => {
+                this.setState({sampleRecipeResponseData: res});
+            })
+            .catch(err => console.log(err));
+        }
     }
 
     mapPhotos = (photosList) => {
@@ -94,8 +102,8 @@ class ContentManagerSandbox extends React.Component {
                 <hr />
                 <RecipeForm recipeId={this.state.sampleRecipeId} />
                 <hr />
-                {this.state.renderSampleRecipe === true &&
-                    getDataAndRenderRecipeDisplay(this.state.sampleRecipeId)
+                {this.state.renderSampleRecipe === true && this.state.sampleRecipeResponseData &&
+                    renderRecipeDisplayFromResponse(this.state.sampleRecipeResponseData)
                 }
                 <hr />
                 {this.state.renderPhotoUploadsForm === true &&
