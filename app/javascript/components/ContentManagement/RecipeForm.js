@@ -62,7 +62,16 @@ class RecipeForm extends React.Component {
             url: requestUrl,
             data: this.state
         })
-        .then(res => console.log(res))
+        .then(res => {
+            console.log(res);
+            this.setState({
+                priorPrimaryState: {
+                    ingredients: this.state.ingredients,
+                    paragraphs: this.state.paragraphs,
+                    title: this.state.title
+                }
+            })
+        })
         .catch(err => console.log(err));
     }
 
@@ -91,9 +100,7 @@ class RecipeForm extends React.Component {
         this.state.title === this.state.priorPrimaryState.title) {
             return false;
         }
-        else {
-            return true;
-        }
+        return true;
     }
 
     mapIngredientInputs = (ingredientList) => {

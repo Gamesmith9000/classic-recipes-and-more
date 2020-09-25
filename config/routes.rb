@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   get 'get_current_admin', :to => 'general#get_current_admin', :as => 'get_current_admin'
   get 'get_video_data', :to => 'general#get_video_data', :as => 'get_video_data'
 
+  # [NOTE] Improved, versioned namespaces should be used for get_current_admin and get_video_data
+
   namespace :api do
     namespace :v1 do
       resources :photos, only: [:index, :show, :create, :update, :destroy]
