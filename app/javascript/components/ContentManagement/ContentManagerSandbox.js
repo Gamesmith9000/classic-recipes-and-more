@@ -10,6 +10,10 @@ class ContentManagerSandbox extends React.Component {
         super(props);
         this.state = {
             allPhotos: [],
+            auxData: {
+                aboutPageParagraphs: null,
+                photoPageOrderedIds: null
+            },
             currentAdmin: null,
             photoFile: null,
             photoTitle: null,
@@ -18,7 +22,8 @@ class ContentManagerSandbox extends React.Component {
             renderPhotoUploadsForm: true,
             renderSampleRecipe: true,
             sampleRecipeResponseData: null,
-            sampleRecipeId: 7
+            sampleRecipeId: 7,
+            testAuxData: true,
         }
     }
 
@@ -35,6 +40,27 @@ class ContentManagerSandbox extends React.Component {
             axios.get(`/api/v1/recipes/${this.state.sampleRecipeId}`)
             .then(res => {
                 this.setState({sampleRecipeResponseData: res});
+            })
+            .catch(err => console.log(err));
+        }
+        if(this.state.testAuxData) {
+            axios.get('/api/v1/aux/about_page_paragraphs')
+            .then(res => {
+                let newAuxData = this.state.auxData;
+                newAuxData.aboutPageParagraphs = res.data;
+                this.setState({
+                    auxData: newAuxData
+                });
+            })
+            .catch(err => console.log(err));
+
+            axios.get('/api/v1/aux/photo_page_ordered_ids')
+            .then(res => {
+                let newAuxData = this.state.auxData;
+                newAuxData.photoPageOrderedIds = res.data;
+                this.setState({
+                    auxData: newAuxData
+                });
             })
             .catch(err => console.log(err));
         }

@@ -1,0 +1,2 @@
+class AuxData < ApplicationRecord
+end
