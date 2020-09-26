@@ -1,2 +1,2 @@
-module module Api::V1::PhotosHelper
+module Api::V1::PhotosHelper
 end
