@@ -20,14 +20,14 @@ class RecipeForm extends React.Component {
 
     handleAddIngredient = (event) => {
         event.preventDefault();
-        let updatedIngredientsState = this.state.ingredients;
+        let updatedIngredientsState = this.state.ingredients.slice();
         updatedIngredientsState.push('');
         this.setState({ingredients: updatedIngredientsState});
     }
 
     handleAddParagraph = (event) => {
         event.preventDefault();
-        let updatedParagraphsState = this.state.paragraphs;
+        let updatedParagraphsState = this.state.paragraphs.slice();
         updatedParagraphsState.push('');
         this.setState({paragraphs: updatedParagraphsState});
     }

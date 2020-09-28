@@ -44,7 +44,7 @@ class ContentManagerSandbox extends React.Component {
             .catch(err => console.log(err));
         }
         if(this.state.testAuxData) {
-            axios.get('/api/v1/aux/about_page_paragraphs')
+            axios.get('/api/v1/aux/about_page_paragraphs.json')
             .then(res => {
                 let newAuxData = this.state.auxData;
                 newAuxData.aboutPageParagraphs = res.data;
@@ -54,7 +54,7 @@ class ContentManagerSandbox extends React.Component {
             })
             .catch(err => console.log(err));
 
-            axios.get('/api/v1/aux/photo_page_ordered_ids')
+            axios.get('/api/v1/aux/photo_page_ordered_ids.json')
             .then(res => {
                 let newAuxData = this.state.auxData;
                 newAuxData.photoPageOrderedIds = res.data;

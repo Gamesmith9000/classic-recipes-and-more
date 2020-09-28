@@ -44,14 +44,14 @@ class Api::V1::AuxController < ApplicationController
     def about_page_paragraphs
         respond_to do |format|
             format.html { html_disallowed_response }
-            format.json { render_serialized_json AuxData.first!.about_page_paragraphs }
+            format.json { render json: AuxData.first!.about_page_paragraphs }
         end
     end
 
     def photo_page_ordered_ids
         respond_to do |format|
             format.html { html_disallowed_response }
-            format.json { render_serialized_json AuxData.first!.photo_page_ordered_ids }
+            format.json { render json: AuxData.first!.photo_page_ordered_ids }
         end
     end
 
@@ -60,10 +60,6 @@ class Api::V1::AuxController < ApplicationController
     def html_disallowed_response
         # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
         redirect_back(fallback_location: root_path)
-    end
-
-    def render_serialized_json (values)
-        render json: AuxDataSerializer.new(values).serialized_json
     end
 
     def video_params
