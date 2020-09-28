@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react'
-import axios from 'axios'
 import RecipeDisplay from './components/RecipeDisplay'
 
-export function embedYoutubeVideo (youtubeVideoId) {
+export function embedYoutubeVideo (youtubeVideoId/*, iframeWidth = 320, iframeHeight = 240*/) {
+    // [NOTE] Prior code is preserved in comments here. Remove/re-add after testing its further use
     return (
         <iframe 
-            width="560" 
-            height="315" 
+            /*width={iframeWidth}
+            height={iframeHeight}*/
             src={`https://www.youtube-nocookie.com/embed/${youtubeVideoId}`} 
             frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 

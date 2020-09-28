@@ -6,6 +6,24 @@ body {
     margin: 0;
 }
 
+.cooking-videos {
+    iframe {
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
+    .video-frame {
+        overflow: hidden;
+        margin-bottom: 3%;
+        padding-top: 56.25%;
+        position: relative;
+        width: 100%;
+    }
+}
+
 .content-manager-sandbox {
 
     li.photo-info-entry {
