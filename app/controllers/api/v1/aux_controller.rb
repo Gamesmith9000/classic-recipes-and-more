@@ -38,24 +38,9 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
-    # AuxData retrieval methods
+    # AuxData methods
     #   [DESIGN] The record with the lowest id is used as the sole instance
     #   [DESIGN] Creation and deletion must be done via console
-
-
-    def about_page_paragraphs
-        respond_to do |format|
-            format.html { html_disallowed_response }
-            format.json { render json: AuxData.first!.about_page_paragraphs }
-        end
-    end
-
-    def photo_page_ordered_ids
-        respond_to do |format|
-            format.html { html_disallowed_response }
-            format.json { render json: AuxData.first!.photo_page_ordered_ids }
-        end
-    end
 
     def show
         aux_data = AuxData.first
@@ -75,7 +60,7 @@ class Api::V1::AuxController < ApplicationController
     private
 
     def aux_data_params
-        params.require(:aux_data).permit(:about_page_paragraphs, :photo_page_ordered_ids)
+        params.require(:aux_data).permit(:about_page_paragraphs =>[], :photo_page_ordered_ids =>[])
     end
 
     def html_disallowed_response

@@ -13,11 +13,14 @@ class AboutPageTextForm extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('/api/v1/aux/about_page_paragraphs.json')
+        setAxiosCsrfToken();
+
+        axios.get('/api/v1/aux/main.json')
         .then(res => {
+            console.log(res);
             this.setState({
-                paragraphs: res.data,
-                priorParagraphsState: res.data
+                paragraphs: res.data.data.attributes.about_page_paragraphs,
+                priorParagraphsState: res.data.data.attributes.about_page_paragraphs
             });
         })
         .catch(err => console.log(err));
@@ -45,15 +48,18 @@ class AboutPageTextForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        // [NOTE] Update routes to add both getters and setters. Might be better to switch to getting/sending the entire AuxData (would allow a serializer)
-        console.log("Update is incomplete. There is not yet a route to patch to.");
-    /*
-        axios.patch()
+        axios.patch('/api/v1/aux/main.json', { 
+            aux_data: {
+                about_page_paragraphs: this.state.paragraphs
+            }
+        })
         .then(res => {
-
+            console.log(res);
+            this.setState({
+                priorParagraphsState: this.state.paragraphs
+            });
         })
         .catch(err => console.log(err));
-    */
     }
 
     handleParagraphInputChange = (event, index) => {
