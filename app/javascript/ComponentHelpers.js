@@ -27,3 +27,16 @@ export function renderRecipeDisplayFromResponse(responseData){
         />
     );
 }
+
+export function unsavedChangesMessage (hasUnsavedChanges) {
+    return (
+        // [NOTE] a more pleasant display should be created
+        <Fragment>     
+            {hasUnsavedChanges === true ?
+                <p>YOU HAVE UNSAVED CHANGES!</p>
+            :
+                <br/>
+            }
+        </Fragment>
+    );
+}

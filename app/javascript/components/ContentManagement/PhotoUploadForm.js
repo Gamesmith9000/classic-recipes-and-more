@@ -64,6 +64,7 @@ class PhotoUploadForm extends React.Component {
     }
 
     render() {
+        // [NOTE] This component has several unfinished aspects
         return (
             <div className="photo-uploader">
                 <form onSubmit={this.handlePhotoUploadSubmit}>

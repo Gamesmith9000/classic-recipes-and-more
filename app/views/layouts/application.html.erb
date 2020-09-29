@@ -13,6 +13,7 @@
 
   <body>
     <% if notice || alert %>
+    <!-- [NOTE] These flash message don't currently play nice with the render on React components -->
       <% if notice %>
         <p class="notice"><%= notice %></p>
       <% end %>

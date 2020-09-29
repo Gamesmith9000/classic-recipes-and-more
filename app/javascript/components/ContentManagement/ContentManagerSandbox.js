@@ -4,6 +4,7 @@ import RecipeForm from './RecipeForm';
 import PhotoUploadForm from './PhotoUploadForm';
 import { renderRecipeDisplayFromResponse } from '../../ComponentHelpers'
 import { setAxiosCsrfToken } from '../../Helpers'
+import AboutPageTextForm from './AboutPageTextForm';
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -37,7 +38,7 @@ class ContentManagerSandbox extends React.Component {
         .catch(err => console.log(err));
 
         if(this.state.renderSampleRecipe && this.state.sampleRecipeId) {
-            axios.get(`/api/v1/recipes/${this.state.sampleRecipeId}`)
+            axios.get(`/api/v1/recipes/${this.state.sampleRecipeId}.json`)
             .then(res => {
                 this.setState({sampleRecipeResponseData: res});
             })
@@ -123,6 +124,8 @@ class ContentManagerSandbox extends React.Component {
                 {this.state.currentAdmin &&
                     logoutButton
                 }
+                <hr />
+                <AboutPageTextForm />
                 <hr />
                 <RecipeForm recipeId={null}/>
                 <hr />

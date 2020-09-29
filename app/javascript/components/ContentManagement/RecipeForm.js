@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../Helpers'
+import { unsavedChangesMessage } from '../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -255,14 +256,7 @@ class RecipeForm extends React.Component {
                 <button type="submit">
                     {this.state.existingRecipe ? 'Update' : 'Create'}
                 </button>
-                {this.isExistingRecipeWithChanges() === true ?
-                    <p>
-                        YOU HAVE UNSAVED CHANGES!
-                    </p>
-                    :
-                    <br/>
-                }
-
+                { unsavedChangesMessage(this.isExistingRecipeWithChanges() === true) }
             </form>
         )
     }

@@ -1,7 +1,6 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
 
-
     # General API methods
 
     def get_current_admin
