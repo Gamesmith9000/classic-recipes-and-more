@@ -77,13 +77,13 @@ class RecipeForm extends React.Component {
     }
 
     handleIngredientInputChange = (event, index) => {
-        let updatedIngredientsState = this.state.ingredients;
+        let updatedIngredientsState = this.state.ingredients.slice();
         updatedIngredientsState[index] = event.target.value;
         this.setState({ingredients: updatedIngredientsState});
     }
 
     handleParagraphInputChange = (event, index) => {
-        let updatedParagraphsState = this.state.paragraphs;
+        let updatedParagraphsState = this.state.paragraphs.slice();
         updatedParagraphsState[index] = event.target.value;
         this.setState({paragraphs: updatedParagraphsState});
     }

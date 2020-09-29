@@ -63,7 +63,7 @@ class AboutPageTextForm extends React.Component {
     }
 
     handleParagraphInputChange = (event, index) => {
-        let updatedParagraphsState = this.state.paragraphs;
+        let updatedParagraphsState = this.state.paragraphs.slice();
         updatedParagraphsState[index] = event.target.value;
         this.setState({paragraphs: updatedParagraphsState});
     }
