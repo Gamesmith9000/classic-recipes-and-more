@@ -1,5 +1,6 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
+    before_action :authenticate_admin!, only: :update
 
     # General API methods
 
@@ -39,6 +40,8 @@ class Api::V1::AuxController < ApplicationController
 
     # AuxData retrieval methods
     #   [DESIGN] The record with the lowest id is used as the sole instance
+    #   [DESIGN] Creation and deletion must be done via console
+
 
     def about_page_paragraphs
         respond_to do |format|
@@ -54,11 +57,34 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
+    def show
+        aux_data = AuxData.first
+        render_serialized_json(aux_data)
+    end
+
+    def update
+        aux_data = AuxData.first
+
+        if aux_data.update(aux_data_params)
+            render_serialized_json(aux_data)   
+        else
+            render json: {error: aux_data.errors.messages}, status: 422
+        end
+    end
+
     private
+
+    def aux_data_params
+        params.require(:aux_data).permit(:about_page_paragraphs, :photo_page_ordered_ids)
+    end
 
     def html_disallowed_response
         # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
         redirect_back(fallback_location: root_path)
+    end
+
+    def render_serialized_json (values)
+        render json: AuxDataSerializer.new(values).serialized_json
     end
 
     def video_params
