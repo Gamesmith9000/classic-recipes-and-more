@@ -5,6 +5,7 @@ class ContentManagerHome extends React.Component {
         return (
             <div className="content-manager-home">
                 <p>[ContentManagerHome Component]</p>
+                <p>{this.props.currentAdmin}</p>
             </div>
         )
     }
