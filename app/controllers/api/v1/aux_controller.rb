@@ -4,14 +4,14 @@ class Api::V1::AuxController < ApplicationController
 
     # General API methods
 
-    def get_current_admin
+    def current_admin
         respond_to do |format|
             format.html { html_disallowed_response }
             format.json { render json: current_admin }
         end
     end
     
-    def get_youtube_video_data
+    def youtube_video_data
         respond_to do |format|
             format.html { html_disallowed_response }
             format.json {

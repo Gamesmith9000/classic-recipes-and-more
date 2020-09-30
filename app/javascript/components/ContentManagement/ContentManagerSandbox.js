@@ -58,7 +58,7 @@ class ContentManagerSandbox extends React.Component {
     }
 
     retrieveCurrentAdmin = () => {
-        axios.get('/api/v1/get_current_admin.json')
+        axios.get('/api/v1/current_admin.json')
         .then(res => {
             console.log(res);
             this.setState({ currentAdmin: res?.data?.email});

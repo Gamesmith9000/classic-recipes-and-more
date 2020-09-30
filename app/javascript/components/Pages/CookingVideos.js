@@ -17,7 +17,7 @@ class CookingVideos extends React.Component {
         const options = {
             max: 5
         }
-        axios.get('/api/v1/get_youtube_video_data.json', options)
+        axios.get('/api/v1/youtube_video_data.json', options)
         .then(res => {
             console.log(res.data);
             this.setState({videoData: res.data});
