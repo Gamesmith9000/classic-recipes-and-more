@@ -23,8 +23,18 @@ class App extends React.Component {
                     <Route exact path="/recipe-photos" component={RecipePhotos} />
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                    <Route exact path="/sandbox" component={ContentManagerSandbox} />
-                    <Route exact path="/content" component={ContentManagerHome} />
+                    <Route 
+                        exact path="/sandbox"
+                        render={(props) => (
+                            <ContentManagerSandbox currentAdmin={this.props.currentAdmin}/>
+                        )}
+                    />
+                    <Route 
+                        exact path="/content"
+                        render={(props) => (
+                            <ContentManagerHome currentAdmin={this.props.currentAdmin}/>
+                        )}
+                    />
                 </Switch>
             </div>
         );

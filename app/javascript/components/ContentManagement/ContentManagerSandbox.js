@@ -24,7 +24,7 @@ class ContentManagerSandbox extends React.Component {
     }
 
     componentDidMount () {
-        this.retrieveCurrentAdmin();
+        // this.retrieveCurrentAdmin();
 
         axios.get('/api/v1/photos.json')
         .then(res => {
@@ -56,7 +56,7 @@ class ContentManagerSandbox extends React.Component {
 
         return mappedPhotos;
     }
-
+/*
     retrieveCurrentAdmin = () => {
         axios.get('/api/v1/current_admin.json')
         .then(res => {
@@ -65,14 +65,14 @@ class ContentManagerSandbox extends React.Component {
         })
         .catch(err => console.log(err));
     }
-
+*/
     sendLogoutRequest = () => {
         setAxiosCsrfToken();
 
         axios.delete ('/admins/sign_out')
         .then(res => {
             console.log(res);
-            this.retrieveCurrentAdmin();
+//            this.retrieveCurrentAdmin();
         })
         .catch(err => console.log(err));
     }
@@ -94,8 +94,8 @@ class ContentManagerSandbox extends React.Component {
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
                 <hr />
-                <p>Current admin: &nbsp; <strong>{ this.state.currentAdmin ? this.state.currentAdmin : "[No admin logged in]" }</strong></p>
-                {this.state.currentAdmin &&
+                <p>Current admin: &nbsp; <strong>{ this.props.currentAdmin ? this.props.currentAdmin : "[No admin logged in]" }</strong></p>
+                {this.props.currentAdmin &&
                     logoutButton
                 }
                 <hr />

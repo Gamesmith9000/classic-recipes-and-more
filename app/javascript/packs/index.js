@@ -12,9 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <BrowserRouter>
       <Navbar />
-      <Route path="/">
-        <App currentAdmin={currentAdminData} />
-      </Route>
+      <Route
+        path="/" 
+        render={(props) => (
+          <App {...props} currentAdmin={currentAdminData} />
+          )} 
+      />
     </BrowserRouter>,
     document.body.appendChild(document.createElement('div'))
   )
