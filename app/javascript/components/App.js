@@ -9,6 +9,7 @@ import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
 
 import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
+import ContentManagerHome from './ContentManagement/ContentManagerHome'
 
 class App extends React.Component {
     render () {
@@ -23,6 +24,7 @@ class App extends React.Component {
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
 
                     <Route exact path="/sandbox" component={ContentManagerSandbox} />
+                    <Route exact path="/content" component={ContentManagerHome} />
                 </Switch>
             </div>
         );
