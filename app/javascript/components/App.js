@@ -19,6 +19,15 @@ class App extends React.Component {
         return (this.props.currentAdmin && this.props.currentAdmin !== "" && this.props.currentAdmin != "nil" && this.props.currentAdmin.includes("@"));
     }
 
+    renderProtectedRoute = (exactPath, componentToRender) => {
+        return (
+            <Route 
+                exact path={exactPath} 
+                component={this.hasValidAdmin() === true ? componentToRender : Login}
+            />
+        );
+    }
+
     render () {
         return (
             <div className="app">
@@ -30,33 +39,8 @@ class App extends React.Component {
                     <Route exact path="/recipe-photos" component={RecipePhotos} />
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                    {/* [NOTE] A more DRY solution to below items needs to be made */}
-
-                    {this.hasValidAdmin() === true 
-                    ?
-                        <Route 
-                            exact path="/sandbox"
-                            render={(props) => (
-                                <ContentManagerSandbox currentAdmin={this.props.currentAdmin}/>
-                            )}
-                        />
-                    :
-                        <Route exact path="/sandbox" component={Login} />
-                    }
-
-                    
-                    {this.hasValidAdmin() === true 
-                    ?
-                        <Route 
-                            exact path="/content"
-                            render={(props) => (
-                                <ContentManagerHome currentAdmin={this.props.currentAdmin}/>
-                            )}
-                        />
-                    :
-                        <Route exact path="/sandbox" component={Login} />
-                    }
-
+                    {this.renderProtectedRoute("/sandbox", ContentManagerSandbox)}
+                    {this.renderProtectedRoute("/content", ContentManagerHome)}
                 </Switch>
             </div>
         );
