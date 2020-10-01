@@ -1,5 +1,5 @@
-<% current_admin_email = current_admin.email unless !current_admin %>       <!-- falls back to null -->
-<!--% current_admin_email = current_admin ? current_admin.email : "" %-->   <!-- falls back to ''   -->
+<% current_admin_email = current_admin.email unless !current_admin %>       <%# falls back to null #%>
+<%# current_admin_email = current_admin ? current_admin.email : "" #%>      <%# falls back to ''   #%>
 
 <%= tag("div", :id => 'current-admin', :data => {:current_admin => current_admin_email}) %>
 <%= javascript_pack_tag 'index'%>

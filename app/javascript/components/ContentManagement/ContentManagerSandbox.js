@@ -11,7 +11,6 @@ class ContentManagerSandbox extends React.Component {
         super(props);
         this.state = {
             allPhotos: [],
-            currentAdmin: null,
             photoFile: null,
             photoTitle: null,
             photoNotes: null,
@@ -95,9 +94,7 @@ class ContentManagerSandbox extends React.Component {
                 <p>[ContentManagerSandbox Component]</p>
                 <hr />
                 <p>Current admin: &nbsp; <strong>{ this.props.currentAdmin ? this.props.currentAdmin : "[No admin logged in]" }</strong></p>
-                {this.props.currentAdmin &&
-                    logoutButton
-                }
+                {logoutButton}
                 <hr />
                 <AboutPageTextForm />
                 <hr />
