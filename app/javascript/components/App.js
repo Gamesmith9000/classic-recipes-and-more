@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Route, Switch } from 'react-router-dom'
+
+import Login from './Login'
+
 
 import About from './Pages/About'
 import Cookbook from './Pages/Cookbook'
@@ -12,6 +15,10 @@ import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
 import ContentManagerHome from './ContentManagement/ContentManagerHome'
 
 class App extends React.Component {
+    hasValidAdmin = () => {
+        return (this.props.currentAdmin && this.props.currentAdmin !== "" && this.props.currentAdmin != "nil" && this.props.currentAdmin.includes("@"));
+    }
+
     render () {
         return (
             <div className="app">
@@ -23,18 +30,33 @@ class App extends React.Component {
                     <Route exact path="/recipe-photos" component={RecipePhotos} />
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                    <Route 
-                        exact path="/sandbox"
-                        render={(props) => (
-                            <ContentManagerSandbox currentAdmin={this.props.currentAdmin}/>
-                        )}
-                    />
-                    <Route 
-                        exact path="/content"
-                        render={(props) => (
-                            <ContentManagerHome currentAdmin={this.props.currentAdmin}/>
-                        )}
-                    />
+                    {/* [NOTE] A more DRY solution to below items needs to be made */}
+
+                    {this.hasValidAdmin() === true 
+                    ?
+                        <Route 
+                            exact path="/sandbox"
+                            render={(props) => (
+                                <ContentManagerSandbox currentAdmin={this.props.currentAdmin}/>
+                            )}
+                        />
+                    :
+                        <Route exact path="/sandbox" component={Login} />
+                    }
+
+                    
+                    {this.hasValidAdmin() === true 
+                    ?
+                        <Route 
+                            exact path="/content"
+                            render={(props) => (
+                                <ContentManagerHome currentAdmin={this.props.currentAdmin}/>
+                            )}
+                        />
+                    :
+                        <Route exact path="/sandbox" component={Login} />
+                    }
+
                 </Switch>
             </div>
         );
