@@ -12,8 +12,9 @@ module Api
 
             def show
                 recipe = Recipe.find_by_id(params[:id])
-
-                render_serialized_json(recipe)
+                options = {}
+                options[:include] = [:sections]
+                render json: RecipeSerializer.new(recipe, options).serialized_json
             end
 
             def create

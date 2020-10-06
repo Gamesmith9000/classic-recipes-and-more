@@ -13,8 +13,10 @@ class RecipeForm extends React.Component {
             priorPrimaryState: {
                 ingredients: [''],
                 paragraphs: [''],
+                sections: [],
                 title: '',
             },
+            sections: [],
             title: ''
         }
     }
@@ -202,6 +204,13 @@ class RecipeForm extends React.Component {
             })
             .then(res => {
                 console.log(res);
+
+                const sectionsData = res.data.included.map(function (value) {
+                    let sectionData = value.attributes;
+                    sectionData.id = value.id;
+                    return sectionData;
+                });
+
                 this.setState({
                     existingRecipe: true,
                     ingredients: res.data.data.attributes.ingredients,
@@ -209,8 +218,10 @@ class RecipeForm extends React.Component {
                     priorPrimaryState: {
                         ingredients: res.data.data.attributes.ingredients,
                         paragraphs: res.data.data.attributes.paragraphs,
+                        sections: sectionsData,
                         title: res.data.data.attributes.title,                        
                     },
+                    sections: sectionsData,
                     title: res.data.data.attributes.title
                 });
             })
