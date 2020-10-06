@@ -1,4 +1,4 @@
 class PhotoSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :title, :file
+  attributes :file, :title
 end

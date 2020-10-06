@@ -7,8 +7,8 @@ class AboutPageTextForm extends React.Component {
     constructor() {
         super();
         this.state = {
-            paragraphs: null,
-            priorParagraphsState: null
+            sections: null,
+            priorSectionsState: null
         }
     }
 
@@ -19,28 +19,29 @@ class AboutPageTextForm extends React.Component {
         .then(res => {
             console.log(res);
             this.setState({
-                paragraphs: res.data.data.attributes.about_page_paragraphs,
-                priorParagraphsState: res.data.data.attributes.about_page_paragraphs
+                sections: res.data.data.attributes.about_page_sections,
+                priorSectionsState: res.data.data.attributes.about_page_sections
             });
         })
         .catch(err => console.log(err));
     }
 
     // [NOTE] Paragraph edit logic was ported from RecipeForm component. Attempt to find a more DRY implementation
+    // [NOTE] Later, 'Paragraph' instances and logic were converted to 'Section' instead
 
-    handleAddParagraph = (event) => {
+    handleAddSection = (event) => {
         event.preventDefault();
-        let updatedParagraphsState = this.state.paragraphs.slice();
-        updatedParagraphsState.push('');
-        this.setState({paragraphs: updatedParagraphsState});
+        let updatedsectionsState = this.state.sections.slice();
+        updatedsectionsState.push('');
+        this.setState({sections: updatedsectionsState});
     }
 
-    handleDeleteParagraphButtonInput = (event, index) => {
+    handleDeleteSectionButtonInput = (event, index) => {
         event.preventDefault();
-        if(window.confirm("Are you sure you want to delete this paragraph?")) {
-            let newParagraphsState = this.state.paragraphs.slice();
-            newParagraphsState.splice(index, 1);
-            this.setState({paragraphs: newParagraphsState});
+        if(window.confirm("Are you sure you want to delete this section?")) {
+            let newsectionsState = this.state.sections.slice();
+            newsectionsState.splice(index, 1);
+            this.setState({sections: newsectionsState});
         }
     }
 
@@ -50,57 +51,57 @@ class AboutPageTextForm extends React.Component {
 
         axios.patch('/api/v1/aux/main.json', { 
             aux_data: {
-                about_page_paragraphs: this.state.paragraphs
+                about_page_sections: this.state.sections
             }
         })
         .then(res => {
             console.log(res);
             this.setState({
-                priorParagraphsState: this.state.paragraphs
+                priorSectionsState: this.state.sections
             });
         })
         .catch(err => console.log(err));
     }
 
-    handleParagraphInputChange = (event, index) => {
-        let updatedParagraphsState = this.state.paragraphs.slice();
-        updatedParagraphsState[index] = event.target.value;
-        this.setState({paragraphs: updatedParagraphsState});
+    handleSectionInputChange = (event, index) => {
+        let updatedsectionsState = this.state.sections.slice();
+        updatedsectionsState[index] = event.target.value;
+        this.setState({sections: updatedsectionsState});
     }
 
-    mapParagraphInputs = (paragraphList) => {
-        return paragraphList.map((item, index) => {
+    mapSectionInputs = (sectionList) => {
+        return sectionList.map((item, index) => {
             return (
-            <li className="paragraph-edits" key={index}>
+            <li className="section-edits" key={index}>
                 <label>
                     {index}
                     <textarea 
-                        className="paragraph-input"
-                        onChange={(event) => this.handleParagraphInputChange(event, index)}
-                        value={this.state.paragraphs[index]}
+                        className="section-input"
+                        onChange={(event) => this.handleSectionInputChange(event, index)}
+                        value={this.state.sections[index]}
                     />
 
-                    {paragraphList.length > 1 &&
+                    {sectionList.length > 1 &&
                         <Fragment>
                             <button 
                                 className={index > 0 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({paragraphs: bumpArrayElement(this.state.paragraphs, index, -1)});
+                                    this.setState({sections: bumpArrayElement(this.state.sections, index, -1)});
                                 }}
                             >
                                 ▲
                             </button>
                             <button 
-                                className={index < paragraphList.length - 1 ? "move-item" : "move-item hidden"}
+                                className={index < sectionList.length - 1 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({paragraphs: bumpArrayElement(this.state.paragraphs, index, 1)});
+                                    this.setState({sections: bumpArrayElement(this.state.sections, index, 1)});
                                 }}
                             >
                                 ▼
                             </button>
-                            <button className="delete-item" onClick={(event) => this.handleDeleteParagraphButtonInput(event, index)}>
+                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, index)}>
                                 Delete
                             </button>
                         </Fragment>
@@ -116,19 +117,19 @@ class AboutPageTextForm extends React.Component {
         return (
             <Fragment>
                 <h2>Edit "About" Section</h2>
-                {this.state.paragraphs &&
+                {this.state.sections &&
                     <form className="about-text-form" onSubmit={this.handleFormSubmit}>
                     <label>
-                        Paragraphs
+                        sections
                         <br />
-                        {this.state.paragraphs &&
-                            this.mapParagraphInputs(this.state.paragraphs)
+                        {this.state.sections &&
+                            this.mapSectionInputs(this.state.sections)
                         }
-                        <button onClick={this.handleAddParagraph}>+</button>
+                        <button onClick={this.handleAddSection}>+</button>
                     </label>
                     <br />
                     <button type="submit">Update</button>
-                    {unsavedChangesMessage(!arraysHaveMatchingValues(this.state.paragraphs, this.state.priorParagraphsState))}
+                    {unsavedChangesMessage(!arraysHaveMatchingValues(this.state.sections, this.state.priorSectionsState))}
                     </form>
                 }
             </Fragment>

@@ -201,6 +201,7 @@ class RecipeForm extends React.Component {
                 }
             })
             .then(res => {
+                console.log(res);
                 this.setState({
                     existingRecipe: true,
                     ingredients: res.data.data.attributes.ingredients,

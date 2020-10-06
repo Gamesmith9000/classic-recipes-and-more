@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_05_091444) do
+ActiveRecord::Schema.define(version: 2020_10_06_011553) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,10 +29,10 @@ ActiveRecord::Schema.define(version: 2020_10_05_091444) do
 
   create_table "aux_datas", force: :cascade do |t|
     t.text "about_page_paragraphs", array: true
-    t.integer "photo_page_ordered_ids", array: true
+    t.integer "photo_page_ordered_ids", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.text "about_page_sections", array: true
+    t.text "about_page_sections", default: [""], array: true
   end
 
   create_table "photos", force: :cascade do |t|

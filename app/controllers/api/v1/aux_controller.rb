@@ -60,7 +60,7 @@ class Api::V1::AuxController < ApplicationController
     private
 
     def aux_data_params
-        params.require(:aux_data).permit(:about_page_paragraphs =>[], :photo_page_ordered_ids =>[])
+        params.require(:aux_data).permit(:photo_page_ordered_ids =>[], :about_page_sections =>[])
     end
 
     def html_disallowed_response
