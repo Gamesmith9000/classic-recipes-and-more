@@ -26,6 +26,14 @@ export function bumpArrayElement (array, index, direction) {
     }
 }
 
+export function mapSectionsDataFromAxiosResponse (responseData) {
+    return responseData.data.included.map((value) => {
+        let sectionData = value.attributes;
+        sectionData.id = value.id;
+        return sectionData;
+    });
+}
+
 export function setAxiosCsrfToken () {
     const csrfToken = document.querySelector('meta[name=csrf-token]').content;
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;

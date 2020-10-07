@@ -25,13 +25,30 @@ class RecipeDisplay extends React.Component {
         });
     }
 
+    mapSections = (sectionsList) => {
+        return sectionsList.map((item, index) => {
+            return (
+                <div className="section">
+                    <p key={index}>
+                        {item.text_content}
+                    </p>
+                    <div>
+                        {/* PHOTO ELEMENTS WILL MAP HERE */}
+                    </div>
+                </div>
+            )
+        });
+    }
+
     render() {
-        const { ingredients, paragraphs, title } = this.props;
+        const { ingredients, paragraphs, sections, title } = this.props;
         return (
             <div className="recipe">
                 <h1>{title}</h1>
                 <ul>{this.mapIngredients(ingredients)}</ul>
-                <Fragment>{this.mapParagraphs(paragraphs)}</Fragment>               
+                <Fragment>{this.mapParagraphs(paragraphs)}</Fragment>
+                <h2>Sections:</h2>
+                <Fragment>{this.mapSections(sections)}</Fragment>
             </div>
         )
     }

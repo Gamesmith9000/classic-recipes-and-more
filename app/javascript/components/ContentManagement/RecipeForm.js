@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../Helpers'
+import { arraysHaveMatchingValues, bumpArrayElement, mapSectionsDataFromAxiosResponse, setAxiosCsrfToken } from '../../Helpers'
 import { unsavedChangesMessage } from '../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
@@ -205,12 +205,8 @@ class RecipeForm extends React.Component {
             .then(res => {
                 console.log(res);
 
-                const sectionsData = res.data.included.map(function (value) {
-                    let sectionData = value.attributes;
-                    sectionData.id = value.id;
-                    return sectionData;
-                });
-
+                const sectionsData = mapSectionsDataFromAxiosResponse(res);
+                
                 this.setState({
                     existingRecipe: true,
                     ingredients: res.data.data.attributes.ingredients,

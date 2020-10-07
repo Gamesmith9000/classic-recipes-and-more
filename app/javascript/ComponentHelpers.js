@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import { mapSectionsDataFromAxiosResponse } from './Helpers'
 import RecipeDisplay from './components/RecipeDisplay'
 
 export function embedYoutubeVideo (youtubeVideoId) {
@@ -17,12 +18,14 @@ export function renderRecipeDisplayFromResponse(responseData){
         return <Fragment />
     }
 
-    const { ingredients, paragraphs, photoId, title } = responseData.data.data.attributes;
+    const { ingredients, paragraphs, title } = responseData.data.data.attributes;
+    const sections = mapSectionsDataFromAxiosResponse(responseData);
+    
     return(
         <RecipeDisplay
         ingredients={ingredients}
         paragraphs={paragraphs}
-        photoId={photoId}
+        sections={sections}
         title={title}
         />
     );
