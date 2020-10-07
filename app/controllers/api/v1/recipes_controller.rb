@@ -6,7 +6,6 @@ module Api
 
             def index
                 recipes = Recipe.all
-
                 render_serialized_json(recipes)
             end
 
@@ -21,6 +20,13 @@ module Api
                 recipe = Recipe.new(recipe_params)
 
                 if recipe.save
+                    if params.has_key :sections && params[:sections].length > 0
+                        params[:section].each do |section|
+                            # [NOTE] validation will be needed to ensure proper creation of new sections
+                            # Also consider new vs create
+                           Section.create(:recipe_id => section.recipe_id, :text_content => section.text_content, :ordered_photo_ids => section.ordered_photo_ids)
+                        end
+                    end
                     render_serialized_json(recipe)
                 else
                     render json: {error: recipe.errors.messages}, status: 422
@@ -41,6 +47,7 @@ module Api
                 recipe = Recipe.find_by_id(params[:id])
 
                 if recipe.destroy
+                    Section.destroy_all(:recipe_id => params[:id])
                     head :no_content
                 else
                     render json: {error: recipe.error.messages}, status: 422
@@ -50,7 +57,13 @@ module Api
             private
 
             def recipe_params
-                params.require(:recipe).permit(:title, :photo_id, :ingredients => [], :paragraphs => [])
+                params.require(:recipe).permit(
+                    :title, 
+                    :photo_id, 
+                    :ingredients => [], 
+                    :paragraphs => [],
+                    :sections => [ :id, :text_content, :ordered_photo_ids => [] ]
+                )
             end
 
             def render_serialized_json (values)

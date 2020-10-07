@@ -28,10 +28,8 @@ class RecipeDisplay extends React.Component {
     mapSections = (sectionsList) => {
         return sectionsList.map((item, index) => {
             return (
-                <div className="section">
-                    <p key={index}>
-                        {item.text_content}
-                    </p>
+                <div className="section" key={index}>
+                    <p>{item.text_content}</p>
                     <div>
                         {/* PHOTO ELEMENTS WILL MAP HERE */}
                     </div>
