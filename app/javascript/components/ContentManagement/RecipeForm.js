@@ -96,7 +96,7 @@ class RecipeForm extends React.Component {
             method: requestType,
             url: requestUrl,
             data: this.state
-            // [NOTE] The data passed in needs to be better mapped. Extra, useless data is being sent withing the request
+            // [NOTE] The data passed in needs to be better mapped. Extra, useless data is being sent within the request
         })
         .then(res => {
             console.log(res);
@@ -123,6 +123,24 @@ class RecipeForm extends React.Component {
         let updatedParagraphsState = this.state.paragraphs.slice();
         updatedParagraphsState[index] = event.target.value;
         this.setState({paragraphs: updatedParagraphsState});
+    }
+
+    handleSectionMove = (index, direction) => {
+        if(direction !== -1 && direction !== 1) {
+            return;
+        }
+
+        const targetIndex = index - direction;
+        const originalTextAtIndex = this.state.sections[index].text_content;
+        const originalTextAtTarget = this.state.sections[targetIndex].text_content;
+
+        let newSectionsState = this.state.sections.slice();
+        newSectionsState[index].text_content = originalTextAtTarget;
+        newSectionsState[targetIndex].text_content = originalTextAtIndex;
+
+        this.setState({
+            sections: newSectionsState
+        });
     }
 
     handleSectionTextInputChange = (event, index) => {
@@ -254,7 +272,7 @@ class RecipeForm extends React.Component {
                                 className={index > 0 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({sections: bumpArrayElement(this.state.sections, index, -1)});
+                                    this.handleSectionMove(index, 1);
                                 }}
                             >
                                 ▲
@@ -263,7 +281,7 @@ class RecipeForm extends React.Component {
                                 className={index < sectionsList.length - 1 ? "move-item" : "move-item hidden"}
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({sections: bumpArrayElement(this.state.sections, index, 1)});
+                                    this.handleSectionMove(index, -1);
                                 }}
                             >
                                 ▼

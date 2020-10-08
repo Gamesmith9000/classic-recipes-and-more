@@ -36,52 +36,41 @@ module Api
             def update
                 recipe = Recipe.find_by_id(params[:id])
 
-                # [NOTE] Focusing on getting this working properly. Refactoring & more DRY approach after
-
                 if recipe.update(recipe_params)
                     if params.has_key? :sections
                         prior_sections_data = Section.where(recipe_id: params[:id]).order('created_at DESC').reverse_order.as_json
                         new_sections_data = params[:sections]
 
-                        if new_sections_data.length == prior_sections_data.length
+                        are_fewer_new_sections = (new_sections_data.length < prior_sections_data.length)
+                        length_variance = (new_sections_data.length - prior_sections_data.length).abs
+
+                        if are_fewer_new_sections
+                            new_sections_data.each_with_index do |data, index|
+                                new_data = new_sections_data[index]
+                                section_id = prior_sections_data[index][:id]
+
+                                Section.update(new_data[:id], :text_content => new_data[:text_content], :ordered_photo_ids => new_data[:ordered_photo_ids])
+                            end
+
+                            length_variance.times do |i|
+                                prior_data = prior_sections_data[new_sections_data.length + i]
+
+                                # For some reason, using prior_data[:id] rather than prior_data['id'] causes the key not to be found
+                                Section.destroy(prior_data["id"])
+                            end
+                        else
                             prior_sections_data.each_with_index do |data, index|
                                 new_data = new_sections_data[index]
                                 section_id = prior_sections_data[index][:id]
 
                                 Section.update(new_data[:id], :text_content => new_data[:text_content], :ordered_photo_ids => new_data[:ordered_photo_ids])
                             end
-                        else
-                            length_variance = (new_sections_data.length - prior_sections_data.length).abs
 
-                            if new_sections_data.length > prior_sections_data.length
-                                # if (1+) new piece of section data was added via form
-
-                                prior_sections_data.each_with_index do |data, index| # copied from above, but with added steps:
-                                    new_data = new_sections_data[index]
-                                    section_id = prior_sections_data[index][:id]
-    
-                                    Section.update(new_data[:id], :text_content => new_data[:text_content], :ordered_photo_ids => new_data[:ordered_photo_ids])
-                                end
-
+                            if length_variance > 0
                                 length_variance.times do |i|
                                     new_data = new_sections_data[prior_sections_data.length + i]
                                     
                                     Section.create(:recipe_id => params[:id], :text_content => new_data[:text_content], :ordered_photo_ids => new_data[:ordered_photo_ids])
-                                end
-                            else
-                                # if (1+) section data entry was deleted via form
-
-                                new_sections_data.each_with_index do |data, index|
-                                    new_data = new_sections_data[index]
-                                    section_id = prior_sections_data[index][:id]
-    
-                                    Section.update(new_data[:id], :text_content => new_data[:text_content], :ordered_photo_ids => new_data[:ordered_photo_ids])
-                                end
-
-                                length_variance.times do |i|
-                                    prior_data = prior_sections_data[new_sections_data.length + i]
-
-                                    Section.destroy(prior_data["id"])
                                 end
                             end
                         end
