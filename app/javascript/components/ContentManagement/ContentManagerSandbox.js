@@ -18,7 +18,7 @@ class ContentManagerSandbox extends React.Component {
             renderPhotoUploadsForm: true,
             renderSampleRecipe: true,
             sampleRecipeResponseData: null,
-            sampleRecipeId: 7,
+            sampleRecipeId: 19,
         }
     }
 
