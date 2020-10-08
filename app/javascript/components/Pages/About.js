@@ -5,7 +5,7 @@ class About extends React.Component {
     constructor () {
         super();
         this.state = {
-            paragraphs: []
+            sections: []
         }
     }
 
@@ -13,14 +13,14 @@ class About extends React.Component {
         axios.get('/api/v1/aux/main.json')
         .then(res => {
             this.setState({
-                paragraphs: res.data.data.attributes.about_page_paragraphs,
+                sections: res.data.data.attributes.about_page_sections,
             });
         })
         .catch(err => console.log(err));
     }
 
-    mapParagraphs = (paragraphsList) => {
-        return paragraphsList.map((item, index) => {
+    mapSections = (sectionsList) => {
+        return sectionsList.map((item, index) => {
             return (
                 <p key={index}>
                     {item}
@@ -34,7 +34,7 @@ class About extends React.Component {
             <div className="about">
                 <h1>About Us</h1>
                 <div className="about-story">
-                    {this.mapParagraphs(this.state.paragraphs)}
+                    {this.mapSections(this.state.sections)}
                 </div>
             </div>
         )
