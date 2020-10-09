@@ -26,6 +26,8 @@ module Api
                             # Also consider new vs create
                            Section.create(:recipe_id => section.recipe_id, :text_content => section.text_content, :ordered_photo_ids => section.ordered_photo_ids)
                         end
+                    else
+                        Section.create(:recipe_id => recipe.id, :text_content => "", :ordered_photo_ids => [])
                     end
                     render_serialized_json(recipe)
                 else
@@ -97,6 +99,7 @@ module Api
 
             def recipe_params
                 params.require(:recipe).permit(
+                    :featured,
                     :title, 
                     :ingredients => [], 
                     :paragraphs => [],

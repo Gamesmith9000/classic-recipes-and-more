@@ -23,8 +23,6 @@ class ContentManagerSandbox extends React.Component {
     }
 
     componentDidMount () {
-        // this.retrieveCurrentAdmin();
-
         axios.get('/api/v1/photos.json')
         .then(res => {
             this.setState({allPhotos: res.data.data});
@@ -55,23 +53,13 @@ class ContentManagerSandbox extends React.Component {
 
         return mappedPhotos;
     }
-/*
-    retrieveCurrentAdmin = () => {
-        axios.get('/api/v1/current_admin.json')
-        .then(res => {
-            console.log(res);
-            this.setState({ currentAdmin: res?.data?.email});
-        })
-        .catch(err => console.log(err));
-    }
-*/
+
     sendLogoutRequest = () => {
         setAxiosCsrfToken();
 
         axios.delete ('/admins/sign_out')
         .then(res => {
             console.log(res);
-//            this.retrieveCurrentAdmin();
         })
         .catch(err => console.log(err));
     }
@@ -93,7 +81,6 @@ class ContentManagerSandbox extends React.Component {
             <div className="content-manager-sandbox">
                 <p>[ContentManagerSandbox Component]</p>
                 <hr />
-                <p>Current admin: &nbsp; <strong>{ this.props.currentAdmin ? this.props.currentAdmin : "[No admin logged in]" }</strong></p>
                 {logoutButton}
                 <hr />
                 <AboutPageTextForm />
@@ -116,7 +103,5 @@ class ContentManagerSandbox extends React.Component {
         )
     }
 }
-
-// [NOTE] there is currently no production build. Authentication is not yet implemented for this reason.
 
 export default ContentManagerSandbox
