@@ -1,22 +1,68 @@
-import React from 'react'
+import React, { Fragment } from 'react'
+import PageManager from './PageManager';
+import PhotoManager from './PhotoManager';
+import RecipeManager from './RecipeManager';
 
 class ContentManagerHome extends React.Component {
     constructor () {
         super();
         this.state = ({
-            contentSectionOpen: true,
-            selectedContentSecion: 0
+            contentSectionOpen: false,
+            selectedContentSection: 0
         });
     }
 
-    changeTab = () => { // rename 'tab'
+    /*  contentSection ID legend: 
+        0 - Pages, 1 - Recipes, 2 - Photos */
 
+    changeContentSection = (newSectionIdentifier) => {
+        // [NOTE] The max number for content section identifier is hard coded here:
+        if (!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > 2) {
+            return;
+        }
+        this.setState({
+            selectedContentSection: newSectionIdentifier
+        });
+    }
+    
+    closeContentSection = () => {
+        this.setState({
+            contentSectionOpen: false
+        });
+    }
+
+    closeThenChangeContentSection = (newSectionIdentifier) => {
+        this.closeContentSection();
+        this.changeContentSection(newSectionIdentifier);
+    }
+
+    renderContentSectionComponent = () => {
+        if(this.state.contentSectionOpen === false) {
+            return;
+        }
+
+        let renderedItem;
+        switch(this.state.selectedContentSection){
+            case 0:
+                renderedItem = <PageManager />
+                break;
+            case 1:
+                renderedItem = <RecipeManager />
+                break;
+            case 2:
+                renderedItem = <PhotoManager />
+                break;
+        }
+        return renderedItem;
     }
 
     render() {
         return (
-            <div className="content-manager-home">
-                <p>[ContentManagerHome Component]</p>
+            <div className="content-manager">
+                <h1>Content Management Dashboard</h1>
+                <Fragment>
+                    {this.renderContentSectionComponent()}
+                </Fragment>
             </div>
         )
     }
