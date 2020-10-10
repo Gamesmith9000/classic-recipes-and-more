@@ -13,6 +13,5 @@ Rails.application.routes.draw do
     end
   end
   
-  match '*path', to: 'general#index', via: :all
-  # [NOTE] Zayne's CRUD tutorial uses 'get', over 'match'
+  get '*path', to: 'general#index', via: :all
 end

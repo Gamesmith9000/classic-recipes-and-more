@@ -1,8 +1,6 @@
 import React, { Fragment } from 'react'
 import { Route, Switch } from 'react-router-dom'
 
-import Login from './Login'
-
 import About from './Pages/About'
 import Cookbook from './Pages/Cookbook'
 import CookingVideos from './Pages/CookingVideos'
@@ -18,13 +16,29 @@ class App extends React.Component {
         return (this.props.currentAdmin && this.props.currentAdmin !== "" && this.props.currentAdmin != "nil" && this.props.currentAdmin.includes("@"));
     }
 
-    renderProtectedRoute = (exactPath, componentToRender) => {
-        return (
+    /* [NOTE] This is part of the temporary authorization setup. The 'hasValidAdmin' method be used for simple exclusion for regular users, and a
+        new, robust solution will be used to truly authenticate admin users. Note that there will be no production build before such a point. */
+
+    renderProtectedRoute = (path, componentToRender, useExactPath = true) => {
+        const loginRelativeUrl = '/admins/sign_in'
+        return this.hasValidAdmin() === true
+        ?
             <Route 
-                exact path={exactPath} 
-                component={this.hasValidAdmin() === true ? componentToRender : Login}
+                component={componentToRender}
+                exact={useExactPath} 
+                path={path} 
             />
-        );
+        :
+            <Route 
+                component={ () => {
+                        // [NOTE] Verify security of this approach, history (back button, etc) seems to work well enough
+                        window.location.replace(loginRelativeUrl);
+                        return null;
+                    }
+                }
+                path={'/content'} 
+            />
+        ;
     }
 
     render () {
@@ -38,7 +52,7 @@ class App extends React.Component {
                     <Route exact path="/recipe-photos" component={RecipePhotos} />
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                    {this.renderProtectedRoute("/sandbox", ContentManagerSandbox)}
+                    <Route exact path="/sandbox" component={ContentManagerSandbox} />
                     {this.renderProtectedRoute("/content", ContentManagerHome)}
                 </Switch>
             </div>
