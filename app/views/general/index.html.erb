@@ -1,6 +1,10 @@
-<% current_admin_email = current_admin.email unless !current_admin %>       <%# falls back to null #%>
-<%# current_admin_email = current_admin ? current_admin.email : "" #%>      <%# falls back to ''   #%>
-
-<%= tag("div", :id => 'current-admin', :data => {:current_admin => current_admin_email}) %>
 <%= javascript_pack_tag 'index'%>
 <%= stylesheet_pack_tag 'application'%>
+
+<script>
+    <% if current_admin.nil? %>
+        const currentAdmin = null;
+    <% else %>
+        const currentAdmin = <%= raw current_admin.to_json %>;
+    <% end %>
+</script>

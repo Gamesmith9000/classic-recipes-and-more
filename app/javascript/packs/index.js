@@ -6,18 +6,10 @@ import App from '../components/App'
 import Navbar from '../components/Navbar'
 
 document.addEventListener('DOMContentLoaded', () => {
-  const currentAdminNode = document.getElementById('current-admin');
-  const currentAdminData = currentAdminNode.getAttribute('data-current-admin');
-  document.body.removeChild(currentAdminNode);
   ReactDOM.render(
     <BrowserRouter>
       <Navbar />
-      <Route
-        path="/" 
-        render={(props) => (
-          <App {...props} currentAdmin={currentAdminData} />
-          )} 
-      />
+      <Route path="/" component={App} />
     </BrowserRouter>,
     document.body.appendChild(document.createElement('div'))
   )
