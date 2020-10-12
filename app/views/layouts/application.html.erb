@@ -12,30 +12,14 @@
   </head>
 
   <body>
-
-  <!-- INCOMPLETE: -->
     <script>
-    <%# Flash variables %>
-    <%# for use in React and Devise's non-React rendered views %>
+      <%# Flash variables %>
+      <%# for use in React and Devise's non-React rendered views %>
 
-      let flashAlert = null;
-      let flashNotice = null;
-      
-      <% if alert || notice %>
-
-        <% if alert && notice %>
-
-        <% elsif alert %>
-
-        <% else %>
-
-        <% end %>
-
-      <% end %>
-
+      const hasSignedInFlashMessage = <%= notice == successful_sign_in_message %>;
       const flashMessages = {
-        alert: flashAlert,
-        notice: flashNotice
+        alert: (<%= alert.nil? %> === true) ? null : "<%= alert %>",
+        notice: <%= notice.nil? %> === true ? null : "<%= notice %>"
       }
     </script>
 
@@ -47,6 +31,7 @@
         <p class="flash-notice"><%= notice %></p>
       <% end %>
     <% end %>
+    
     <%= yield %>
   </body>
 </html>

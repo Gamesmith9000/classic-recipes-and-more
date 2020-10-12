@@ -59,11 +59,6 @@ class ContentManagerHome extends React.Component {
     }
 
     render() {
-        // NOTE: Flash messages will need to be rendered here
-        //      classes: flash-alert, flash-notice
-        //          (to match Devise, wrap them in <p>)
-        //      var: flashMessages { alert, notice}
- 
         return (
             <div className="content-manager">
                 <h1>Content Management Dashboard</h1>

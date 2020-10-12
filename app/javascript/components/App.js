@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 
 import About from './Pages/About'
 import Cookbook from './Pages/Cookbook'
@@ -12,9 +12,21 @@ import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
 import ContentManagerHome from './ContentManagement/ContentManagerHome'
 
 class App extends React.Component {
+    // [NOTE] adminVerified needs to have security beefed up and security tested
+
+    adminVerified = () => {
+        return !!currentAdmin?.email;
+    }
+
+    redirectOnSignIn = () => {
+        if(this.adminVerified() === true && hasSignedInFlashMessage === true) {
+            return <Redirect to ="/content" />
+        }
+    }
+
     renderProtectedRoute = (path, componentToRender, useExactPath = true) => {
         const loginRelativeUrl = '/admins/sign_in'
-        return currentAdmin?.email
+        return this.adminVerified() === true
         ?
             <Route 
                 component={componentToRender}
@@ -37,6 +49,7 @@ class App extends React.Component {
     render () {
         return (
             <div className="app">
+                {this.redirectOnSignIn()}
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route exact path="/about" component={About} />
