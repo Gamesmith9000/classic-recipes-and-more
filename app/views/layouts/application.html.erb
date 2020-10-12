@@ -12,16 +12,41 @@
   </head>
 
   <body>
-    <% if notice || alert %>
-    <!-- [NOTE] These flash message don't currently play nice with the render on React components -->
-      <% if notice %>
-        <p class="notice"><%= notice %></p>
+
+  <!-- INCOMPLETE: -->
+    <script>
+    <%# Flash variables %>
+    <%# for use in React and Devise's non-React rendered views %>
+
+      let flashAlert = null;
+      let flashNotice = null;
+      
+      <% if alert || notice %>
+
+        <% if alert && notice %>
+
+        <% elsif alert %>
+
+        <% else %>
+
+        <% end %>
+
       <% end %>
+
+      const flashMessages = {
+        alert: flashAlert,
+        notice: flashNotice
+      }
+    </script>
+
+    <% if controller_name == 'sessions' && (alert || notice) %>
       <% if alert %>
-        <p class="alert"><%= alert %></p>
+        <p class="flash-alert"><%= alert %></p>
+      <% end %>
+      <% if notice %>
+        <p class="flash-notice"><%= notice %></p>
       <% end %>
     <% end %>
-
     <%= yield %>
   </body>
 </html>

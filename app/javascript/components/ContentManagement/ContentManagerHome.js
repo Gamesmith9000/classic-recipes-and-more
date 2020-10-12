@@ -2,6 +2,8 @@ import React, { Fragment } from 'react'
 import PageManager from './PageManager';
 import PhotoManager from './PhotoManager';
 import RecipeManager from './RecipeManager';
+import SectionSelector from './SectionSelector';
+
 
 class ContentManagerHome extends React.Component {
     constructor () {
@@ -57,9 +59,20 @@ class ContentManagerHome extends React.Component {
     }
 
     render() {
+        // NOTE: Flash messages will need to be rendered here
+        //      classes: flash-alert, flash-notice
+        //          (to match Devise, wrap them in <p>)
+        //      var: flashMessages { alert, notice}
+ 
         return (
             <div className="content-manager">
                 <h1>Content Management Dashboard</h1>
+                <SectionSelector 
+                    changeContentSection={this.closeContentSection}
+                    closeContentSection={this.closeContentSection}      
+                    contentSectionOpen={this.state.contentSectionOpen}
+                    selectedContentSection={this.state.selectedContentSection}
+                />
                 <Fragment>
                     {this.renderContentSectionComponent()}
                 </Fragment>

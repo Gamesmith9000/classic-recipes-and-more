@@ -2,6 +2,8 @@
 <%= stylesheet_pack_tag 'application'%>
 
 <script>
+    <%# Global variables: %>
+    
     <% if current_admin.nil? %>
         const currentAdmin = null;
     <% else %>

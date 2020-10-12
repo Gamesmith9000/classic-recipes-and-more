@@ -24,40 +24,15 @@ body {
     }
 }
 
-.content-manager-sandbox {
-
-    li.photo-info-entry {
-        border: solid 1.5px;
-        list-style-type: none;
-
-        img {
-            max-width: 10vw;
-        }
-        p > span {
-            font-weight: 800;
-        }
+.flash {
+    &-alert {
+        background-color: darkred;
+        color: white;
     }
-
-    ul.all-photos-list {
-        display: flex;
-        margin: 15px;
-        padding: 0;
+    &-notice {
+        background-color: lightblue;
+        color: white;
     }
-
-    .ingredients-edits > label, .paragraph-edits > label {
-        display: flex;
-    }
-
-    .move-item {
-        &.hidden {
-            visibility: hidden;
-        }
-    }
-}
-
-.devise-login-iframe {
-    height: 100vh;  // [NOTE] Frame height needs to have navbar height subtracted from it
-    width: 100%;
 }
 
 .navbar {
