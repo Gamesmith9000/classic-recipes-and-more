@@ -120,7 +120,8 @@ class AboutPageTextForm extends React.Component {
                 {this.state.sections &&
                     <form className="about-text-form" onSubmit={this.handleFormSubmit}>
                     <label>
-                        sections
+                        Sections
+                        <br />
                         <br />
                         {this.state.sections &&
                             this.mapSectionInputs(this.state.sections)

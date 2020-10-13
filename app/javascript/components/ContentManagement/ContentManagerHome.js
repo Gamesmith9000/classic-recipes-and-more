@@ -9,7 +9,7 @@ class ContentManagerHome extends React.Component {
     constructor () {
         super();
         this.state = ({
-            contentSectionOpen: false,
+            contentSectionOpen: true,
             selectedContentSection: 0
         });
     }
@@ -19,7 +19,7 @@ class ContentManagerHome extends React.Component {
 
     changeContentSection = (newSectionIdentifier) => {
         // [NOTE] The max number for content section identifier is hard coded here:
-        if (!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > 2) {
+        if (!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > 2 || newSectionIdentifier === this.state.selectedContentSection) {
             return;
         }
         this.setState({
@@ -33,10 +33,11 @@ class ContentManagerHome extends React.Component {
         });
     }
 
-    closeThenChangeContentSection = (newSectionIdentifier) => {
-        this.closeContentSection();
-        this.changeContentSection(newSectionIdentifier);
-    }
+    openContentSection = () => {
+        this.setState({
+            contentSectionOpen: true
+        });
+    } 
 
     renderContentSectionComponent = () => {
         if(this.state.contentSectionOpen === false) {
@@ -63,14 +64,13 @@ class ContentManagerHome extends React.Component {
             <div className="content-manager">
                 <h1>Content Management Dashboard</h1>
                 <SectionSelector 
-                    changeContentSection={this.closeContentSection}
+                    changeContentSection={this.changeContentSection}
                     closeContentSection={this.closeContentSection}      
                     contentSectionOpen={this.state.contentSectionOpen}
+                    openContentSection={this.openContentSection}      
                     selectedContentSection={this.state.selectedContentSection}
                 />
-                <Fragment>
-                    {this.renderContentSectionComponent()}
-                </Fragment>
+                <Fragment>{this.renderContentSectionComponent()}</Fragment>
             </div>
         )
     }
