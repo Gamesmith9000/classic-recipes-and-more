@@ -11,10 +11,20 @@
         }
     }
 
+    li.recipe-preview {
+        display: grid;
+        grid-template-columns: 3rem 1fr;
+        grid-gap: 1.5rem;
+    }
+
     ul.all-photos-list {
         display: flex;
         margin: 15px;
         padding: 0;
+    }
+
+    ul.recipe-previews-list {
+        list-style-type: disc;
     }
 
     .ingredients-edits > label, .paragraph-edits > label {
@@ -29,5 +39,11 @@
 
     .page-selector, .section-selector {
         display: flex;
+    }
+
+    .recipe-picker {
+        .sorting-controls {
+            display: flex;
+        }
     }
 }
