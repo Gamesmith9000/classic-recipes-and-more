@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import RecipeForm from '../Forms/RecipeForm';
 import RecipeDestroyer from '../RecipeDestroyer';
 import RecipePicker from '../RecipePicker';
@@ -22,6 +22,18 @@ class RecipeManager extends React.Component {
         });
     }
 
+    handleCreateRecipeButtonInput = (event) => {
+        event.preventDefault();
+
+        this.setState({
+            recipeDestroyerIsOpen: false,
+            recipeFormIsOpen: true,
+            recipePickerIsOpen: false,
+            selectedRecipeId: null
+        });
+
+    }
+
     handleCloseRecipeDestroyerButtonInput = () => {
         this.setState({
             recipeDestroyerIsOpen: false,
@@ -31,8 +43,9 @@ class RecipeManager extends React.Component {
     }
 
     handleCloseRecipeFormButtonInput = (event) => {
-        event.preventDefault();
-
+        if(event){
+            event.preventDefault();
+        }
         this.setState({
             recipeDestroyerIsOpen: false,
             recipeFormIsOpen: false,
@@ -66,6 +79,16 @@ class RecipeManager extends React.Component {
         return (
             <div className="recipe-manager">
                 <h1>Recipe Manager</h1>
+                {this.state.recipeDestroyerIsOpen === false && this.state.recipeFormIsOpen === false &&
+                    <Fragment>
+                        <button onClick={this.handleCreateRecipeButtonInput}>
+                            Create Recipe
+                        </button>
+                        <br /> 
+                        <br />
+                    </Fragment>
+                }
+
                 {this.state.recipePickerIsOpen === true &&
                     <RecipePicker 
                         changeSelectedRecipeId={this.changeSelectedRecipeId}

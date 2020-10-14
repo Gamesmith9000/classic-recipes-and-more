@@ -99,7 +99,10 @@ class RecipeForm extends React.Component {
             // [NOTE] The data passed in needs to be better mapped. Extra, useless data is being sent within the request
         })
         .then(res => {
-            console.log(res);
+            if(this.state.existingRecipe === false) {
+                this.props.closeForm(null);
+                return;
+            }
             this.setState({
                 priorPrimaryState: {
                     ingredients: this.state.ingredients,
@@ -108,7 +111,7 @@ class RecipeForm extends React.Component {
                     title: this.state.title
                 }
                 // [NOTE] Updated section data will need to be fetched after this (assuming it has been changed)
-            })
+            });
         })
         .catch(err => console.log(err));
     }
@@ -379,7 +382,7 @@ class RecipeForm extends React.Component {
                 <br/>
 
 
-                <button type="submit">
+                <button onClick={this.handleFormSubmit}>
                     {this.state.existingRecipe ? 'Update' : 'Create'}
                 </button>
                 <button onClick={this.props.closeForm}>Close</button>

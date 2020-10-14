@@ -20,11 +20,11 @@ module Api
                 recipe = Recipe.new(recipe_params)
 
                 if recipe.save
-                    if params.has_key? :sections && params[:sections].length > 0
-                        params[:section].each do |section|
+                    if params.has_key? :sections
+                        params[:sections].each do |section|
                             # [NOTE] validation will be needed to ensure proper creation of new sections
                             # Also consider new vs create
-                           Section.create(:recipe_id => section.recipe_id, :text_content => section.text_content, :ordered_photo_ids => section.ordered_photo_ids)
+                           Section.create(:recipe_id => recipe.id, :text_content => section[:text_content], :ordered_photo_ids => section[:ordered_photo_ids])
                         end
                     else
                         Section.create(:recipe_id => recipe.id, :text_content => "", :ordered_photo_ids => [])
