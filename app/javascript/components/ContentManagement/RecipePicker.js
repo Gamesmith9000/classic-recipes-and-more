@@ -13,6 +13,11 @@ class RecipePicker extends React.Component {
     // [NOTE] When changes are made to the database, data needs to be updated here
     //  This will need to work with the associated form
 
+    handleRecipePreviewSelect = (event, recipeID) => {
+        event.preventDefault();
+        this.props.changeSelectedRecipeId(parseInt(recipeID));
+    }
+
     handleSortingButtonPress = (event) => {
         event.preventDefault();
         this.setState({
@@ -25,8 +30,31 @@ class RecipePicker extends React.Component {
         
         const sortedRecipeDataList = this.sortRecipeData(recipeDataList);
         const mappedRecipePreview = sortedRecipeDataList.map((item, index) => {
+            const isSelected = (this.props.selectedRecipeId && this.props.selectedRecipeId === parseInt(item.id));
+            if(isSelected === true){
+                return (
+                <li 
+                    className="recipe-preview selected" 
+                    key={index}
+                >
+                    <button>Modify</button>
+                    <button>Delete</button>
+                    <button onClick={(event) => this.handleRecipePreviewSelect(event, null)}>
+                        Cancel
+                    </button>
+                    <div className="id-column">ID: {item.id}</div>
+                    <div>Title: {item.attributes.title}</div>
+
+                </li>
+                );
+            }
+
             return (
-                <li className="recipe-preview" key={index}>
+                <li 
+                    className="recipe-preview" 
+                    key={index}
+                    onClick={(event) => this.handleRecipePreviewSelect(event, item.id)}
+                >
                     <div className="id-column">ID: {item.id}</div>
                     <div>Title: {item.attributes.title}</div>
                 </li>
@@ -92,12 +120,7 @@ class RecipePicker extends React.Component {
                 <div className="sorting-controls">
                     <div>Sorting By:</div>
                     <button onClick={this.handleSortingButtonPress}>
-                        {this.state.sortById === true 
-                        ?
-                            "ID"
-                        :
-                            "Title"
-                        }
+                        {this.state.sortById === true  ? "ID" : "Title"}
                     </button>
                 </div>
                 {this.mapRecipePreviews(this.state.recipeData)}

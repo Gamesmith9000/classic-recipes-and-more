@@ -12,9 +12,22 @@
     }
 
     li.recipe-preview {
+        border: 1px solid;
         display: grid;
-        grid-template-columns: 3rem 1fr;
         grid-gap: 1.5rem;
+        margin-bottom: .5rem;
+
+        &:not(.selected) {
+            background-color: grey;
+            border-color: black;
+            grid-template-columns: 3rem 1fr;
+        }
+        &.selected {
+            background-color: black;
+            border-color: white;
+            color: white;
+            grid-template-columns: max-content max-content max-content 3rem 1fr;
+        }
     }
 
     ul.all-photos-list {

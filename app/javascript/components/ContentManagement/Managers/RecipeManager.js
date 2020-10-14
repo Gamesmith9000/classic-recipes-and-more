@@ -10,13 +10,23 @@ class RecipeManager extends React.Component {
             selectedRecipeId: null
         }
     }
+
+    changeSelectedRecipeId = (newId) => {
+        if(newId && !Number.isInteger(newId)) return;
+
+        this.setState({
+            selectedRecipeId: newId
+        });
+    }
+
     render() {
         return (
             <div className="recipe-manager">
                 <h1>Recipe Manager</h1>
                 {this.state.recipePickerIsOpen === true &&
                     <RecipePicker 
-
+                        changeSelectedRecipeId={this.changeSelectedRecipeId}
+                        selectedRecipeId={this.state.selectedRecipeId}
                     />
                 }
             </div>
