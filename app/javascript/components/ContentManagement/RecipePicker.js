@@ -10,9 +10,6 @@ class RecipePicker extends React.Component {
         }
     }
 
-    // [NOTE] When changes are made to the database, data needs to be updated here
-    //  This will need to work with the associated form
-
     handleRecipePreviewSelect = (event, recipeID) => {
         event.preventDefault();
         this.props.changeSelectedRecipeId(parseInt(recipeID));
@@ -31,20 +28,23 @@ class RecipePicker extends React.Component {
         const sortedRecipeDataList = this.sortRecipeData(recipeDataList);
         const mappedRecipePreview = sortedRecipeDataList.map((item, index) => {
             const isSelected = (this.props.selectedRecipeId && this.props.selectedRecipeId === parseInt(item.id));
-            if(isSelected === true){
+            if(isSelected === true) {
                 return (
                 <li 
                     className="recipe-preview selected" 
                     key={index}
                 >
-                    <button>Modify</button>
-                    <button>Delete</button>
+                    <button onClick={this.props.handleModifyRecipeButtonInput}>
+                        Modify
+                    </button>
+                    <button onClick={this.props.handleDeleteRecipeButtonInput}>
+                        Delete
+                    </button>
                     <button onClick={(event) => this.handleRecipePreviewSelect(event, null)}>
                         Cancel
                     </button>
                     <div className="id-column">ID: {item.id}</div>
                     <div>Title: {item.attributes.title}</div>
-
                 </li>
                 );
             }
@@ -62,10 +62,8 @@ class RecipePicker extends React.Component {
         });
         // [NOTE] Consider changing li key to something other than index.
 
-        return(
-            <ul className="recipe-previews-list">
-                {mappedRecipePreview}
-            </ul>
+        return (
+            <ul className="recipe-previews-list">{mappedRecipePreview}</ul>
         );
     }
 

@@ -382,6 +382,7 @@ class RecipeForm extends React.Component {
                 <button type="submit">
                     {this.state.existingRecipe ? 'Update' : 'Create'}
                 </button>
+                <button onClick={this.props.closeForm}>Close</button>
                 { unsavedChangesMessage(this.isExistingRecipeWithChanges() === true) }
             </form>
         )
