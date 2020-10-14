@@ -1,12 +1,13 @@
 import React from 'react'
 import RecipeForm from '../Forms/RecipeForm';
+import RecipeDestroyer from '../RecipeDestroyer';
 import RecipePicker from '../RecipePicker';
 
 class RecipeManager extends React.Component {
     constructor () {
         super();
         this.state = {
-            deletionPromptIsOpen: false,
+            recipeDestroyerIsOpen: false,
             recipeFormIsOpen: false,
             recipePickerIsOpen: true,
             selectedRecipeId: null
@@ -21,10 +22,19 @@ class RecipeManager extends React.Component {
         });
     }
 
+    handleCloseRecipeDestroyerButtonInput = () => {
+        this.setState({
+            recipeDestroyerIsOpen: false,
+            recipeFormIsOpen: false,
+            recipePickerIsOpen: true
+        });
+    }
+
     handleCloseRecipeFormButtonInput = (event) => {
         event.preventDefault();
 
         this.setState({
+            recipeDestroyerIsOpen: false,
             recipeFormIsOpen: false,
             recipePickerIsOpen: true
         });
@@ -35,11 +45,10 @@ class RecipeManager extends React.Component {
         if(!this.state.selectedRecipeId) return;
 
         this.setState({
-            deletionPromptIsOpen: true,
+            recipeDestroyerIsOpen: true,
             recipeFormIsOpen: false,
             recipePickerIsOpen: false
         });
-        console.log('handleDeleteRecipeButtonInput called');
     }
 
     handleModifyRecipeButtonInput = (event) => {
@@ -47,7 +56,7 @@ class RecipeManager extends React.Component {
         if(!this.state.selectedRecipeId) return;
 
         this.setState({
-            deletionPromptIsOpen: false,
+            recipeDestroyerIsOpen: false,
             recipeFormIsOpen: true,
             recipePickerIsOpen: false
         });
@@ -69,6 +78,12 @@ class RecipeManager extends React.Component {
                     <RecipeForm 
                         closeForm={this.handleCloseRecipeFormButtonInput}
                         recipeId={this.state.selectedRecipeId}
+                    />
+                }
+                {this.state.recipeDestroyerIsOpen === true &&
+                    <RecipeDestroyer 
+                        handleCloseRecipeDestroyerButtonInput = {this.handleCloseRecipeDestroyerButtonInput}
+                        recipeId={this.state.selectedRecipeId} 
                     />
                 }
             </div>

@@ -88,7 +88,7 @@ module Api
                 recipe = Recipe.find_by_id(params[:id])
 
                 if recipe.destroy
-                    Section.destroy_all(:recipe_id => params[:id])
+                    Section.where(:recipe_id => params[:id]).destroy_all
                     head :no_content
                 else
                     render json: {error: recipe.error.messages}, status: 422
