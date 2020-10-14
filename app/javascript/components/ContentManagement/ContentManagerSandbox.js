@@ -1,10 +1,10 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
-import RecipeForm from './RecipeForm';
-import PhotoUploadForm from './PhotoUploadForm';
+import RecipeForm from './Forms/RecipeForm';
+import PhotoUploadForm from './Forms/PhotoUploadForm';
 import { renderRecipeDisplayFromResponse } from '../../ComponentHelpers'
 import { setAxiosCsrfToken } from '../../Helpers'
-import AboutPageTextForm from './AboutPageTextForm';
+import AboutPageTextForm from './Forms/AboutPageTextForm';
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {

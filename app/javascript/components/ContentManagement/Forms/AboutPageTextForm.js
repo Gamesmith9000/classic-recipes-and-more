@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
-import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../Helpers'
-import { unsavedChangesMessage } from '../../ComponentHelpers'
+import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
+import { unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class AboutPageTextForm extends React.Component {
     constructor() {
@@ -116,7 +116,7 @@ class AboutPageTextForm extends React.Component {
     render() {
         return (
             <Fragment>
-                <h2>Edit "About" Section</h2>
+                <h2>Editing "About" Page</h2>
                 {this.state.sections &&
                     <form className="about-text-form" onSubmit={this.handleFormSubmit}>
                     <label>

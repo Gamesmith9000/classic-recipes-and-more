@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react'
-import PageManager from './PageManager';
-import PhotoManager from './PhotoManager';
-import RecipeManager from './RecipeManager';
+import PageManager from './Managers/PageManager';
+import PhotoManager from './Managers/PhotoManager';
+import RecipeManager from './Managers/RecipeManager';
 import SectionSelector from './SectionSelector';
 
 
-class ContentManagerHome extends React.Component {
+class ContentManagementDashboard extends React.Component {
     constructor () {
         super();
         this.state = ({
@@ -61,7 +61,7 @@ class ContentManagerHome extends React.Component {
 
     render() {
         return (
-            <div className="content-manager">
+            <div className="content-management">
                 <h1>Content Management Dashboard</h1>
                 <SectionSelector 
                     changeContentSection={this.changeContentSection}
@@ -70,10 +70,11 @@ class ContentManagerHome extends React.Component {
                     openContentSection={this.openContentSection}      
                     selectedContentSection={this.state.selectedContentSection}
                 />
+                <hr />
                 <Fragment>{this.renderContentSectionComponent()}</Fragment>
             </div>
         )
     }
 }
 
-export default ContentManagerHome
+export default ContentManagementDashboard

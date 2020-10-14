@@ -1,4 +1,4 @@
-.content-manager-sandbox {
+.content-manager-sandbox, .content-management {
     li.photo-info-entry {
         border: solid 1.5px;
         list-style-type: none;
@@ -26,8 +26,8 @@
             visibility: hidden;
         }
     }
-}
 
-.page-selector, .section-selector {
-    display: flex;
+    .page-selector, .section-selector {
+        display: flex;
+    }
 }

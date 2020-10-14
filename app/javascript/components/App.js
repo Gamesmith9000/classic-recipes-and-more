@@ -9,7 +9,7 @@ import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
 
 import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
-import ContentManagerHome from './ContentManagement/ContentManagerHome'
+import ContentManagementDashboard from './ContentManagement/ContentManagementDashboard'
 
 class App extends React.Component {
     // [NOTE] adminVerified needs to have security beefed up and security tested
@@ -59,7 +59,7 @@ class App extends React.Component {
                     <Route exact path="/seasonal" component={SeasonalRecipes} />
 
                     <Route exact path="/sandbox" component={ContentManagerSandbox} />
-                    {this.renderProtectedRoute("/content", ContentManagerHome)}
+                    {this.renderProtectedRoute("/content", ContentManagementDashboard)}
                 </Switch>
             </div>
         );

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import AboutPageTextForm from './AboutPageTextForm'
+import AboutPageTextForm from '../Forms/AboutPageTextForm'
 
 class PageManager extends React.Component {
     constructor () {
@@ -52,6 +52,7 @@ class PageManager extends React.Component {
                         {this.pageButton(1, "Photo Gallery")}
                     </Fragment>
                 </div>
+                <hr />
                 <Fragment>{this.renderPageComponent()}</Fragment>
             </div>
         )
