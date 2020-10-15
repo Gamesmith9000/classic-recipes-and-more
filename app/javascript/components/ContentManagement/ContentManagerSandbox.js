@@ -1,10 +1,8 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
-import RecipeForm from './Forms/RecipeForm';
 import PhotoUploadForm from './Forms/PhotoUploadForm';
 import { renderRecipeDisplayFromResponse } from '../../ComponentHelpers'
-import { setAxiosCsrfToken } from '../../Helpers'
-import AboutPageTextForm from './Forms/AboutPageTextForm';
+import { getUrlForPhotoVersionSmall, setAxiosCsrfToken } from '../../Helpers'
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -47,7 +45,7 @@ class ContentManagerSandbox extends React.Component {
             return(
                 <li key={item.id} className="photo-info-entry">
                     <p><span>Title: </span>{item.attributes.title}</p>
-                    <img src={item.attributes.file.url} />
+                    <img src={getUrlForPhotoVersionSmall(item.id, item.attributes.file.url)} />
                 </li>);
         });
 
@@ -82,12 +80,6 @@ class ContentManagerSandbox extends React.Component {
                 <p>[ContentManagerSandbox Component]</p>
                 <hr />
                 {logoutButton}
-                <hr />
-                <AboutPageTextForm />
-                <hr />
-                <RecipeForm recipeId={null}/>
-                <hr />
-                <RecipeForm recipeId={this.state.sampleRecipeId} />
                 <hr />
                 {this.state.renderSampleRecipe === true && this.state.sampleRecipeResponseData &&
                     renderRecipeDisplayFromResponse(this.state.sampleRecipeResponseData)
