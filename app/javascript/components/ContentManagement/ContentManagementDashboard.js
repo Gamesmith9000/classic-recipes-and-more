@@ -3,14 +3,14 @@ import PageManager from './Managers/PageManager';
 import PhotoManager from './Managers/PhotoManager';
 import RecipeManager from './Managers/RecipeManager';
 import SectionSelector from './SectionSelector';
-
+import ContentSectionsInfo from '../../Helpers';
 
 class ContentManagementDashboard extends React.Component {
     constructor () {
         super();
         this.state = ({
-            contentSectionOpen: true,
-            selectedContentSection: 1   // [NOTE] Value modified for ease of creating new sections
+            contentSectionOpen: true,   // [NOTE] Content sections will probably default to being closed
+            selectedContentSection: 2   // [NOTE] Value modified for ease of creating new sections
         });
     }
 
@@ -19,10 +19,11 @@ class ContentManagementDashboard extends React.Component {
 
     changeContentSection = (newSectionIdentifier) => {
         // [NOTE] The max number for content section identifier is hard coded here:
-        if (!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > 2 || newSectionIdentifier === this.state.selectedContentSection) {
-            return;
-        }
+        if (!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > 2) { return; }
+
+        const sectionChange = (newSectionIdentifier !== this.state.selectedContentSection);
         this.setState({
+            contentSectionOpen: sectionChange === true ? true : !this.state.contentSectionOpen,
             selectedContentSection: newSectionIdentifier
         });
     }
