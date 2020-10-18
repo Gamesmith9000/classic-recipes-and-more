@@ -3,7 +3,7 @@ import PageManager from './Managers/PageManager';
 import PhotoManager from './Managers/PhotoManager';
 import RecipeManager from './Managers/RecipeManager';
 import SectionSelector from './SectionSelector';
-import ContentSectionsInfo from '../../Helpers';
+import { ContentSectionsInfo } from '../../Helpers';
 
 class ContentManagementDashboard extends React.Component {
     constructor () {
@@ -14,17 +14,13 @@ class ContentManagementDashboard extends React.Component {
         });
     }
 
-    /*  contentSection ID legend: 
-        0 - Pages, 1 - Recipes, 2 - Photos */
-
     changeContentSection = (newSectionIdentifier) => {
-        // [NOTE] The max number for content section identifier is hard coded here:
-        if (!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > 2) { return; }
+        const newSectionId = parseInt(newSectionIdentifier);
+        if(!ContentSectionsInfo.isValidSectionId(newSectionId)) { return;} 
 
-        const sectionChange = (newSectionIdentifier !== this.state.selectedContentSection);
         this.setState({
-            contentSectionOpen: sectionChange === true ? true : !this.state.contentSectionOpen,
-            selectedContentSection: newSectionIdentifier
+            contentSectionOpen: newSectionId !== this.state.selectedContentSection ? true : !this.state.contentSectionOpen,
+            selectedContentSection: newSectionId
         });
     }
     
@@ -40,26 +36,6 @@ class ContentManagementDashboard extends React.Component {
         });
     } 
 
-    renderContentSectionComponent = () => {
-        if(this.state.contentSectionOpen === false) {
-            return;
-        }
-
-        let renderedItem;
-        switch(this.state.selectedContentSection){
-            case 0:
-                renderedItem = <PageManager />
-                break;
-            case 1:
-                renderedItem = <RecipeManager />
-                break;
-            case 2:
-                renderedItem = <PhotoManager />
-                break;
-        }
-        return renderedItem;
-    }
-
     render() {
         return (
             <div className="content-management">
@@ -72,7 +48,7 @@ class ContentManagementDashboard extends React.Component {
                     selectedContentSection={this.state.selectedContentSection}
                 />
                 <hr />
-                <Fragment>{this.renderContentSectionComponent()}</Fragment>
+                <Fragment>{ContentSectionsInfo.sections[this.state.selectedContentSection].component}</Fragment>
             </div>
         )
     }

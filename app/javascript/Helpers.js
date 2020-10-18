@@ -38,7 +38,6 @@ function getUrlForPhotoVersion (photoId, standardUrl, versionNameText) {
     return splitUrl[0].concat(separator, versionNameText, "_", splitUrl[1]);
 }
 
-
 export function getUrlForPhotoVersionLarge (photoId, standardUrl) {
     return getUrlForPhotoVersion(photoId, standardUrl, "large")
 }
