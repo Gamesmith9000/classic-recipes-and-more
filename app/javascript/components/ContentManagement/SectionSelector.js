@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { ContentSectionsInfo } from '../../Helpers';
+import { ContentSectionsInfo } from '../../ComponentHelpers';
 
 class SectionSelector extends React.Component {
     constructor () {

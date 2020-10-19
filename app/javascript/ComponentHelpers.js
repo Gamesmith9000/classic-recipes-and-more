@@ -1,6 +1,25 @@
 import React, { Fragment } from 'react'
 import { mapSectionsDataFromAxiosResponse } from './Helpers'
+
+import PageManager from './components/ContentManagement/Managers/PageManager'
+import PhotoManager from './components/ContentManagement/Managers/PageManager'
 import RecipeDisplay from './components/RecipeDisplay'
+import RecipeManager from './components/ContentManagement/Managers/RecipeManager'
+
+
+export const ContentSectionsInfo = {
+    isValidSectionId: function (sectionId) {
+        if(!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > sectionId.length -1) {
+            return false
+        }
+        else { return true; }
+    },
+    sections: [
+        {component: <PageManager/>, name: 'Pages' },
+        {component: <RecipeManager/>, name: 'Recipes' },
+        {component: <PhotoManager/>, name: 'Photos' }
+    ]
+}
 
 export function embedYoutubeVideo (youtubeVideoId) {
     return (

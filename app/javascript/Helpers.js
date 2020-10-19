@@ -1,9 +1,4 @@
 import axios from 'axios'
-import React from 'react'
-
-import PageManager from './components/ContentManagement/Managers/PageManager'
-import PhotoManager from './components/ContentManagement/Managers/PageManager'
-import RecipeManager from './components/ContentManagement/Managers/RecipeManager'
 
 export function arraysHaveMatchingValues (array1, array2) {
     if(array1.length !== array2.length) {
@@ -69,18 +64,4 @@ export function setAxiosCsrfToken () {
 
 export function validationErrorsToString (fieldName, fieldErrorArray) {
     return fieldName + " " + fieldErrorArray.join (' and ')
-}
-
-export const ContentSectionsInfo = {
-    isValidSectionId: function (sectionId) {
-        if(!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > sectionId.length -1) {
-            return false
-        }
-        else { return true; }
-    },
-    sections: [
-        {component: <PageManager/>, name: 'Pages' },
-        {component: <RecipeManager/>, name: 'Recipes' },
-        {component: <PhotoManager/>, name: 'Photos' }
-    ]
 }

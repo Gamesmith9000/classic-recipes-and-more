@@ -1,9 +1,6 @@
 import React, { Fragment } from 'react'
-import PageManager from './Managers/PageManager';
-import PhotoManager from './Managers/PhotoManager';
-import RecipeManager from './Managers/RecipeManager';
 import SectionSelector from './SectionSelector';
-import { ContentSectionsInfo } from '../../Helpers';
+import { ContentSectionsInfo } from '../../ComponentHelpers';
 
 class ContentManagementDashboard extends React.Component {
     constructor () {
