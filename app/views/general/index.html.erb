@@ -1,4 +1,6 @@
-<%= javascript_pack_tag 'index'%>
+<%= javascript_pack_tag(admin_signed_in? 'indexVerified' : 'indexStandard')%>
+
+<%# [NOTE] The global variables below will need to be repurposed/removed after index.js/App.js setups are changed %>
 
 <script>
     <%# Global variables: %>
