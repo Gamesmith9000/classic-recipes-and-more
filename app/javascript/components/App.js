@@ -48,7 +48,7 @@ class App extends React.Component {
 
     render () {
         return (
-            <div className="app">
+            <Fragment>
                 {this.redirectOnSignIn()}
                 <Switch>
                     <Route exact path="/" component={Home} />
@@ -61,7 +61,7 @@ class App extends React.Component {
                     <Route exact path="/sandbox" component={ContentManagerSandbox} />
                     {this.renderProtectedRoute("/content", ContentManagementDashboard)}
                 </Switch>
-            </div>
+            </Fragment>
         );
     }
 }
