@@ -92,6 +92,7 @@ class PhotoUploadForm extends React.Component {
                         <br/>
                     }
                     <button type="submit">Upload</button>
+                    <button onClick={this.props.closeForm}>Close</button>
                 </form>
                 <hr/>
             </div>

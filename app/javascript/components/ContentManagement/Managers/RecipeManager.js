@@ -31,7 +31,6 @@ class RecipeManager extends React.Component {
             recipePickerIsOpen: false,
             selectedRecipeId: null
         });
-
     }
 
     handleCloseRecipeDestroyerButtonInput = () => {
@@ -88,7 +87,6 @@ class RecipeManager extends React.Component {
                         <br />
                     </Fragment>
                 }
-
                 {this.state.recipePickerIsOpen === true &&
                     <RecipePicker 
                         changeSelectedRecipeId={this.changeSelectedRecipeId}

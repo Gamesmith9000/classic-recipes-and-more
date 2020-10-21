@@ -380,8 +380,6 @@ class RecipeForm extends React.Component {
                 </label>
                 <br/>
                 <br/>
-
-
                 <button onClick={this.handleFormSubmit}>
                     {this.state.existingRecipe ? 'Update' : 'Create'}
                 </button>
