@@ -23,7 +23,6 @@ module Api
                     if params.has_key? :sections
                         params[:sections].each do |section|
                             # [NOTE] validation will be needed to ensure proper creation of new sections
-                            # Also consider new vs create
                            Section.create(:recipe_id => recipe.id, :text_content => section[:text_content], :ordered_photo_ids => section[:ordered_photo_ids])
                         end
                     else
@@ -100,6 +99,7 @@ module Api
             def recipe_params
                 params.require(:recipe).permit(
                     :featured,
+                    :tag,
                     :title, 
                     :ingredients => [], 
                     :paragraphs => [],
