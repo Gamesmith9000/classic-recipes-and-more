@@ -18,7 +18,12 @@ export function renderIndexToDom (allowAccessToContentPages) {
             <BrowserRouter>
             <Navbar />
             <FlashMessagesDisplay />
-            <Route path="/" component={App} />
+            <Route 
+                path="/" 
+                render={(props) => (
+                    <App {...props} giveContentPageAccess={allowAccessToContentPages} />
+                )}
+            />
             </BrowserRouter>,
             createTopDiv()
         )

@@ -1,13 +1,1 @@
 <%= javascript_pack_tag(admin_signed_in? ? 'verifiedIndex' : 'index')%>
-
-<%# [NOTE] The global variables below will need to be repurposed/removed after index.js/App.js setups are changed %>
-
-<script>
-    <%# Global variables: %>
-    
-    <% if current_admin.nil? %>
-        const currentAdmin = null;
-    <% else %>
-        const currentAdmin = <%= raw current_admin.to_json %>;
-    <% end %>
-</script>
