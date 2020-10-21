@@ -1,3 +1,3 @@
 import { renderIndexToDom } from './indexRendering'
 
-renderIndexToDom(false);
+renderIndexToDom(true);

@@ -1,11 +1,1 @@
-<%= javascript_pack_tag 'index'%>
-
-<script>
-    <%# Global variables: %>
-    
-    <% if current_admin.nil? %>
-        const currentAdmin = null;
-    <% else %>
-        const currentAdmin = <%= raw current_admin.to_json %>;
-    <% end %>
-</script>
+<%= javascript_pack_tag(admin_signed_in? ? 'verifiedIndex' : 'index')%>

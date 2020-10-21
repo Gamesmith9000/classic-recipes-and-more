@@ -11,22 +11,16 @@ import SeasonalRecipes from './Pages/SeasonalRecipes'
 import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
 import ContentManagementDashboard from './ContentManagement/ContentManagementDashboard'
 
-class App extends React.Component {
-    // [NOTE] adminVerified needs to have security beefed up and security tested
-
-    adminVerified = () => {
-        return !!currentAdmin?.email;
-    }
-
-    redirectOnSignIn = () => {
-        if(this.adminVerified() === true && hasSignedInFlashMessage === true) {
+function App(props) {
+    const redirectOnSignIn = () => {
+        if(props?.giveContentPageAccess === true && hasSignedInFlashMessage === true) {
             return <Redirect to ="/content" />
         }
     }
 
-    renderProtectedRoute = (path, componentToRender, useExactPath = true) => {
+    const renderProtectedRoute = (path, componentToRender, useExactPath = true) => {
         const loginRelativeUrl = '/admins/sign_in'
-        return this.adminVerified() === true
+        return props?.giveContentPageAccess === true
         ?
             <Route 
                 component={componentToRender}
@@ -46,24 +40,22 @@ class App extends React.Component {
         ;
     }
 
-    render () {
-        return (
-            <div className="app">
-                {this.redirectOnSignIn()}
-                <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Route exact path="/about" component={About} />
-                    <Route exact path="/cookbook" component={Cookbook} />
-                    <Route exact path="/cooking-videos" component={CookingVideos} />
-                    <Route exact path="/recipe-photos" component={RecipePhotos} />
-                    <Route exact path="/seasonal" component={SeasonalRecipes} />
+    return (            
+        <Fragment>
+            {redirectOnSignIn()}
+            <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/about" component={About} />
+                <Route exact path="/cookbook" component={Cookbook} />
+                <Route exact path="/cooking-videos" component={CookingVideos} />
+                <Route exact path="/recipe-photos" component={RecipePhotos} />
+                <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                    <Route exact path="/sandbox" component={ContentManagerSandbox} />
-                    {this.renderProtectedRoute("/content", ContentManagementDashboard)}
-                </Switch>
-            </div>
-        );
-    }
+                <Route exact path="/sandbox" component={ContentManagerSandbox} />
+                {renderProtectedRoute("/content", ContentManagementDashboard)}
+            </Switch>
+        </Fragment>
+    );
 }
 
 export default App
