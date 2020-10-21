@@ -2,14 +2,14 @@ import React, { Fragment } from 'react'
 import { mapSectionsDataFromAxiosResponse } from './Helpers'
 
 import PageManager from './components/ContentManagement/Managers/PageManager'
-import PhotoManager from './components/ContentManagement/Managers/PageManager'
+import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
 import RecipeDisplay from './components/RecipeDisplay'
 import RecipeManager from './components/ContentManagement/Managers/RecipeManager'
 
 
 export const ContentSectionsInfo = {
-    isValidSectionId: function (sectionId) {
-        if(!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > sectionId.length -1) {
+    isValidSectionId: function (newSectionIdentifier) {
+        if(!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > this.sections.length -1) {
             return false
         }
         else { return true; }
