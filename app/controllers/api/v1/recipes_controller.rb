@@ -98,8 +98,8 @@ module Api
 
             def recipe_params
                 params.require(:recipe).permit(
+                    :description,
                     :featured,
-                    :tag,
                     :title, 
                     :ingredients => [], 
                     :paragraphs => [],

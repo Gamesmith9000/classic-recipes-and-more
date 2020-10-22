@@ -4,8 +4,6 @@ import { arraysHaveMatchingValues, bumpArrayElement, mapSectionsDataFromAxiosRes
 import { unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
-    // [NOTE] Validation error messages are not yet implemented
-
     constructor() {
         super();
         this.state = {
@@ -14,6 +12,8 @@ class RecipeForm extends React.Component {
             featured: false,
             ingredients: [''],
             priorRecipeState: {
+                description: '',
+                featured: false,
                 ingredients: [''],
                 sections: [{
                     id: null,
@@ -53,6 +53,11 @@ class RecipeForm extends React.Component {
         this.setState({sections: updatedSectionsState});
     }
 
+    handleDescriptionInputChange = (event) => {
+        console.log(event);
+        this.setState({description: event.target.value});
+    }
+
     handleDeleteIngredientButtonInput = (event, index) => {
         event.preventDefault();
         if(window.confirm("Are you sure you want to delete this ingredient?")) {
@@ -70,6 +75,12 @@ class RecipeForm extends React.Component {
             this.setState({sections: newSectionsState});
         }
     }
+
+    handleFeaturedInputChange = (event) => {
+        this.setState({featured: event.target.checked});
+    }
+
+    // [NOTE] Validation error messages have not yet been implemented
 
     handleFormSubmit = (event) => {
         event.preventDefault();
@@ -143,6 +154,8 @@ class RecipeForm extends React.Component {
         }
         if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) &&
         arraysHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) &&
+        this.state.description === this.state.priorRecipeState.description &&
+        this.state.featured === this.state.priorRecipeState.featured &&
         this.state.title === this.state.priorRecipeState.title) {
             return false;
         }
@@ -281,6 +294,29 @@ class RecipeForm extends React.Component {
                         onChange={this.handleTitleInputChange}
                         type="text"
                         value={this.state.title}
+                    />
+                </label>
+                <br />
+                <br />
+                <label>
+                    Description
+                    <textarea 
+                        className="description-input"
+                        maxLength="300"
+                        onChange={this.handleDescriptionInputChange}
+                        type="textarea"
+                        value={this.state.description}
+                    />
+                </label>
+                <br />
+                <br />
+                <label>
+                    Featured
+                    <input 
+                        checked={this.state.featured}
+                        className="featured-input"
+                        onChange={this.handleFeaturedInputChange}
+                        type="checkbox"
                     />
                 </label>
                 <br />
