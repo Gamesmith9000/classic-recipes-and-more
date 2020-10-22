@@ -4,15 +4,17 @@ import { arraysHaveMatchingValues, bumpArrayElement, mapSectionsDataFromAxiosRes
 import { unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
+    // [NOTE] Validation error messages are not yet implemented
+
     constructor() {
         super();
         this.state = {
+            description: '',
             existingRecipe: false,
+            featured: false,
             ingredients: [''],
-            paragraphs: [''],
-            priorState: {
+            priorRecipeState: {
                 ingredients: [''],
-                paragraphs: [''],
                 sections: [{
                     id: null,
                     ordered_photo_ids: null,
@@ -39,13 +41,6 @@ class RecipeForm extends React.Component {
         this.setState({ingredients: updatedIngredientsState});
     }
 
-    handleAddParagraph = (event) => {
-        event.preventDefault();
-        let updatedParagraphsState = this.state.paragraphs.slice();
-        updatedParagraphsState.push('');
-        this.setState({paragraphs: updatedParagraphsState});
-    }
-
     handleAddSection = (event) => {
         event.preventDefault();
         let updatedSectionsState = this.state.sections.slice();
@@ -64,15 +59,6 @@ class RecipeForm extends React.Component {
             let newIngredientsState = this.state.ingredients.slice();
             newIngredientsState.splice(index, 1);
             this.setState({ingredients: newIngredientsState});
-        }
-    }
-
-    handleDeleteParagraphButtonInput = (event, index) => {
-        event.preventDefault();
-        if(window.confirm("Are you sure you want to delete this paragraph?")) {
-            let newParagraphsState = this.state.paragraphs.slice();
-            newParagraphsState.splice(index, 1);
-            this.setState({paragraphs: newParagraphsState});
         }
     }
 
@@ -104,9 +90,8 @@ class RecipeForm extends React.Component {
                 return;
             }
             this.setState({
-                priorState: {
+                priorRecipeState: {
                     ingredients: this.state.ingredients,
-                    paragraphs: this.state.paragraphs,
                     sections: this.state.sections,
                     title: this.state.title
                 }
@@ -120,12 +105,6 @@ class RecipeForm extends React.Component {
         let updatedIngredientsState = this.state.ingredients.slice();
         updatedIngredientsState[index] = event.target.value;
         this.setState({ingredients: updatedIngredientsState});
-    }
-
-    handleParagraphInputChange = (event, index) => {
-        let updatedParagraphsState = this.state.paragraphs.slice();
-        updatedParagraphsState[index] = event.target.value;
-        this.setState({paragraphs: updatedParagraphsState});
     }
 
     handleSectionMove = (index, direction) => {
@@ -160,10 +139,9 @@ class RecipeForm extends React.Component {
         if(this.state.existingRecipe !== true) {
             return false;
         }
-        if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorState.ingredients) &&
-        arraysHaveMatchingValues(this.state.paragraphs, this.state.priorState.paragraphs) &&
-        arraysHaveMatchingValues(this.state.sections, this.state.priorState.sections) &&
-        this.state.title === this.state.priorState.title) {
+        if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) &&
+        arraysHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) &&
+        this.state.title === this.state.priorRecipeState.title) {
             return false;
         }
         return true;
@@ -202,50 +180,6 @@ class RecipeForm extends React.Component {
                                 ▼
                             </button>
                             <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, index)}>
-                                Delete
-                            </button>
-                        </Fragment>
-                    }
-                </label>
-            </li>
-            )
-        });
-        // [NOTE] Consider changing li key to something other than index.
-    }
-
-    mapParagraphInputs = (paragraphList) => {
-        return paragraphList.map((item, index) => {
-            return (
-            <li className="paragraph-edits" key={index}>
-                <label>
-                    {index}
-                    <textarea 
-                        className="paragraph-input"
-                        onChange={(event) => this.handleParagraphInputChange(event, index)}
-                        value={this.state.paragraphs[index]}
-                    />
-
-                    {paragraphList.length > 1 &&
-                        <Fragment>
-                            <button 
-                                className={index > 0 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.setState({paragraphs: bumpArrayElement(this.state.paragraphs, index, -1)});
-                                }}
-                            >
-                                ▲
-                            </button>
-                            <button 
-                                className={index < paragraphList.length - 1 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.setState({paragraphs: bumpArrayElement(this.state.paragraphs, index, 1)});
-                                }}
-                            >
-                                ▼
-                            </button>
-                            <button className="delete-item" onClick={(event) => this.handleDeleteParagraphButtonInput(event, index)}>
                                 Delete
                             </button>
                         </Fragment>
@@ -303,7 +237,6 @@ class RecipeForm extends React.Component {
 
     componentDidMount () {
         if(this.props.recipeId) {
-
             axios.get(`/api/v1/recipes/${this.props.recipeId}`, { 
                 params: {
                     id: this.props.recipeId
@@ -313,19 +246,22 @@ class RecipeForm extends React.Component {
                 console.log(res);
 
                 const sectionsData = mapSectionsDataFromAxiosResponse(res);
+                const attributes = res.data.data.attributes;
                 
                 this.setState({
+                    description: attributes.description,
                     existingRecipe: true,
-                    ingredients: res.data.data.attributes.ingredients,
-                    paragraphs: res.data.data.attributes.paragraphs,
-                    priorState: {
-                        ingredients: res.data.data.attributes.ingredients,
-                        paragraphs: res.data.data.attributes.paragraphs,
+                    featured: attributes.featured,
+                    ingredients: attributes.ingredients,
+                    priorRecipeState: {
+                        description: attributes.description,
+                        featured: attributes.featured,
+                        ingredients: attributes.ingredients,
                         sections: sectionsData,
-                        title: res.data.data.attributes.title,                        
+                        title: attributes.title,                        
                     },
                     sections: sectionsData,
-                    title: res.data.data.attributes.title
+                    title: attributes.title
                 });
             })
             .catch(err => console.log(err));
@@ -333,8 +269,6 @@ class RecipeForm extends React.Component {
     }
 
     render() {
-        const { recipeId } = this.props;
-
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>
                 <h2>{this.state.existingRecipe ? 'Edit' : 'New'} Recipe</h2>
@@ -359,17 +293,6 @@ class RecipeForm extends React.Component {
                 </label>
                 <br />
                 <br />
-                <label>
-                    Paragraphs
-                    <br />
-                    {this.state.paragraphs &&
-                        this.mapParagraphInputs(this.state.paragraphs)
-                    }
-                    <button onClick={this.handleAddParagraph}>+</button>
-                </label>
-                <br/>
-                <br/>
-
                 <label>
                     Sections
                     <br />
