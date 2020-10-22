@@ -10,7 +10,7 @@ class RecipeForm extends React.Component {
             existingRecipe: false,
             ingredients: [''],
             paragraphs: [''],
-            priorPrimaryState: {
+            priorState: {
                 ingredients: [''],
                 paragraphs: [''],
                 sections: [{
@@ -104,7 +104,7 @@ class RecipeForm extends React.Component {
                 return;
             }
             this.setState({
-                priorPrimaryState: {
+                priorState: {
                     ingredients: this.state.ingredients,
                     paragraphs: this.state.paragraphs,
                     sections: this.state.sections,
@@ -160,10 +160,10 @@ class RecipeForm extends React.Component {
         if(this.state.existingRecipe !== true) {
             return false;
         }
-        if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorPrimaryState.ingredients) &&
-        arraysHaveMatchingValues(this.state.paragraphs, this.state.priorPrimaryState.paragraphs) &&
-        arraysHaveMatchingValues(this.state.sections, this.state.priorPrimaryState.sections) &&
-        this.state.title === this.state.priorPrimaryState.title) {
+        if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorState.ingredients) &&
+        arraysHaveMatchingValues(this.state.paragraphs, this.state.priorState.paragraphs) &&
+        arraysHaveMatchingValues(this.state.sections, this.state.priorState.sections) &&
+        this.state.title === this.state.priorState.title) {
             return false;
         }
         return true;
@@ -318,7 +318,7 @@ class RecipeForm extends React.Component {
                     existingRecipe: true,
                     ingredients: res.data.data.attributes.ingredients,
                     paragraphs: res.data.data.attributes.paragraphs,
-                    priorPrimaryState: {
+                    priorState: {
                         ingredients: res.data.data.attributes.ingredients,
                         paragraphs: res.data.data.attributes.paragraphs,
                         sections: sectionsData,
