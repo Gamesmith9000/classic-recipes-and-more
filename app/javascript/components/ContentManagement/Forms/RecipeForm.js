@@ -91,6 +91,8 @@ class RecipeForm extends React.Component {
             }
             this.setState({
                 priorRecipeState: {
+                    description: this.state.description,
+                    featured: this.state.featured,
                     ingredients: this.state.ingredients,
                     sections: this.state.sections,
                     title: this.state.title
