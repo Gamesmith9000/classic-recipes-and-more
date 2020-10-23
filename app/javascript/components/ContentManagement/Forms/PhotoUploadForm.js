@@ -46,6 +46,7 @@ class PhotoUploadForm extends React.Component {
             if(res.data.data?.type === "photo") {
                 // SUCCESS
                 // data: { data: type: "photo" }
+                this.props.handleClose();
             }
             else {
                 // NOT SIGNED IN
@@ -58,16 +59,12 @@ class PhotoUploadForm extends React.Component {
             this.setState({errors: res.response.data.error});
         }
     }
-    
-    mapErrorMessages = () => {
-
-    }
 
     render() {
         // [NOTE] This component has several unfinished aspects
         return (
             <div className="photo-uploader">
-                <form onSubmit={this.handlePhotoUploadSubmit}>
+                <form>
                     <h2>Upload Photo</h2>
                     <label>
                         Photo
@@ -91,7 +88,7 @@ class PhotoUploadForm extends React.Component {
                     :
                         <br/>
                     }
-                    <button type="submit">Upload</button>
+                    <button onClick={this.handlePhotoUploadSubmit}>Upload</button>
                     <button onClick={this.props.closeForm}>Close</button>
                 </form>
                 <hr/>

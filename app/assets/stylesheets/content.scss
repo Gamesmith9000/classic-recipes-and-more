@@ -12,6 +12,7 @@
         }
     }
 
+    li.photo-preview,
     li.recipe-preview {
         border: 1px solid;
         display: grid;
@@ -37,6 +38,10 @@
         padding: 0;
     }
 
+    ul.photo-previews-list {
+        display: flex;
+    }
+
     ul.recipe-previews-list {
         list-style-type: disc;
     }
@@ -55,7 +60,7 @@
         display: flex;
     }
 
-    .recipe-picker {
+    .photo-picker, .recipe-picker {
         .sorting-controls {
             display: flex;
         }

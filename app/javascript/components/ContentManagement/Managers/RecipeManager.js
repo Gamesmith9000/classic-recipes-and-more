@@ -4,6 +4,8 @@ import RecipeDestroyer from '../RecipeDestroyer';
 import RecipePicker from '../RecipePicker';
 
 class RecipeManager extends React.Component {
+    // [NOTE] Refactor this component in the same way as PhotoManager
+
     constructor () {
         super();
         this.state = {
@@ -97,7 +99,7 @@ class RecipeManager extends React.Component {
                 }
                 {this.state.recipeFormIsOpen === true &&
                     <RecipeForm 
-                        closeForm={this.handleCloseRecipeFormButtonInput}
+                        handleClose={this.handleCloseRecipeFormButtonInput}
                         recipeId={this.state.selectedRecipeId}
                     />
                 }

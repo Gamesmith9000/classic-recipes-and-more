@@ -1,36 +1,83 @@
 import React, { Fragment } from 'react'
+import PhotoPicker from '../PhotoPicker'
 import PhotoUploadForm from '../Forms/PhotoUploadForm';
 
 class PhotoManager extends React.Component {
+
+    // [NOTE] Next step: Refactor this with dynamic handlers (open/close handlers, at least)
+
     constructor () {
         super();
         this.state = {
-            photoUploadFormIsOpen: false
+            photoDestroyerIsOpen: false,
+            photoEditFormIsOpen: false,
+            photoPickerIsOpen: true,
+            photoUploadFormIsOpen: false,
+            selectedPhotoId: null
         }
+    }
+
+    closeAllExceptPicker = (newId = this.state.selectedPhotoId) => {
+        this.setState({
+            photoDestroyerIsOpen: false,
+            photoPickerIsOpen: true,
+            photoEditFormIsOpen: false,
+            photoUploadFormIsOpen: false,
+            selectedPhotoId: newId
+        });
+    }
+
+    closeAllExcept = (fieldName, newId = this.state.selectedPhotoId) => {
+        let newOpenState = {
+            photoDestroyerIsOpen: false,
+            photoEditFormIsOpen: false,
+            photoPickerIsOpen: false,
+            photoUploadFormIsOpen: false,
+            selectedPhotoId: newId
+        }
+        newOpenState[fieldName] = true;
+        this.setState({
+            photoDestroyerIsOpen: newOpenState.photoDestroyerIsOpen,
+            photoEditFormIsOpen: newOpenState.photoEditFormIsOpen,
+            photoPickerIsOpen: newOpenState.photoPickerIsOpen,
+            photoUploadFormIsOpen: newOpenState.photoUploadFormIsOpen,
+            selectedPhotoId: newOpenState.selectedPhotoId
+        });
+
+    };
+
+    changeSelectedPhotoId = (newId) => {
+        if(newId && !Number.isInteger(newId)) return;
+        this.setState({ selectedPhotoId: newId });
     }
 
     handleAddPhotoButtonInput = (event) => {
         event.preventDefault();
-
-        this.setState({
-            photoUploadFormIsOpen: true
-        });
+        this.closeAllExcept('photoUploadFormIsOpen', null)
+    }
+    
+    handleClosePhotoUploadFormButtonInput = (event) => {
+        if(event){ event.preventDefault(); }
+        this.closeAllExceptPicker(null);
     }
 
-    handleClosePhotoUploadFormButtonInput = (event) => {
-        if(event){
-            event.preventDefault();
-        }
-        this.setState({
-            photoUploadFormIsOpen: false
-        });
+    handleDeletePhotoButtonInput = (event) => {
+        event.preventDefault();
+        if(!this.state.selectedPhotoId) { return; }
+        this.closeAllExcept('photoDestroyerIsOpen');
+    }
+
+    handleModifyPhotoButtonInput = (event) => {
+        event.preventDefault();
+        if(!this.state.selectedRecipeId) { return; }
+        this.closeAllExcept('photoEditFormIsOpen')
     }
 
     render() {
         return (
             <div className="photo-manager">
                 <h1>Photo Manager</h1>
-                {this.state.photoUploadFormIsOpen === false &&
+                {this.state.photoUploadFormIsOpen === false && this.state.photoDestroyerIsOpen === false && this.state.photoEditFormIsOpen === false &&
                     <Fragment>
                         <button onClick={this.handleAddPhotoButtonInput}>
                             Add Photo
@@ -39,8 +86,22 @@ class PhotoManager extends React.Component {
                         <br />
                     </Fragment>
                 }
+                {this.state.photoPickerIsOpen === true &&
+                    <PhotoPicker 
+                        changeSelectedPhotoId={this.changeSelectedPhotoId}
+                        handleDeletePhotoButtonInput={this.handleDeletePhotoButtonInput}
+                        handleModifyPhotoButtonInput={this.handleModifyPhotoButtonInput}
+                        selectedRecipeId={this.state.selectedRecipeId}
+                    />
+                }
                 {this.state.photoUploadFormIsOpen === true &&
-                    <PhotoUploadForm closeForm={this.handleClosePhotoUploadFormButtonInput} />
+                    <PhotoUploadForm handleClose={this.handleClosePhotoUploadFormButtonInput} />
+                }
+                {this.state.photoEditFormIsOpen === true &&
+                    <Fragment/>
+                }
+                {this.state.photoDestroyerIsOpen === true &&
+                    <Fragment/>
                 }
             </div>
         )

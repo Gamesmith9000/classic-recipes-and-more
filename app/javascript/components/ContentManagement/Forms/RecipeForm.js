@@ -97,7 +97,7 @@ class RecipeForm extends React.Component {
         })
         .then(res => {
             if(this.state.existingRecipe === false) {
-                this.props.closeForm(null);
+                this.props.handleClose(null);
                 return;
             }
             this.setState({
