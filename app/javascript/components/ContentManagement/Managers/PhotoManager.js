@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import PhotoPicker from '../Pickers/PhotoPicker'
 import PhotoUploadForm from '../Forms/PhotoUploadForm';
+import PhotoEditForm from '../Forms/PhotoEditForm';
 
 class PhotoManager extends React.Component {
 
@@ -56,7 +57,7 @@ class PhotoManager extends React.Component {
         this.closeAllExcept('photoUploadFormIsOpen', null)
     }
     
-    handleClosePhotoUploadFormButtonInput = (event) => {
+    handleCloseSubcomponents = (event) => {
         if(event){ event.preventDefault(); }
         this.closeAllExceptPicker(null);
     }
@@ -69,8 +70,8 @@ class PhotoManager extends React.Component {
 
     handleModifyPhotoButtonInput = (event) => {
         event.preventDefault();
-        if(!this.state.selectedRecipeId) { return; }
-        this.closeAllExcept('photoEditFormIsOpen')
+        if(!this.state.selectedPhotoId) { return; }
+        this.closeAllExcept('photoEditFormIsOpen');
     }
 
     render() {
@@ -95,10 +96,13 @@ class PhotoManager extends React.Component {
                     />
                 }
                 {this.state.photoUploadFormIsOpen === true &&
-                    <PhotoUploadForm handleClose={this.handleClosePhotoUploadFormButtonInput} />
+                    <PhotoUploadForm handleClose={this.handleCloseSubcomponents} />
                 }
                 {this.state.photoEditFormIsOpen === true &&
-                    <Fragment/>
+                    <PhotoEditForm 
+                        handleClose={this.handleCloseSubcomponents}
+                        photoId={this.state.selectedPhotoId}
+                    />
                 }
                 {this.state.photoDestroyerIsOpen === true &&
                     <Fragment/>

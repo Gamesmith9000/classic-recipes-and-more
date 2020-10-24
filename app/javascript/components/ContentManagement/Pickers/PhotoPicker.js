@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import axios from 'axios'
 
 class PhotoPicker extends React.Component {
@@ -30,6 +30,13 @@ class PhotoPicker extends React.Component {
         const sortedPhotoDataList = this.sortPhotoData(photoDataList);
         const mappedPhotoPreview = sortedPhotoDataList.map((item, index) => {
             const isSelected = (this.props.selectedPhotoId && this.props.selectedPhotoId === parseInt(item.id));
+            const commonItems = (
+                <Fragment>
+                    <div className="id-column">ID: {item.id}</div>
+                    <img src={item.attributes.file.thumb.url} />
+                    <div>Title: {item.attributes.title}</div>
+                </Fragment>
+            );
             if(isSelected === true) {
                 return (
                 <li 
@@ -45,8 +52,7 @@ class PhotoPicker extends React.Component {
                     <button onClick={(event) => this.handlePhotoPreviewSelect(event, null)}>
                         Cancel
                     </button>
-                    <div className="id-column">ID: {item.id}</div>
-                    <div>Title: {item.attributes.title}</div>
+                    { commonItems }
                 </li>
                 );
             }
@@ -57,8 +63,7 @@ class PhotoPicker extends React.Component {
                     key={index}
                     onClick={(event) => this.handlePhotoPreviewSelect(event, item.id)}
                 >
-                    <div className="id-column">ID: {item.id}</div>
-                    <div>Title: {item.attributes.title}</div>
+                    { commonItems }
                 </li>
             );
         });

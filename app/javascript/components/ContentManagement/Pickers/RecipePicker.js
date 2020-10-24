@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import axios from 'axios'
 
 class RecipePicker extends React.Component {
@@ -28,6 +28,12 @@ class RecipePicker extends React.Component {
         const sortedRecipeDataList = this.sortRecipeData(recipeDataList);
         const mappedRecipePreview = sortedRecipeDataList.map((item, index) => {
             const isSelected = (this.props.selectedRecipeId && this.props.selectedRecipeId === parseInt(item.id));
+            const commonItems = (
+                <Fragment>
+                    <div className="id-column">ID: {item.id}</div>
+                    <div>Title: {item.attributes.title}</div>
+                </Fragment>
+            );
             if(isSelected === true) {
                 return (
                 <li 
@@ -43,8 +49,7 @@ class RecipePicker extends React.Component {
                     <button onClick={(event) => this.handleRecipePreviewSelect(event, null)}>
                         Cancel
                     </button>
-                    <div className="id-column">ID: {item.id}</div>
-                    <div>Title: {item.attributes.title}</div>
+                    { commonItems }
                 </li>
                 );
             }
@@ -55,8 +60,7 @@ class RecipePicker extends React.Component {
                     key={index}
                     onClick={(event) => this.handleRecipePreviewSelect(event, item.id)}
                 >
-                    <div className="id-column">ID: {item.id}</div>
-                    <div>Title: {item.attributes.title}</div>
+                    { commonItems }
                 </li>
             );
         });
