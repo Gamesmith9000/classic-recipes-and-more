@@ -47,7 +47,7 @@ class PhotoManager extends React.Component {
     };
 
     changeSelectedPhotoId = (newId) => {
-        if(newId && !Number.isInteger(newId)) return;
+        if(newId && !Number.isInteger(newId)) { return; }
         this.setState({ selectedPhotoId: newId });
     }
 
@@ -91,7 +91,7 @@ class PhotoManager extends React.Component {
                         changeSelectedPhotoId={this.changeSelectedPhotoId}
                         handleDeletePhotoButtonInput={this.handleDeletePhotoButtonInput}
                         handleModifyPhotoButtonInput={this.handleModifyPhotoButtonInput}
-                        selectedRecipeId={this.state.selectedRecipeId}
+                        selectedPhotoId={this.state.selectedPhotoId}
                     />
                 }
                 {this.state.photoUploadFormIsOpen === true &&

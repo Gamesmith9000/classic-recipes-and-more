@@ -17,7 +17,7 @@ class RecipeDestroyer extends React.Component {
 
         axios.delete(`/api/v1/recipes/${this.props.recipeId}`)
         .then(res => {
-            this.props.handleCloseRecipeDestroyerButtonInput();
+            this.props.handleClose();
         })
         .catch(err => console.log(err));
     }
@@ -43,7 +43,7 @@ class RecipeDestroyer extends React.Component {
                         <button onClick={this.handleDestroyRecipeButtonInput}>
                             Delete
                         </button>
-                        <button onClick={this.props.handleCloseRecipeDestroyerButtonInput}>
+                        <button onClick={this.props.handleClose}>
                             Cancel
                         </button>
                     </Fragment>

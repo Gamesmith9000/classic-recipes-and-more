@@ -105,7 +105,7 @@ class RecipeManager extends React.Component {
                 }
                 {this.state.recipeDestroyerIsOpen === true &&
                     <RecipeDestroyer 
-                        handleCloseRecipeDestroyerButtonInput = {this.handleCloseRecipeDestroyerButtonInput}
+                        handleClose = {this.handleCloseRecipeDestroyerButtonInput}
                         recipeId={this.state.selectedRecipeId} 
                     />
                 }

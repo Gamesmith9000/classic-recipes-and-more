@@ -26,29 +26,6 @@ export function bumpArrayElement (array, index, direction) {
     }
 }
 
-function getUrlForPhotoVersion (photoId, standardUrl, versionNameText) {
-    // [NOTE] This relies on the uploader containing the format '/id/filename'
-    const separator =  String(photoId).concat("/");
-    const splitUrl = standardUrl.split(separator);
-    return splitUrl[0].concat(separator, versionNameText, "_", splitUrl[1]);
-}
-
-export function getUrlForPhotoVersionLarge (photoId, standardUrl) {
-    return getUrlForPhotoVersion(photoId, standardUrl, "large")
-}
-
-export function getUrlForPhotoVersionMedium (photoId, standardUrl) {
-    return getUrlForPhotoVersion(photoId, standardUrl, "medium")
-}
-
-export function getUrlForPhotoVersionSmall (photoId, standardUrl) {
-    return getUrlForPhotoVersion(photoId, standardUrl, "small")
-}
-
-export function getUrlForPhotoVersionThumb (photoId, standardUrl) {
-    return getUrlForPhotoVersion(photoId, standardUrl, "thumb")
-}
-
 export function mapSectionsDataFromAxiosResponse (responseData) {
     return responseData.data.included.map((value) => {
         let sectionData = value.attributes;

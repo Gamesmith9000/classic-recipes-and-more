@@ -2,7 +2,7 @@ import React, {Fragment} from 'react'
 import axios from 'axios'
 import PhotoUploadForm from './Forms/PhotoUploadForm';
 import { renderRecipeDisplayFromResponse } from '../../ComponentHelpers'
-import { getUrlForPhotoVersionSmall, setAxiosCsrfToken } from '../../Helpers'
+import { setAxiosCsrfToken } from '../../Helpers'
 
 class ContentManagerSandbox extends React.Component {
     constructor(props) {
@@ -45,7 +45,7 @@ class ContentManagerSandbox extends React.Component {
             return(
                 <li key={item.id} className="photo-info-entry">
                     <p><span>Title: </span>{item.attributes.title}</p>
-                    <img src={getUrlForPhotoVersionSmall(item.id, item.attributes.file.url)} />
+                    <img src={item.attributes.file.small.url} />
                 </li>);
         });
 
