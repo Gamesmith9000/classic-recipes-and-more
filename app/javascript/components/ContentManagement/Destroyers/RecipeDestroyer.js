@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { setAxiosCsrfToken } from '../../Helpers'
+import { setAxiosCsrfToken } from '../../../Helpers'
 
 
 class RecipeDestroyer extends React.Component {
@@ -32,7 +32,7 @@ class RecipeDestroyer extends React.Component {
         .catch(err => console.log(err));
     }
 
-    render() {
+    render() { 
         return (
             <div className="recipe-destroyer">
                 {this.state.recipeData &&

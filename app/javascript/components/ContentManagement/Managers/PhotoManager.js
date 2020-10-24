@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import PhotoPicker from '../PhotoPicker'
+import PhotoPicker from '../Pickers/PhotoPicker'
 import PhotoUploadForm from '../Forms/PhotoUploadForm';
 
 class PhotoManager extends React.Component {

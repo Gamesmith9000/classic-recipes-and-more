@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import RecipeForm from '../Forms/RecipeForm';
-import RecipeDestroyer from '../RecipeDestroyer';
-import RecipePicker from '../RecipePicker';
+import RecipeDestroyer from '../Destroyers/RecipeDestroyer';
+import RecipePicker from '../Pickers/RecipePicker';
 
 class RecipeManager extends React.Component {
     // [NOTE] Refactor this component in the same way as PhotoManager
