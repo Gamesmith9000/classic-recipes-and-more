@@ -40,6 +40,10 @@
 
     ul.photo-previews-list {
         display: flex;
+        flex-wrap: wrap;
+        list-style-type: none;
+        max-width: 100%;
+        padding-left: 0;
     }
 
     ul.recipe-previews-list {
