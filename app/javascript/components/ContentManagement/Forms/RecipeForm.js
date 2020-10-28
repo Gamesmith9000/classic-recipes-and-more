@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { arraysHaveMatchingValues, bumpArrayElement, mapSectionsDataFromAxiosResponse, setAxiosCsrfToken } from '../../../Helpers'
-import { unsavedChangesMessage } from '../../../ComponentHelpers'
+import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -54,7 +54,6 @@ class RecipeForm extends React.Component {
     }
 
     handleDescriptionInputChange = (event) => {
-        console.log(event);
         this.setState({description: event.target.value});
     }
 
@@ -80,27 +79,28 @@ class RecipeForm extends React.Component {
         this.setState({featured: event.target.checked});
     }
 
-    // [NOTE] Validation error messages have not yet been implemented
-
     handleFormSubmit = (event) => {
+        console.log('dooki nooki 0');
+
         event.preventDefault();
         setAxiosCsrfToken();
+        const { description, featured, ingredients, sections, title } = this.state;
 
-        const requestType = this.state.existingRecipe ? 'patch' : 'post';
-        const requestUrl = this.state.existingRecipe ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
+        const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
+        const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
 
-        axios({
-            method: requestType,
-            url: requestUrl,
-            data: this.state
-            // [NOTE] The data passed in needs to be better mapped. Extra, useless data is being sent within the request
-        })
+        axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, sections, title } })
         .then(res => {
-            if(this.state.existingRecipe === false) {
-                this.props.handleClose(null);
-                return;
-            }
+            if(this.state.existingRecipe === false) { this.props.handleClose(); }
+            else { this.handleFormSubmitResponse(res); }
+        })
+        .catch(err => { this.handleFormSubmitResponse(err); });
+    }
+
+    handleFormSubmitResponse = (res) =>{
+        if(res?.status === 200 && res.data && res.data.data?.type === "recipe") {
             this.setState({
+                errors: null,
                 priorRecipeState: {
                     description: this.state.description,
                     featured: this.state.featured,
@@ -108,10 +108,9 @@ class RecipeForm extends React.Component {
                     sections: this.state.sections,
                     title: this.state.title
                 }
-                // [NOTE] Updated section data will need to be fetched after this (assuming it has been changed)
             });
-        })
-        .catch(err => console.log(err));
+        }
+        else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
     }
 
     handleIngredientInputChange = (event, index) => {
@@ -121,9 +120,7 @@ class RecipeForm extends React.Component {
     }
 
     handleSectionMove = (index, direction) => {
-        if(direction !== -1 && direction !== 1) {
-            return;
-        }
+        if(direction !== -1 && direction !== 1) { return; }
 
         const targetIndex = index - direction;
         const originalTextAtIndex = this.state.sections[index].text_content;
@@ -133,9 +130,7 @@ class RecipeForm extends React.Component {
         newSectionsState[index].text_content = originalTextAtTarget;
         newSectionsState[targetIndex].text_content = originalTextAtIndex;
 
-        this.setState({
-            sections: newSectionsState
-        });
+        this.setState({  sections: newSectionsState });
     }
 
     handleSectionTextInputChange = (event, index) => {
@@ -149,17 +144,14 @@ class RecipeForm extends React.Component {
     }
 
     isExistingRecipeWithChanges = () => {
-        if(this.state.existingRecipe !== true) {
-            return false;
-        }
+        if(this.state.existingRecipe !== true) { return false; }
+
         if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) &&
         arraysHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) &&
         this.state.description === this.state.priorRecipeState.description &&
         this.state.featured === this.state.priorRecipeState.featured &&
-        this.state.title === this.state.priorRecipeState.title) {
-            return false;
-        }
-        return true;
+        this.state.title === this.state.priorRecipeState.title) { return false; }
+        else { return true; }
     }
 
     mapIngredientInputs = (ingredientList) => {
@@ -258,8 +250,6 @@ class RecipeForm extends React.Component {
                 }
             })
             .then(res => {
-                console.log(res);
-
                 const sectionsData = mapSectionsDataFromAxiosResponse(res);
                 const attributes = res.data.data.attributes;
                 
@@ -295,20 +285,20 @@ class RecipeForm extends React.Component {
                         type="text"
                         value={this.state.title}
                     />
+                    { renderValidationError('title', this.state.errors) }
                 </label>
-                <br />
-                <br />
                 <label>
                     Description
                     <textarea 
                         className="description-input"
                         maxLength="300"
+                        // [NOTE] Max length (db validation value) is hard coded here (and css too)
                         onChange={this.handleDescriptionInputChange}
                         type="textarea"
                         value={this.state.description}
                     />
+                    { renderValidationError('description', this.state.errors) }
                 </label>
-                <br />
                 <br />
                 <label>
                     Featured

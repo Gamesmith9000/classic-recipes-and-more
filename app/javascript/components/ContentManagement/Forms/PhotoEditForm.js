@@ -30,11 +30,15 @@ class PhotoEditForm extends React.Component {
 
     handleFormSubmitResponse = (res) =>{
         if(res?.status === 200 && res.data && res.data.data?.type === "photo") {
-            if(res.data.data?.type === "photo") { this.props.handleClose(); }
+            this.setState({
+                errors: null,
+                priorPhotoState: {
+                    tag: this.state.tag,
+                    title: this.state.title
+                }
+            });
         }
-        else if (res?.response?.status === 422) {
-            this.setState({ errors: res.response.data.error });
-        }
+        else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
     }
 
     hasChanges = () => {
