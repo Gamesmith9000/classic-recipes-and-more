@@ -1,19 +1,70 @@
 import React from 'react'
 import axios from 'axios'
-import { setAxiosCsrfToken, validationErrorsToString } from '../../../Helpers'
+import { setAxiosCsrfToken } from '../../../Helpers'
+import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class PhotoEditForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             errors: null,
-            photoTitle: "",
-            photoPreviewUrl: null,
+            previewUrl: null,
+            priorPhotoState: {
+                tag: '',
+                title: ''
+            },
+            tag: '',
+            title: ''
         }
     }
 
-    onPhotoTitleInputChange = (event) => {
-        this.setState({photoTitle: event.target.value})
+    handleFormSubmit = (event) => {
+        event.preventDefault();
+        setAxiosCsrfToken();
+        const { tag, title } = this.state;
+
+        axios.patch(`/api/v1/photos/${this.props.photoId}`, { tag, title })
+        .then( res => { this.handleFormSubmitResponse(res); })
+        .catch(err => { this.handleFormSubmitResponse(err); });
+    }
+
+    handleFormSubmitResponse = (res) =>{
+        if(res?.status === 200 && res.data && res.data.data?.type === "photo") {
+            if(res.data.data?.type === "photo") { this.props.handleClose(); }
+        }
+        else if (res?.response?.status === 422) {
+            this.setState({ errors: res.response.data.error });
+        }
+    }
+
+    hasChanges = () => {
+        return (this.state.tag !== this.state.priorPhotoState.tag || this.state.title !== this.state.priorPhotoState.title)
+    }
+
+    onTagInputChange = (event) => {
+        this.setState({ tag: event.target.value.toUpperCase() })
+    }
+
+    onTitleInputChange = (event) => {
+        this.setState({ title: event.target.value })
+    }
+
+    componentDidMount() {
+        axios.get(`/api/v1/photos/${this.props.photoId}`)
+        .then(res => {
+            const { tag, title } = res.data.data.attributes;
+            const previewUrl = this.props.previewPhotoSize ? res.data.data.attributes.file[`${this.props.previewPhotoSize}`].url: res.data.data.attributes.file.url;
+            this.setState({
+                previewUrl: previewUrl,
+                priorPhotoState:  {
+                    tag: tag,
+                    title: title
+                },
+                tag: tag,
+                title: title
+            });
+        })
+        .catch(err => console.log(err));
     }
 
     render() {
@@ -23,20 +74,34 @@ class PhotoEditForm extends React.Component {
                     <h2>Edit Photo Details</h2>
                     <label>
                         Photo
-                        <img src={this.state.photoPreviewUrl} />
+                        <br />
+                        <img src={this.state.previewUrl} />
                     </label>
+                    <br />
                     <label>
                         Title
-                        {/* <input type="text" onChange={this.onPhotoTitleInputChange} /> */}
+                        <input 
+                            name="title"
+                            onChange={this.onTitleInputChange}
+                            type="text" 
+                            value={this.state.title}
+                        />
+                        { renderValidationError('title', this.state.errors) }
                     </label>
-                    {this.state.errors?.title ?
-                        <div className="validation-error">
-                            {validationErrorsToString("Title", this.state.errors.title)}
-                        </div>
-                    :
-                        <br/>
-                    }
+                    <label>
+                        Tag
+                        <input
+                            name="tag" 
+                            onChange={this.onTagInputChange}
+                            type="text" 
+                            value={this.state.tag}
+                        />
+                        { renderValidationError('tag', this.state.errors) }
+                    </label>
+                    <br/>
+                    <button onClick={this.handleFormSubmit}>Update</button>
                     <button onClick={this.props.closeForm}>Close</button>
+                    { unsavedChangesMessage(this.hasChanges() === true) }
                 </form>
                 <hr/>
             </div>

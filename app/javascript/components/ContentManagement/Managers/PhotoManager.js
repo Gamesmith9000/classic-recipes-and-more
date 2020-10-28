@@ -102,6 +102,7 @@ class PhotoManager extends React.Component {
                     <PhotoEditForm 
                         handleClose={this.handleCloseSubcomponents}
                         photoId={this.state.selectedPhotoId}
+                        previewPhotoSize="medium"
                     />
                 }
                 {this.state.photoDestroyerIsOpen === true &&

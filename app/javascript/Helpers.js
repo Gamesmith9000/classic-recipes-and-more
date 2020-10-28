@@ -39,6 +39,6 @@ export function setAxiosCsrfToken () {
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 }
 
-export function validationErrorsToString (fieldName, fieldErrorArray) {
-    return fieldName + " " + fieldErrorArray.join (' and ')
+export function validationErrorsToString (fieldDisplayName, fieldErrorArray) {
+    return fieldDisplayName + " " + fieldErrorArray.join (' and ')
 }

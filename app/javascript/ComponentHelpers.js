@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { mapSectionsDataFromAxiosResponse } from './Helpers'
+import { mapSectionsDataFromAxiosResponse, validationErrorsToString } from './Helpers'
 
 import PageManager from './components/ContentManagement/Managers/PageManager'
 import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
@@ -47,6 +47,17 @@ export function renderRecipeDisplayFromResponse(responseData){
         sections={sections}
         title={title}
         />
+    );
+}
+
+export function renderValidationError (propertyName, errorsObject, capitalizePropertyName = true) {
+    if(!propertyName || !errorsObject?.[propertyName]) { return <br/>; }
+
+    const propertyDisplayName = capitalizePropertyName === true ? (propertyName.charAt(0).toUpperCase() + propertyName.slice(1)) : propertyName;
+    return (
+        <div className="validation-error">
+            { validationErrorsToString(propertyDisplayName, errorsObject[propertyName]) }
+        </div>
     );
 }
 
