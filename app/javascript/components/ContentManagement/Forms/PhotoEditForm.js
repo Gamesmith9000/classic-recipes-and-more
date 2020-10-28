@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
-import { setAxiosCsrfToken } from '../../../Helpers'
 import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
+import { setAxiosCsrfToken } from '../../../Helpers'
 
 class PhotoEditForm extends React.Component {
     constructor(props) {
