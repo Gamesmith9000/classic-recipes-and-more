@@ -35,6 +35,7 @@ class PhotoPicker extends React.Component {
                     <div className="id-column">ID: {item.id}</div>
                     <img src={item.attributes.file.thumb.url} />
                     <div>Title: {item.attributes.title}</div>
+                    <div>Tag: {item.attributes.tag}</div>
                 </Fragment>
             );
             if(isSelected === true) {
@@ -43,12 +44,21 @@ class PhotoPicker extends React.Component {
                     className="photo-preview selected" 
                     key={index}
                 >
-                    <button onClick={this.props.handleModifyPhotoButtonInput}>
-                        Modify
-                    </button>
-                    <button onClick={this.props.handleDeletePhotoButtonInput}>
-                        Delete
-                    </button>
+                    { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
+                        <Fragment>
+                            <button onClick={this.props.handleModifyPhotoButtonInput}>
+                                Modify
+                            </button>
+                            <button onClick={this.props.handleDeletePhotoButtonInput}>
+                                Delete
+                            </button>
+                        </Fragment>
+                    }
+                    { this.props.handleUsePhotoForExport &&
+                        <button onClick={this.props.handleUsePhotoForExport}>
+                            Use
+                        </button>
+                    }
                     <button onClick={(event) => this.handlePhotoPreviewSelect(event, null)}>
                         Cancel
                     </button>

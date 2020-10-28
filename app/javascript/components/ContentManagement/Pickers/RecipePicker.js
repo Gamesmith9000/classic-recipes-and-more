@@ -32,6 +32,7 @@ class RecipePicker extends React.Component {
                 <Fragment>
                     <div className="id-column">ID: {item.id}</div>
                     <div>Title: {item.attributes.title}</div>
+                    <div>Description: {item.attributes.description}</div>
                 </Fragment>
             );
             if(isSelected === true) {
