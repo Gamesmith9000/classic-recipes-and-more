@@ -8,7 +8,6 @@ import Home from './Pages/Home'
 import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
 
-import ContentManagerSandbox from './ContentManagement/ContentManagerSandbox'
 import ContentManagementDashboard from './ContentManagement/ContentManagementDashboard'
 
 function App(props) {
@@ -51,7 +50,6 @@ function App(props) {
                 <Route exact path="/recipe-photos" component={RecipePhotos} />
                 <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                <Route exact path="/sandbox" component={ContentManagerSandbox} />
                 {renderProtectedRoute("/content", ContentManagementDashboard)}
             </Switch>
         </Fragment>
