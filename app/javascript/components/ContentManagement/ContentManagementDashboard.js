@@ -6,14 +6,14 @@ class ContentManagementDashboard extends React.Component {
     constructor () {
         super();
         this.state = ({
-            contentSectionOpen: true,   // [NOTE] Content sections will probably default to being closed
-            selectedContentSection: 2   // [NOTE] Value modified for ease of creating new sections
+            contentSectionOpen: false,
+            selectedContentSection: 0
         });
     }
 
     changeContentSection = (newSectionIdentifier) => {
         const newSectionId = parseInt(newSectionIdentifier);
-        if(!ContentSectionsInfo.isValidSectionId(newSectionId)) { return;} 
+        if(!ContentSectionsInfo.isValidSectionId(newSectionId)) { return; } 
 
         this.setState({
             contentSectionOpen: newSectionId !== this.state.selectedContentSection ? true : !this.state.contentSectionOpen,
@@ -45,7 +45,9 @@ class ContentManagementDashboard extends React.Component {
                     selectedContentSection={this.state.selectedContentSection}
                 />
                 <hr />
-                <Fragment>{ContentSectionsInfo.sections[this.state.selectedContentSection].component}</Fragment>
+                {this.state.contentSectionOpen === true &&
+                    <Fragment>{ContentSectionsInfo.sections[this.state.selectedContentSection].component}</Fragment>
+                }
             </div>
         )
     }
