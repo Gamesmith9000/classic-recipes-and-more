@@ -19,9 +19,7 @@ class PhotoPicker extends React.Component {
 
     handleSortingButtonPress = (event) => {
         event.preventDefault();
-        this.setState({
-            sortById: !this.state.sortById
-        });
+        this.setState({ sortById: !this.state.sortById });
     }
 
     mapPhotoPreviews = (photoDataList) => {
@@ -122,20 +120,18 @@ class PhotoPicker extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/photos')
         .then(res => {
-            this.setState({
-                photoData: res.data.data
-            });
+            this.setState({ photoData: res.data.data });
         })
         .catch(err => console.log(err));
     }
 
     render() {
         return (
-            <div className="photo-picker">
+            <div className={this.props.handleUsePhotoForExport ? 'photo-picker nested' : 'photo-picker'}>
                 <div className="sorting-controls">
                     <div>Sorting By:</div>
                     <button onClick={this.handleSortingButtonPress}>
-                        {this.state.sortById === true  ? "ID" : "Title"}
+                        { this.state.sortById === true  ? "ID" : "Title" }
                     </button>
                 </div>
                 {this.mapPhotoPreviews(this.state.photoData)}

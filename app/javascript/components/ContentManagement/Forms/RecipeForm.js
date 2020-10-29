@@ -276,7 +276,10 @@ class RecipeForm extends React.Component {
     render() {
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>
-                <h2>{this.state.existingRecipe ? 'Edit' : 'New'} Recipe</h2>
+                <h2>{this.state.existingRecipe === true ? 'Edit' : 'New'} Recipe</h2>
+                {this.state.existingRecipe === true && this.props.recipeId &&
+                    <p>ID: {this.props.recipeId}</p>
+                }
                 <label>
                     Title
                     <input 
@@ -332,7 +335,7 @@ class RecipeForm extends React.Component {
                 <br/>
                 <br/>
                 <button onClick={this.handleFormSubmit}>
-                    {this.state.existingRecipe ? 'Update' : 'Create'}
+                    {this.state.existingRecipe === true ? 'Update' : 'Create'}
                 </button>
                 <button onClick={this.props.handleClose}>Close</button>
                 { unsavedChangesMessage(this.isExistingRecipeWithChanges() === true) }

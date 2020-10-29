@@ -76,8 +76,9 @@ class PhotoEditForm extends React.Component {
             <div className="photo-editor">
                 <form>
                     <h2>Edit Photo Details</h2>
+                    <p>ID: {this.props.photoId}</p>
                     <label>
-                        Photo
+                        Image:
                         <br />
                         <img src={this.state.previewUrl} />
                     </label>

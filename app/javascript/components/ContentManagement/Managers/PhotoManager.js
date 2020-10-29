@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 import PhotoPicker from '../Pickers/PhotoPicker'
 import PhotoUploadForm from '../Forms/PhotoUploadForm';
 import PhotoEditForm from '../Forms/PhotoEditForm';
+import PhotoDestroyer from '../Destroyers/PhotoDestroyer';
 
 class PhotoManager extends React.Component {
 
@@ -106,7 +107,11 @@ class PhotoManager extends React.Component {
                     />
                 }
                 {this.state.photoDestroyerIsOpen === true &&
-                    <Fragment/>
+                    <PhotoDestroyer
+                        handleClose={this.handleCloseSubcomponents}
+                        photoId={this.state.selectedPhotoId}
+                        previewPhotoSize="medium"
+                    />
                 }
             </div>
         )

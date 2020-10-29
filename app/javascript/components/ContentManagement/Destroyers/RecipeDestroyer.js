@@ -17,6 +17,7 @@ class RecipeDestroyer extends React.Component {
 
         axios.delete(`/api/v1/recipes/${this.props.recipeId}`)
         .then(res => {
+            window.alert(`Recipe deleted (ID:${this.props.recipeId})`)
             this.props.handleClose();
         })
         .catch(err => console.log(err));
@@ -38,8 +39,9 @@ class RecipeDestroyer extends React.Component {
                 {this.state.recipeData &&
                     <Fragment>
                         <h3>You are about to delete a recipe:</h3>
-                        <p>ID:&nbsp;{this.state.recipeData.id}</p>
-                        <p>Title:&nbsp;{this.state.recipeData.attributes.title}</p>
+                        <p>ID: {this.props.recipeId}</p>
+                        <p>Title: {this.state.recipeData.attributes.title}</p>
+                        <p>Description: {this.state.recipeData.attributes.description}</p>
                         <button onClick={this.handleDestroyRecipeButtonInput}>
                             Delete
                         </button>
