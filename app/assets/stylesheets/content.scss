@@ -1,17 +1,4 @@
 .content-management {
-    li.photo-info-entry {
-        border: solid 1.5px;
-        list-style-type: none;
-        /*
-        img {
-            max-width: 10vw;
-        }
-        */
-        p > span {
-            font-weight: 800;
-        }
-    }
-
     li.photo-preview,
     li.recipe-preview {
         border: 1px solid;
@@ -32,23 +19,18 @@
         }
     }
 
-    ul.all-photos-list {
-        display: flex;
-        margin: 15px;
-        padding: 0;
+    ul.photo-previews-list, ul.recipe-previews-list {
+        list-style-type: none;
     }
 
     ul.photo-previews-list {
         display: flex;
         flex-wrap: wrap;
-        list-style-type: none;
         max-width: 100%;
         padding-left: 0;
     }
 
-    ul.recipe-previews-list {
-        list-style-type: disc;
-    }
+
 
     .ingredients-edits > label, .paragraph-edits > label {
         display: flex;
@@ -70,3 +52,13 @@
         }
     }
 }
+/*
+.photo-picker {
+    .photo-manager > & {
+        // Styling for standard usage
+    }
+    :not(.photo-manager) > & {
+        // Styling for use in outside components
+    }
+}
+*/ 

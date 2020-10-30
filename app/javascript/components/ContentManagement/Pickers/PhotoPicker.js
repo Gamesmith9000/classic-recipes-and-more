@@ -127,7 +127,7 @@ class PhotoPicker extends React.Component {
 
     render() {
         return (
-            <div className={this.props.handleUsePhotoForExport ? 'photo-picker nested' : 'photo-picker'}>
+            <div className="photo-picker">
                 <div className="sorting-controls">
                     <div>Sorting By:</div>
                     <button onClick={this.handleSortingButtonPress}>

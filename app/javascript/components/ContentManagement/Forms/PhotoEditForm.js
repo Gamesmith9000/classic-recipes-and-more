@@ -105,7 +105,7 @@ class PhotoEditForm extends React.Component {
                     </label>
                     <br/>
                     <button onClick={this.handleFormSubmit}>Update</button>
-                    <button onClick={this.props.closeForm}>Close</button>
+                    <button onClick={this.props.handleClose}>Close</button>
                     { unsavedChangesMessage(this.hasChanges() === true) }
                 </form>
                 <hr/>
