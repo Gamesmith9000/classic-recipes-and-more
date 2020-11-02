@@ -6,7 +6,8 @@ class RecipePicker extends React.Component {
         super();
         this.state = {
             recipeData: null,
-            sortById: true
+            sortById: true,
+            sortingField: 'id'
         }
     }
 
