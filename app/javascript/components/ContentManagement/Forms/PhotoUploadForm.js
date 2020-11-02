@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import { renderValidationError } from '../../../ComponentHelpers'
-import { setAxiosCsrfToken, validationErrorsToString } from '../../../Helpers'
+import { BackendConstants, setAxiosCsrfToken } from '../../../Helpers'
 
 class PhotoUploadForm extends React.Component {
     constructor(props) {
@@ -9,7 +9,7 @@ class PhotoUploadForm extends React.Component {
         this.state = {
             errors: null,
             file: null,
-            tag: 'DEFAULT', // [NOTE] Hard-coded value of the db field default
+            tag: BackendConstants.models.photo.defaults.tag,
             title: '',
         }
     }

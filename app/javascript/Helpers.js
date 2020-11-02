@@ -1,5 +1,43 @@
 import axios from 'axios'
 
+export const BackendConstants = {
+    /*  [NOTE] This object holds the hard coded references to certain rails values. This allows other
+         JS objects to utilize the values, while only requiring updates in a single location            */
+
+    models: {
+        recipe: {
+            defaults: {
+                featured: false
+            },
+            validations: {
+                description: {
+                    maximum: 300,
+                    minimum: 5
+                },
+                title: {
+                    maximum: 40,
+                    minimum: 2
+                }
+            }
+        },
+        photo: {
+            defaults: {
+                tag: 'DEFAULT'
+            },
+            validations: {
+                tag: {
+                    maximum: 40,
+                    minimum: 1
+                },
+                title: {
+                    maximum: 25,
+                    minimum: 2
+                }
+            }
+        }
+    }
+}
+
 export function arraysHaveMatchingValues (array1, array2) {
     if(array1.length !== array2.length) {
         return false;

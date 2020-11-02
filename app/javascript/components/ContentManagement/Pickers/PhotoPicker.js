@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
+import { BackendConstants } from '../../../Helpers'
 
 class PhotoPicker extends React.Component {
     // [NOTE] This logic was ported from RecipePicker component. Attempt to find a more DRY implementation
@@ -8,7 +9,12 @@ class PhotoPicker extends React.Component {
         super();
         this.state = {
             photoData: null,
-            sortById: true
+            sortById: true,  //  [NOTE] In the future, this will be changed to 'sortingField'
+            tagFiltering : {
+                enabled: false,
+                filteredPhotoIds: [],
+                tag: BackendConstants.models.photo.defaults.tag
+            }
         }
     }
 

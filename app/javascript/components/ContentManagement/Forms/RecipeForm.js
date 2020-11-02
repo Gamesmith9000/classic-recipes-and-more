@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { arraysHaveMatchingValues, bumpArrayElement, mapSectionsDataFromAxiosResponse, setAxiosCsrfToken } from '../../../Helpers'
+import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, mapSectionsDataFromAxiosResponse, setAxiosCsrfToken } from '../../../Helpers'
 import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
@@ -9,11 +9,11 @@ class RecipeForm extends React.Component {
         this.state = {
             description: '',
             existingRecipe: false,
-            featured: false,
+            featured: BackendConstants.recipe.defaults.featured,
             ingredients: [''],
             priorRecipeState: {
                 description: '',
-                featured: false,
+                featured: BackendConstants.recipe.defaults.featured,
                 ingredients: [''],
                 sections: [{
                     id: null,
@@ -284,6 +284,7 @@ class RecipeForm extends React.Component {
                     Title
                     <input 
                         className="title-input"
+                        maxLength={BackendConstants.models.recipe.validations.title.maximum} 
                         onChange={this.handleTitleInputChange}
                         type="text"
                         value={this.state.title}
@@ -294,8 +295,7 @@ class RecipeForm extends React.Component {
                     Description
                     <textarea 
                         className="description-input"
-                        maxLength="300"
-                        // [NOTE] Max length (db validation value) is hard coded here (and css too)
+                        maxLength={BackendConstants.models.recipe.validations.description.maximum} 
                         onChange={this.handleDescriptionInputChange}
                         type="textarea"
                         value={this.state.description}
