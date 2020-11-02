@@ -9,11 +9,11 @@ class RecipeForm extends React.Component {
         this.state = {
             description: '',
             existingRecipe: false,
-            featured: BackendConstants.recipe.defaults.featured,
+            featured: BackendConstants.models.recipe.defaults.featured,
             ingredients: [''],
             priorRecipeState: {
                 description: '',
-                featured: BackendConstants.recipe.defaults.featured,
+                featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [''],
                 sections: [{
                     id: null,
@@ -80,8 +80,6 @@ class RecipeForm extends React.Component {
     }
 
     handleFormSubmit = (event) => {
-        console.log('dooki nooki 0');
-
         event.preventDefault();
         setAxiosCsrfToken();
         const { description, featured, ingredients, sections, title } = this.state;
