@@ -1,4 +1,4 @@
-function getProperDataFromWithinResponse (res) {
+function getProperDataForAttributes (res) {
     // Find the location of the proper model data from Axios response, utilizing fast_jsonapi's formatting
     // Requires at least one item in response
 
@@ -47,66 +47,32 @@ function getProperDataFromWithinResponse (res) {
     return targetData;
 }
 
-export function getSortablePropertyNamesFromAttributes (res, includeIdProperty = true, ignoredPropertiesList = []) {
-    const targetData = getProperDataFromWithinResponse(res);
+export function getSortablePropertyNamesFromAttributes (res, ignoredPropertiesList = []) {
+    // [NOTE] Checking/searching through nested properties is not present, as it
+    //          is not needed for current use cases.
+
+    const targetData = getProperDataForAttributes(res);
 
     if(!targetData) {
         console.error('Response data has an invalid format. Cannot proceed.');
         return null;
     }
-    
-    const topProperties = Object.getOwnPropertyNames(targetData);
 
-    let properties = includeIdProperty === true ? ['id'] : [];
-    let propertiesWithNested = [];
+    const attributes = Object.getOwnPropertyNames(targetData.attributes);
+    const isIgnoredProperty = (targetProperty) => {
+        if(!ignoredPropertiesList || Array.isArray(ignoredPropertiesList) === false) { return false; }
+        else { return ignoredPropertiesList.includes(targetProperty); }
+    };
 
-    console.warn('Function incomplete');
-    return;
+    let validProperties = [];
 
-    for(let i = 0; i < topProperties.length; i++) {
-        if(!ignoredPropertiesList?.includes(topProperties[i])) {
-            // if item has nested properties, add to propertiesWithNested
-
-            // otherwise, just add to properties array
+    for(let i = 0; i < attributes.length; i++) {
+        if(!isIgnoredProperty(attributes[i])) {
+            validProperties.push(attributes[i]);
         }
     }
 
-    // steps: 
-    //
-    //  (1) Iterate through top level properties,
-    //      putting objects with and without nested 
-    //      properties in seperate arrays
-    //  (2) Iterate through the array for objects
-    //      with children doing the same actions as
-    //      in step (1). Keep iterating until the 
-    //      aforementioned array is empty
-
-/*
-    while(fieldsWithNested.length > 1) {
-        // iterated 
-    }
-*/
-    /*
-        response object
-        {
-            data: {
-                data: {
-                    [0]: {
-                        attributes: {
-
-                        },
-                        id: ___,
-                        relationships: {
-
-                        }
-
-                    }
-                }
-            }
-        }
-
-    */
-
+    return validProperties;
 }
 
 export function mapSectionsData (responseData) {
@@ -115,4 +81,53 @@ export function mapSectionsData (responseData) {
         sectionData.id = value.id;
         return sectionData;
     });
+}
+
+export function sortByAttributeNameOrId (data, validSortingFields, sortingFieldIndex, sortById) {
+    // assummes response data passed in is on the lowest 'data' property
+    // i.e., a successful Axios response: res.data.data
+
+    let sortingFailure = false;
+
+    //  [NOTE] Failure checks not yet implemented
+
+    // will fail if sorting field doesn't exist inside object, etc.
+
+    const fieldSort = (a, b) => {
+        if(sortById === true) {
+            return a.id === b.id ? 0 : (a.id < b.id ? -1 : 1);
+        }
+        else {
+            const sortingField = validSortingFields[sortingFieldIndex];
+            const propertyIsString = typeof(a.attributes[sortingField]) === 'string';
+
+            const fieldA = propertyIsString === true 
+                ? a.attributes[sortingField].toUpperCase()
+                : a.attributes[sortingField];
+
+            const fieldB = propertyIsString === true 
+                ? b.attributes[sortingField].toUpperCase()
+                : b.attributes[sortingField];
+
+            return fieldA === fieldB ? 0 : (fieldA < fieldB ? -1 : 1);
+        }
+
+
+        // if(aId === bId) {
+        //     return 0;
+        // }
+        // if(aId < bId) {
+        //     return -1;
+        // }
+        // else {
+        //     return 1;
+        // }
+    }
+
+    if(sortingFailure === true) {
+        console.warn('Failed to sort properly. Data returned in original order');
+        return data;
+    }
+
+    return data.sort(fieldSort);
 }

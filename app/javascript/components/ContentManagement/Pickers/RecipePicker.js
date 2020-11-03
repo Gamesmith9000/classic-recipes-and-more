@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { getSortablePropertyNamesFromAttributes } from '../../../ResponseDataHelpers'
+import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 
 class RecipePicker extends React.Component {
@@ -11,6 +11,8 @@ class RecipePicker extends React.Component {
             sortById: true,
             sortingFieldIndex: 0,
             validSortingFields: []
+            // [NOTE] Can combine sorting state properties into a single object.
+            //  Consider housing the array of ignored sorting objects here too
         }
     }
 
@@ -28,8 +30,10 @@ class RecipePicker extends React.Component {
 
     mapRecipePreviews = (recipeDataList) => {
         if(!recipeDataList) return;
-        
-        const sortedRecipeDataList = this.sortRecipeData(recipeDataList);
+
+        const { sortById, sortingFieldIndex, validSortingFields} = this.state;
+        const sortedRecipeDataList = sortByAttributeNameOrId(recipeDataList, validSortingFields, sortingFieldIndex, sortById);
+
         const mappedRecipePreview = sortedRecipeDataList.map((item, index) => {
             const isSelected = (this.props.selectedRecipeId && this.props.selectedRecipeId === parseInt(item.id));
             const commonItems = (
@@ -76,47 +80,13 @@ class RecipePicker extends React.Component {
         );
     }
 
-    sortRecipeData = (recipeData) => {
-        if(this.state.sortById === true) {
-            return recipeData.sort(function(a,b) {
-                const aId = parseInt(a.id);
-                const bId = parseInt(b.id);
-                
-                if(aId === bId) {
-                    return 0;
-                }
-                if(aId < bId) {
-                    return -1;
-                }
-                else {
-                    return 1;
-                }
-            });
-        }
-        else {
-            return recipeData.sort(function(a,b) {
-                const aName = a.attributes.title.toUpperCase();
-                const bName = b.attributes.title.toUpperCase();
-                
-                if(aName === bName) {
-                    return 0;
-                }
-                if(aName < bName) {
-                    return -1;
-                }
-                else {
-                    return 1;
-                }
-            });
-        }
-    }
-
     componentDidMount () {
         axios.get('/api/v1/recipes')
         .then(res => {
+            const ignoredSortingFields = ['ingredients'];
             this.setState({
                 recipeData: res.data.data,
-                validSortingFields: getSortablePropertyNamesFromAttributes(res.data.data, true)
+                validSortingFields: getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields)
             });
         })
         .catch(err => console.log(err));
