@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
-import { mapSectionsDataFromAxiosResponse, validationErrorsToString } from './Helpers'
+import { validationErrorsToString } from './Helpers'
+import { mapSectionsDataFromAxiosResponse } from './ResponseDataHelpers'
 
 import PageManager from './components/ContentManagement/Managers/PageManager'
 import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
@@ -32,7 +33,7 @@ export function embedYoutubeVideo (youtubeVideoId) {
     );
 }
 
-export function renderRecipeDisplayFromResponse(responseData){
+export function renderRecipeDisplayFromResponse(responseData) {
     if(!responseData?.data?.data) {
         return <Fragment />
     }

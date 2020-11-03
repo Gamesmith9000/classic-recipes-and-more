@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, mapSectionsDataFromAxiosResponse, setAxiosCsrfToken } from '../../../Helpers'
+import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
+import { mapSectionsDataFromAxiosResponse } from '../../../ResponseDataHelpers'
 import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
