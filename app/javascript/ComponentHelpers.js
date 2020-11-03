@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { validationErrorsToString } from './Helpers'
-import { mapSectionsDataFromAxiosResponse } from './ResponseDataHelpers'
+import { mapSectionsData } from './ResponseDataHelpers'
 
 import PageManager from './components/ContentManagement/Managers/PageManager'
 import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
@@ -39,7 +39,7 @@ export function renderRecipeDisplayFromResponse(responseData) {
     }
 
     const { ingredients, paragraphs, title } = responseData.data.data.attributes;
-    const sections = mapSectionsDataFromAxiosResponse(responseData);
+    const sections = mapSectionsData(responseData);
     
     return(
         <RecipeDisplay

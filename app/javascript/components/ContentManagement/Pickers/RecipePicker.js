@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
+import { getSortablePropertyNamesFromAttributes } from '../../../ResponseDataHelpers'
+
 
 class RecipePicker extends React.Component {
     constructor () {
@@ -7,7 +9,8 @@ class RecipePicker extends React.Component {
         this.state = {
             recipeData: null,
             sortById: true,
-            sortingField: 'id'
+            sortingFieldIndex: 0,
+            validSortingFields: []
         }
     }
 
@@ -112,7 +115,8 @@ class RecipePicker extends React.Component {
         axios.get('/api/v1/recipes')
         .then(res => {
             this.setState({
-                recipeData: res.data.data
+                recipeData: res.data.data,
+                validSortingFields: getSortablePropertyNamesFromAttributes(res.data.data, true)
             });
         })
         .catch(err => console.log(err));
