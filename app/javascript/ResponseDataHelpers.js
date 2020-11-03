@@ -1,22 +1,23 @@
 function getProperDataFromWithinResponse (res) {
     // Find the location of the proper model data from Axios response, utilizing fast_jsonapi's formatting
+    // Requires at least one item in response
 
     let targetData;
-    let invalidResData = false;
+    let invalidResData = !res ? true : false;
     
-    if(res?.hasOwnProperty('attributes')) {
-        // has res.attributes
-        targetData = res;
+    if(res[0]?.hasOwnProperty('attributes') && invalidResData === false) {
+        // has res[0].attributes
+        targetData = res[0];
     }
-    else if(res?.hasOwnProperty('data')) {
+    else if(res.hasOwnProperty('data') && invalidResData === false) {
         // has res.data
 
         if(res.data.hasOwnProperty('data')) {
             // has res.data.data
 
-            if(res.data.data.hasOwnProperty('attributes')) {
-                // has res.data.data.attributes
-                targetData = res.data.data;
+            if(res.data.data[0]?.hasOwnProperty('attributes')) {
+                // has res.data.data[0].attributes
+                targetData = res.data.data[0];
             }
             else {
                 invalidResData = true;
@@ -25,9 +26,9 @@ function getProperDataFromWithinResponse (res) {
         else {
             // has res.data
 
-            if(res.data.hasOwnProperty('attributes')) {
-                // has res.data.attributes
-                targetData = res.data;
+            if(res.data[0]?.hasOwnProperty('attributes')) {
+                // has res.data[0].attributes
+                targetData = res.data[0];
             }
             else {
                 invalidResData = true;
@@ -56,11 +57,11 @@ export function getSortablePropertyNamesFromAttributes (res, includeIdProperty =
     
     const topProperties = Object.getOwnPropertyNames(targetData);
 
+    let properties = includeIdProperty === true ? ['id'] : [];
+    let propertiesWithNested = [];
+
     console.warn('Function incomplete');
     return;
-
-    let properties = [];
-    let propertiesWithNested = [];
 
     for(let i = 0; i < topProperties.length; i++) {
         if(!ignoredPropertiesList?.includes(topProperties[i])) {

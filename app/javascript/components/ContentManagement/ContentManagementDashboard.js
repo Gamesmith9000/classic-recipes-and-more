@@ -6,8 +6,8 @@ class ContentManagementDashboard extends React.Component {
     constructor () {
         super();
         this.state = ({
-            contentSectionOpen: false,
-            selectedContentSection: 0
+            contentSectionOpen: true,
+            selectedContentSection: 1
         });
     }
 
