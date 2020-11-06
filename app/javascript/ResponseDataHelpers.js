@@ -50,7 +50,7 @@ function getProperDataForAttributes (res) {
 export function getSortablePropertyNamesFromAttributes (res, ignoredPropertiesList = []) {
     // [NOTE] Checking/searching through nested properties is not present, as it
     //          is not needed for current use cases.
-
+    
     const targetData = getProperDataForAttributes(res);
 
     if(!targetData) {
@@ -111,17 +111,6 @@ export function sortByAttributeNameOrId (data, validSortingFields, sortingFieldI
 
             return fieldA === fieldB ? 0 : (fieldA < fieldB ? -1 : 1);
         }
-
-
-        // if(aId === bId) {
-        //     return 0;
-        // }
-        // if(aId < bId) {
-        //     return -1;
-        // }
-        // else {
-        //     return 1;
-        // }
     }
 
     if(sortingFailure === true) {

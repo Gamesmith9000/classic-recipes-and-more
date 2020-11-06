@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
+import { capitalizeFirstLetter } from '../../../Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 
@@ -8,11 +9,12 @@ class RecipePicker extends React.Component {
         super();
         this.state = {
             recipeData: null,
-            sortById: true,
-            sortingFieldIndex: 0,
-            validSortingFields: []
-            // [NOTE] Can combine sorting state properties into a single object.
-            //  Consider housing the array of ignored sorting objects here too
+            sorting: {
+                byId: true,
+                fieldIndex: 0,
+                ignoredFields: ['ingredients'],
+                validFields: []
+            }
         }
     }
 
@@ -21,18 +23,31 @@ class RecipePicker extends React.Component {
         this.props.changeSelectedRecipeId(parseInt(recipeID));
     }
 
-    handleSortingButtonPress = (event) => {
+    handleSortSelectInputChange = (event) => {
         event.preventDefault();
-        this.setState({
-            sortById: !this.state.sortById
-        });
+        const newValue = event.target.value;
+        if(newValue === 'id') {
+            let sortingState = this.state.sorting;
+            sortingState.byId = true;
+
+            this.setState({ sorting: sortingState });
+        }
+        else {
+            if(this.state.sorting.validFields.includes(newValue)) {
+                let sortingState = this.state.sorting;
+                sortingState.byId = false;
+                sortingState.fieldIndex = this.state.sorting.validFields.indexOf(newValue);
+
+                this.setState({ sorting: sortingState });
+            }
+        }
     }
 
     mapRecipePreviews = (recipeDataList) => {
         if(!recipeDataList) return;
 
-        const { sortById, sortingFieldIndex, validSortingFields} = this.state;
-        const sortedRecipeDataList = sortByAttributeNameOrId(recipeDataList, validSortingFields, sortingFieldIndex, sortById);
+        const { byId, fieldIndex, validFields} = this.state.sorting;
+        const sortedRecipeDataList = sortByAttributeNameOrId(recipeDataList, validFields, fieldIndex, byId);
 
         const mappedRecipePreview = sortedRecipeDataList.map((item, index) => {
             const isSelected = (this.props.selectedRecipeId && this.props.selectedRecipeId === parseInt(item.id));
@@ -80,13 +95,39 @@ class RecipePicker extends React.Component {
         );
     }
 
+    mapSortSelectAttributeOptions = () => {
+        return this.state.sorting.validFields.map((item, index) => {
+            return (
+                <option key={`map-sortSelectField-${item}`} value={item}>
+                    { item.charAt(0).toUpperCase() + item.slice(1) }
+                </option>
+            );
+        }); 
+    }
+
+    renderSortSelect = () => {
+        return (
+            <Fragment>
+                <label htmlFor="sort-select">Sort By: </label>
+                <select 
+                    id="sort-select"
+                    onChange={this.handleSortSelectInputChange} 
+                >
+                    <option value="id">ID</option>
+                    { this.mapSortSelectAttributeOptions() }
+                </select>
+            </Fragment>
+        );
+    }
+
     componentDidMount () {
         axios.get('/api/v1/recipes')
         .then(res => {
-            const ignoredSortingFields = ['ingredients'];
+            let sortingState = this.state.sorting;
+            sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)
             this.setState({
                 recipeData: res.data.data,
-                validSortingFields: getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields)
+                sorting: sortingState
             });
         })
         .catch(err => console.log(err));
@@ -95,12 +136,7 @@ class RecipePicker extends React.Component {
     render() {
         return (
             <div className="recipe-picker">
-                <div className="sorting-controls">
-                    <div>Sorting By:</div>
-                    <button onClick={this.handleSortingButtonPress}>
-                        {this.state.sortById === true  ? "ID" : "Title"}
-                    </button>
-                </div>
+                {this.renderSortSelect()}
                 {this.mapRecipePreviews(this.state.recipeData)}
             </div>
         )
