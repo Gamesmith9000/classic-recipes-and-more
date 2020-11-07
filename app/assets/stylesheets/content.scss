@@ -1,3 +1,5 @@
+$recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
+
 .content-management {
     li.photo-preview,
     li.recipe-preview {
@@ -5,17 +7,21 @@
         display: grid;
         grid-gap: 1.5rem;
         margin-bottom: .5rem;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        // [NOTE][STYLE] Very long test words don't break properly
 
         &:not(.selected) {
             background-color: grey;
             border-color: black;
-            grid-template-columns: 3rem 1fr;
+            grid-template-columns: $recipe-preview-grid-template-columns;
         }
         &.selected {
             background-color: black;
             border-color: white;
             color: white;
-            grid-template-columns: max-content max-content max-content 3rem 1fr;
+            grid-template-columns: max-content $recipe-preview-grid-template-columns;
+            // Button items need to be in separate row/location
         }
     }
 
@@ -51,7 +57,14 @@
             display: flex;
         }
     }
+
+    .selected-preview-item-buttons {
+
+    }
 }
+
+
+
 /*
 .photo-picker {
     .photo-manager > & {

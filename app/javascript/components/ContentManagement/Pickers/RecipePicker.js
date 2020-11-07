@@ -56,6 +56,7 @@ class RecipePicker extends React.Component {
                     <div className="id-column">ID: {item.id}</div>
                     <div>Title: {item.attributes.title}</div>
                     <div>Description: {item.attributes.description}</div>
+                    <div>Featured: {item.attributes.featured === true ? '☑': '☐'}</div>
                 </Fragment>
             );
             if(isSelected === true) {
@@ -64,15 +65,17 @@ class RecipePicker extends React.Component {
                     className="recipe-preview selected" 
                     key={index}
                 >
-                    <button onClick={this.props.handleModifyRecipeButtonInput}>
-                        Modify
-                    </button>
-                    <button onClick={this.props.handleDeleteRecipeButtonInput}>
-                        Delete
-                    </button>
-                    <button onClick={(event) => this.handleRecipePreviewSelect(event, null)}>
-                        Cancel
-                    </button>
+                    <div class='selected-preview-item-buttons'>
+                        <button onClick={this.props.handleModifyRecipeButtonInput}>
+                            Modify
+                        </button>
+                        <button onClick={this.props.handleDeleteRecipeButtonInput}>
+                            Delete
+                        </button>
+                        <button onClick={(event) => this.handleRecipePreviewSelect(event, null)}>
+                            Cancel
+                        </button>
+                    </div>
                     { commonItems }
                 </li>
                 );

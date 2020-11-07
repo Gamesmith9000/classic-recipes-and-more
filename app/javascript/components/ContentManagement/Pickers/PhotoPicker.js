@@ -48,24 +48,26 @@ class PhotoPicker extends React.Component {
                     className="photo-preview selected" 
                     key={index}
                 >
-                    { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
-                        <Fragment>
-                            <button onClick={this.props.handleModifyPhotoButtonInput}>
-                                Modify
+                    <div class='selected-preview-item-buttons'>
+                        { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
+                            <Fragment>
+                                <button onClick={this.props.handleModifyPhotoButtonInput}>
+                                    Modify
+                                </button>
+                                <button onClick={this.props.handleDeletePhotoButtonInput}>
+                                    Delete
+                                </button>
+                            </Fragment>
+                        }
+                        { this.props.handleUsePhotoForExport &&
+                            <button onClick={this.props.handleUsePhotoForExport}>
+                                Use
                             </button>
-                            <button onClick={this.props.handleDeletePhotoButtonInput}>
-                                Delete
-                            </button>
-                        </Fragment>
-                    }
-                    { this.props.handleUsePhotoForExport &&
-                        <button onClick={this.props.handleUsePhotoForExport}>
-                            Use
+                        }
+                        <button onClick={(event) => this.handlePhotoPreviewSelect(event, null)}>
+                            Cancel
                         </button>
-                    }
-                    <button onClick={(event) => this.handlePhotoPreviewSelect(event, null)}>
-                        Cancel
-                    </button>
+                    </div>
                     { commonItems }
                 </li>
                 );
