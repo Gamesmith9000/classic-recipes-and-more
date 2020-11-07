@@ -1,15 +1,25 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { BackendConstants } from '../../../Helpers'
+import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {
     // [NOTE] This logic was ported from RecipePicker component. Attempt to find a more DRY implementation
+
+    // [NOTE][OPTIMIZE] Important: This component has no caching for api calls. This is a crucial place for optimization.
+    //                   this might even require the helper of higher up components & their state
+    // [NOTE] Important: tag filtering has not yet been implemented
 
     constructor () {
         super();
         this.state = {
             photoData: null,
-            sortById: true,  //  [NOTE] In the future, this will be changed to 'sortingField'
+            sorting: {
+                byId: true,
+                fieldIndex: 0,
+                ignoredFields: ['file'],
+                validFields: []
+            },
             tagFiltering : {
                 enabled: false,
                 filteredPhotoIds: [],
@@ -23,15 +33,32 @@ class PhotoPicker extends React.Component {
         this.props.changeSelectedPhotoId(parseInt(photoId));
     }
 
-    handleSortingButtonPress = (event) => {
+    handleSortSelectInputChange = (event) => {
         event.preventDefault();
-        this.setState({ sortById: !this.state.sortById });
+        const newValue = event.target.value;
+        if(newValue === 'id') {
+            let sortingState = this.state.sorting;
+            sortingState.byId = true;
+
+            this.setState({ sorting: sortingState });
+        }
+        else {
+            if(this.state.sorting.validFields.includes(newValue)) {
+                let sortingState = this.state.sorting;
+                sortingState.byId = false;
+                sortingState.fieldIndex = this.state.sorting.validFields.indexOf(newValue);
+
+                this.setState({ sorting: sortingState });
+            }
+        }
     }
 
     mapPhotoPreviews = (photoDataList) => {
         if(!photoDataList) return;
-        
-        const sortedPhotoDataList = this.sortPhotoData(photoDataList);
+
+        const { byId, fieldIndex, validFields} = this.state.sorting;
+
+        const sortedPhotoDataList = sortByAttributeNameOrId(photoDataList, validFields, fieldIndex, byId);
         const mappedPhotoPreview = sortedPhotoDataList.map((item, index) => {
             const isSelected = (this.props.selectedPhotoId && this.props.selectedPhotoId === parseInt(item.id));
             const commonItems = (
@@ -48,7 +75,7 @@ class PhotoPicker extends React.Component {
                     className="photo-preview selected" 
                     key={index}
                 >
-                    <div class='selected-preview-item-buttons'>
+                    <div className='selected-preview-item-buttons'>
                         { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
                             <Fragment>
                                 <button onClick={this.props.handleModifyPhotoButtonInput}>
@@ -90,45 +117,40 @@ class PhotoPicker extends React.Component {
         );
     }
 
-    sortPhotoData = (photoData) => {
-        if(this.state.sortById === true) {
-            return photoData.sort(function(a,b) {
-                const aId = parseInt(a.id);
-                const bId = parseInt(b.id);
-                
-                if(aId === bId) {
-                    return 0;
-                }
-                if(aId < bId) {
-                    return -1;
-                }
-                else {
-                    return 1;
-                }
-            });
-        }
-        else {
-            return photoData.sort(function(a,b) {
-                const aName = a.attributes.title.toUpperCase();
-                const bName = b.attributes.title.toUpperCase();
-                
-                if(aName === bName) {
-                    return 0;
-                }
-                if(aName < bName) {
-                    return -1;
-                }
-                else {
-                    return 1;
-                }
-            });
-        }
+    mapSortSelectAttributeOptions = () => {
+        return this.state.sorting.validFields.map((item) => {
+            return (
+                <option key={`map-sortSelectField-photo-${item}`} value={item}>
+                    { item.charAt(0).toUpperCase() + item.slice(1) }
+                </option>
+            );
+        }); 
+    }
+
+    renderSortSelect = () => {
+        return (
+            <Fragment>
+                <label htmlFor="photo-sort-select">Sort By: </label>
+                <select 
+                    id="photo-sort-select"
+                    onChange={this.handleSortSelectInputChange} 
+                >
+                    <option value="id">ID</option>
+                    { this.mapSortSelectAttributeOptions() }
+                </select>
+            </Fragment>
+        );
     }
 
     componentDidMount () {
         axios.get('/api/v1/photos')
         .then(res => {
-            this.setState({ photoData: res.data.data });
+            let sortingState = this.state.sorting;
+            sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)
+            this.setState({ 
+                photoData: res.data.data,
+                sorting: sortingState
+            });
         })
         .catch(err => console.log(err));
     }
@@ -136,12 +158,7 @@ class PhotoPicker extends React.Component {
     render() {
         return (
             <div className="photo-picker">
-                <div className="sorting-controls">
-                    <div>Sorting By:</div>
-                    <button onClick={this.handleSortingButtonPress}>
-                        { this.state.sortById === true  ? "ID" : "Title" }
-                    </button>
-                </div>
+                {this.renderSortSelect()}
                 {this.mapPhotoPreviews(this.state.photoData)}
             </div>
         )

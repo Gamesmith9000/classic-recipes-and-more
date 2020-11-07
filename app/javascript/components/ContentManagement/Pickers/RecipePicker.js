@@ -1,8 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { capitalizeFirstLetter } from '../../../Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
-
 
 class RecipePicker extends React.Component {
     constructor () {
@@ -99,9 +97,9 @@ class RecipePicker extends React.Component {
     }
 
     mapSortSelectAttributeOptions = () => {
-        return this.state.sorting.validFields.map((item, index) => {
+        return this.state.sorting.validFields.map((item) => {
             return (
-                <option key={`map-sortSelectField-${item}`} value={item}>
+                <option key={`map-sortSelectField-recipe-${item}`} value={item}>
                     { item.charAt(0).toUpperCase() + item.slice(1) }
                 </option>
             );
@@ -111,9 +109,9 @@ class RecipePicker extends React.Component {
     renderSortSelect = () => {
         return (
             <Fragment>
-                <label htmlFor="sort-select">Sort By: </label>
+                <label htmlFor="recipe-sort-select">Sort By: </label>
                 <select 
-                    id="sort-select"
+                    id="recipe-sort-select"
                     onChange={this.handleSortSelectInputChange} 
                 >
                     <option value="id">ID</option>
