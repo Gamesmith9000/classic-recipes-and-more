@@ -1,3 +1,5 @@
+$max-photo-preview-height: 100px;   // [NOTE][STYLE][HARD-CODED] From a value that's hard-coded in multiple locations: (1) RecipePicker
+                                    //  uses the 'thumb' size (via one of it's variables), (2) photo_uploader defines the size
 $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 
 .content-management {
@@ -57,12 +59,35 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
             display: flex;
         }
     }
-
-    .selected-preview-item-buttons {
-
-    }
 }
 
+.selected-preview-item-buttons {
+    display: grid;
+
+    .recipe-preview > & {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .photo-preview > & {
+        grid-template-rows: repeat(3, 1fr); // [NOTE][STYLE] Photo preview currently assumes that there will be 3 buttons, but this will not always be the case
+        min-height: $max-photo-preview-height;
+        
+        button {
+            height: max-content;
+
+            &:first-child {
+                align-self: end;
+            }
+            &:last-child {
+                align-self: start;
+            }
+            &:not(:first-child) {
+                &:not(:last-child) {
+                    align-self: center;
+                }
+            }
+        }
+    }
+}
 
 
 /*
