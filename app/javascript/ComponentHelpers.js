@@ -33,6 +33,15 @@ export function embedYoutubeVideo (youtubeVideoId) {
     );
 }
 
+export function renderEmptyPickerListDisplay (itemTypeName) {
+    const itemName = String(itemTypeName).toLowerCase();
+    return (
+        <p className='no-entries'>
+            { `No ${itemName}s have been added yet.` }
+        </p>
+    );
+}
+
 export function renderRecipeDisplayFromResponse(responseData) {
     if(!responseData?.data?.data) {
         return <Fragment />

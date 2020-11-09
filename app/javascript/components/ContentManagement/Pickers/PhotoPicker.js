@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { BackendConstants } from '../../../Helpers'
+import { renderEmptyPickerListDisplay} from '../../../ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {
@@ -35,7 +36,9 @@ class PhotoPicker extends React.Component {
 
     handleSortSelectInputChange = (event) => {
         event.preventDefault();
+        if(!this.state.sorting) { return; }
         const newValue = event.target.value;
+
         if(newValue === 'id') {
             let sortingState = this.state.sorting;
             sortingState.byId = true;
@@ -54,7 +57,7 @@ class PhotoPicker extends React.Component {
     }
 
     mapPhotoPreviews = (photoDataList) => {
-        if(!photoDataList) return;
+        if(!photoDataList || !this.state.sorting) return;
 
         const { byId, fieldIndex, validFields} = this.state.sorting;
 
@@ -118,7 +121,7 @@ class PhotoPicker extends React.Component {
     }
 
     mapSortSelectAttributeOptions = () => {
-        return this.state.sorting.validFields.map((item) => {
+        return this.state.sorting?.validFields?.map((item) => {
             return (
                 <option key={`map-sortSelectField-photo-${item}`} value={item}>
                     { item.charAt(0).toUpperCase() + item.slice(1) }
@@ -158,8 +161,15 @@ class PhotoPicker extends React.Component {
     render() {
         return (
             <div className="photo-picker">
-                {this.renderSortSelect()}
-                {this.mapPhotoPreviews(this.state.photoData)}
+                {(!this.state.photoData || this.state.photoData.length === 0)
+                    ? 
+                        renderEmptyPickerListDisplay('photo')
+                    :
+                    <Fragment>
+                        { this.mapPhotoPreviews(this.state.photoData) }
+                        { this.renderSortSelect() }
+                    </Fragment> 
+                }
             </div>
         )
     }

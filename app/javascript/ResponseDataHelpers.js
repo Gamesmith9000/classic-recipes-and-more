@@ -40,7 +40,7 @@ function getProperDataForAttributes (res) {
     }
 
     if(invalidResData === true) {
-        console.warn("The response data's format is invalid.");
+        console.warn('The response data has an invalid format, or is empty');
         return null;
     }
 

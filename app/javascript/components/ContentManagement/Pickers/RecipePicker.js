@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
+import { renderEmptyPickerListDisplay} from '../../../ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 class RecipePicker extends React.Component {
@@ -137,8 +138,15 @@ class RecipePicker extends React.Component {
     render() {
         return (
             <div className="recipe-picker">
-                {this.renderSortSelect()}
-                {this.mapRecipePreviews(this.state.recipeData)}
+                {(!this.state.recipeData || this.state.recipeData.length === 0)
+                    ? 
+                        renderEmptyPickerListDisplay('recipe')
+                    : 
+                        <Fragment>
+                            { this.mapRecipePreviews(this.state.recipeData) }
+                            { this.renderSortSelect() }
+                        </Fragment>
+                }
             </div>
         )
     }
