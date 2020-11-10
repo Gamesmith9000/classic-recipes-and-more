@@ -1,11 +1,8 @@
 import React, { Fragment } from 'react'
-import { validationErrorsToString } from './Helpers'
-import { mapSectionsData } from './ResponseDataHelpers'
-
 import PageManager from './components/ContentManagement/Managers/PageManager'
 import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
-import RecipeDisplay from './components/RecipeDisplay'
 import RecipeManager from './components/ContentManagement/Managers/RecipeManager'
+import { validationErrorsToString } from './Helpers'
 
 
 export const ContentSectionsInfo = {
@@ -22,19 +19,26 @@ export const ContentSectionsInfo = {
     ]
 }
 
-export function embedYoutubeVideo (youtubeVideoId) {
+export function EmbeddedYoutubeVideo (props) {
     return (
-        <iframe 
-            src={`https://www.youtube-nocookie.com/embed/${youtubeVideoId}`} 
-            frameBorder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowFullScreen>
-        </iframe>
+        props?.youtubeVideoId
+        ?
+            <div className="video-frame">
+                <iframe 
+                    src={`https://www.youtube-nocookie.com/embed/${props.youtubeVideoId}`} 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen>
+                </iframe>
+            </div>
+        :
+            <Fragment />
     );
 }
 
-export function renderEmptyPickerListDisplay (itemTypeName) {
-    const itemName = String(itemTypeName).toLowerCase();
+export function EmptyPickerEntriesDisplay (props) {
+    const itemNameIsValid = Boolean(props?.entryTypeName);
+    const itemName = itemNameIsValid === true ? String(props?.entryTypeName).toLowerCase() : entrie;
     return (
         <p className='no-entries'>
             { `No ${itemName}s have been added yet.` }
@@ -42,44 +46,30 @@ export function renderEmptyPickerListDisplay (itemTypeName) {
     );
 }
 
-export function renderRecipeDisplayFromResponse(responseData) {
-    if(!responseData?.data?.data) {
-        return <Fragment />
-    }
-
-    const { ingredients, paragraphs, title } = responseData.data.data.attributes;
-    const sections = mapSectionsData(responseData);
-    
-    return(
-        <RecipeDisplay
-        ingredients={ingredients}
-        paragraphs={paragraphs}
-        sections={sections}
-        title={title}
-        />
-    );
-}
-
-export function renderValidationError (propertyName, errorsObject, capitalizePropertyName = true) {
-    if(!propertyName || !errorsObject?.[propertyName]) { return <br/>; }
-
-    const propertyDisplayName = capitalizePropertyName === true ? (propertyName.charAt(0).toUpperCase() + propertyName.slice(1)) : propertyName;
-    return (
-        <div className="validation-error">
-            { validationErrorsToString(propertyDisplayName, errorsObject[propertyName]) }
-        </div>
-    );
-}
-
-export function unsavedChangesMessage (hasUnsavedChanges) {
+export function UnsavedChangesDisplay (props) {
     return (
         // [NOTE] a more pleasant display should be created
         <Fragment>     
-            {hasUnsavedChanges === true ?
-                <p>YOU HAVE UNSAVED CHANGES!</p>
-            :
-                <br/>
+            { props?.hasUnsavedChanges === true 
+            ? <div className="unsaved-changes"> YOU HAVE UNSAVED CHANGES! </div>
+            : <br/>
             }
         </Fragment>
+    );
+}
+
+export function ValidationErrorDisplay (props) {
+    const missingProps = (!props?.errorsObject?.[props.propertyName] || !props.propertyName);
+    const doNotCapitalize = (props?.doNotCapitalizePropertyName === true);
+    const displayName = doNotCapitalize === true ? props?.propertyName : (props?.propertyName?.charAt(0).toUpperCase() + props?.propertyName?.slice(1));
+
+    return (
+        missingProps === false
+        ?
+            <div className="validation-error">
+                { validationErrorsToString(displayName, props.errorsObject[props.propertyName]) }
+            </div>
+        :
+            <Fragment/>
     );
 }

@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
-import { renderValidationError } from '../../../ComponentHelpers'
+import { ValidationErrorDisplay } from '../../../ComponentHelpers'
 import { BackendConstants, setAxiosCsrfToken } from '../../../Helpers'
 
 class PhotoUploadForm extends React.Component {
@@ -58,17 +58,26 @@ class PhotoUploadForm extends React.Component {
                     <label>
                         Photo
                         <input type="file" onChange={this.onFileInputChange} />
-                        { renderValidationError('file', errors) }
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "file"
+                        />
                     </label>
                     <label>
                         Title
                         <input type="text" onChange={this.onTitleInputChange} />
-                        { renderValidationError('title', errors) }
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "title"
+                        />
                     </label>
                     <label>
                         Tag
                         <input type="text" onChange={this.onTagInputChange} value={this.state.tag} />
-                        { renderValidationError('tag', errors) }
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "tag"
+                        />
                     </label>
                     <button onClick={this.handleFormSubmit}>Upload</button>
                     <button onClick={this.props.closeForm}>Close</button>

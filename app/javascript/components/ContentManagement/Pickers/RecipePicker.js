@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { renderEmptyPickerListDisplay} from '../../../ComponentHelpers'
+import { EmptyPickerEntriesDisplay} from '../../../ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 class RecipePicker extends React.Component {
@@ -64,7 +64,7 @@ class RecipePicker extends React.Component {
                     className="recipe-preview selected" 
                     key={index}
                 >
-                    <div class='selected-preview-item-buttons'>
+                    <div className='selected-preview-item-buttons'>
                         <button onClick={this.props.handleModifyRecipeButtonInput}>
                             Modify
                         </button>
@@ -140,7 +140,7 @@ class RecipePicker extends React.Component {
             <div className="recipe-picker">
                 {(!this.state.recipeData || this.state.recipeData.length === 0)
                     ? 
-                        renderEmptyPickerListDisplay('recipe')
+                        <EmptyPickerEntriesDisplay entryTypeName='recipe' />
                     : 
                         <Fragment>
                             { this.mapRecipePreviews(this.state.recipeData) }

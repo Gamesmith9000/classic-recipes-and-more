@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { embedYoutubeVideo } from '../../ComponentHelpers'
+import { EmbeddedYoutubeVideo } from '../../ComponentHelpers'
 import { setAxiosCsrfToken } from '../../Helpers'
 
 class CookingVideos extends React.Component {
@@ -31,9 +31,7 @@ class CookingVideos extends React.Component {
     mapVideos = (videoDataArray) => {
         const mappedVideos = videoDataArray.map( (item, index) => {
             return(
-                <div className="video-frame" key={index}>
-                    {embedYoutubeVideo(item.id)}
-                </div>
+                <EmbeddedYoutubeVideo key={`ytvid:${item.id}`} youtubeVideoId={item.id} />
             );
         });
         

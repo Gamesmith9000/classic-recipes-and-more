@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
+import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../ComponentHelpers'
 import { setAxiosCsrfToken } from '../../../Helpers'
 
 class PhotoEditForm extends React.Component {
@@ -91,7 +91,10 @@ class PhotoEditForm extends React.Component {
                             type="text" 
                             value={this.state.title}
                         />
-                        { renderValidationError('title', this.state.errors) }
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "title"
+                        />
                     </label>
                     <label>
                         Tag
@@ -101,12 +104,15 @@ class PhotoEditForm extends React.Component {
                             type="text" 
                             value={this.state.tag}
                         />
-                        { renderValidationError('tag', this.state.errors) }
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "tag"
+                        />
                     </label>
                     <br/>
                     <button onClick={this.handleFormSubmit}>Update</button>
                     <button onClick={this.props.handleClose}>Close</button>
-                    { unsavedChangesMessage(this.hasChanges() === true) }
+                    <UnsavedChangesDisplay hasUnsavedChanges={this.hasChanges() === true} />
                 </form>
                 <hr/>
             </div>

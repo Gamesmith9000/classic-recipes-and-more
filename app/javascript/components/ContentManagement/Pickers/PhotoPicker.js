@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
 import { BackendConstants } from '../../../Helpers'
-import { renderEmptyPickerListDisplay} from '../../../ComponentHelpers'
+import { EmptyPickerEntriesDisplay} from '../../../ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {
@@ -163,7 +163,7 @@ class PhotoPicker extends React.Component {
             <div className="photo-picker">
                 {(!this.state.photoData || this.state.photoData.length === 0)
                     ? 
-                        renderEmptyPickerListDisplay('photo')
+                        <EmptyPickerEntriesDisplay entryTypeName='photo' />
                     :
                     <Fragment>
                         { this.mapPhotoPreviews(this.state.photoData) }

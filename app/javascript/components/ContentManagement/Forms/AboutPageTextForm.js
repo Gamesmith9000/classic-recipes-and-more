@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
-import { unsavedChangesMessage } from '../../../ComponentHelpers'
+import { UnsavedChangesDisplay } from '../../../ComponentHelpers'
 
 class AboutPageTextForm extends React.Component {
     constructor() {
@@ -130,7 +130,9 @@ class AboutPageTextForm extends React.Component {
                     </label>
                     <br />
                     <button type="submit">Update</button>
-                    {unsavedChangesMessage(!arraysHaveMatchingValues(this.state.sections, this.state.priorSectionsState))}
+                    <UnsavedChangesDisplay 
+                        hasUnsavedChanges={!arraysHaveMatchingValues(this.state.sections, this.state.priorSectionsState)} 
+                    />
                     </form>
                 }
             </Fragment>

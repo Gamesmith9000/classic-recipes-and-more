@@ -38,8 +38,6 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
         padding-left: 0;
     }
 
-
-
     .ingredients-edits > label, .paragraph-edits > label {
         display: flex;
     }
@@ -59,6 +57,16 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
             display: flex;
         }
     }
+
+    /* [NOTE][STYLE] There are several classes that have yet to be styled
+
+    Currently unstyled items:
+
+    .no-entries {}
+    .unsaved-changes {}
+    .validation-error {}
+
+    */
 }
 
 .selected-preview-item-buttons {
@@ -100,3 +108,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     }
 }
 */ 
+
+
+
+

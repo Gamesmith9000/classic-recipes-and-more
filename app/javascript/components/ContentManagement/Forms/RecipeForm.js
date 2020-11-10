@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import axios from 'axios'
 import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
 import { mapSectionsData } from '../../../ResponseDataHelpers'
-import { renderValidationError, unsavedChangesMessage } from '../../../ComponentHelpers'
+import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../ComponentHelpers'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -288,7 +288,10 @@ class RecipeForm extends React.Component {
                         type="text"
                         value={this.state.title}
                     />
-                    { renderValidationError('title', this.state.errors) }
+                    <ValidationErrorDisplay 
+                        errorsObject = {this.state.errors}
+                        propertyName = "title"
+                    />
                 </label>
                 <label>
                     Description
@@ -299,7 +302,10 @@ class RecipeForm extends React.Component {
                         type="textarea"
                         value={this.state.description}
                     />
-                    { renderValidationError('description', this.state.errors) }
+                    <ValidationErrorDisplay 
+                        errorsObject = {this.state.errors}
+                        propertyName = "description"
+                    />
                 </label>
                 <br />
                 <label>
@@ -337,7 +343,9 @@ class RecipeForm extends React.Component {
                     {this.state.existingRecipe === true ? 'Update' : 'Create'}
                 </button>
                 <button onClick={this.props.handleClose}>Close</button>
-                { unsavedChangesMessage(this.isExistingRecipeWithChanges() === true) }
+                <UnsavedChangesDisplay 
+                    hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}
+                />
             </form>
         )
     }
