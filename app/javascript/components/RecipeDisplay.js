@@ -6,6 +6,7 @@ class RecipeDisplay extends React.Component {
     }
 
     mapIngredients = (ingredientsList) => {
+        // [NOTE][OPTIMIZE] Proper key is needed
         return ingredientsList.map((item, index) => {
             return (
                 <li className="ingredient" key={index}>
@@ -18,6 +19,7 @@ class RecipeDisplay extends React.Component {
     mapParagraphs = (paragraphsList) => {
         return paragraphsList.map((item, index) => {
             return (
+                // [NOTE][OPTIMIZE] Proper key is needed
                 <p key={index}>
                     {item}
                 </p>
@@ -28,6 +30,7 @@ class RecipeDisplay extends React.Component {
     mapSections = (sectionsList) => {
         return sectionsList.map((item, index) => {
             return (
+                // [NOTE][OPTIMIZE] Proper key is needed
                 <div className="section" key={index}>
                     <p>{item.text_content}</p>
                     <div>

@@ -22,6 +22,7 @@ class About extends React.Component {
     mapSections = (sectionsList) => {
         return sectionsList.map((item, index) => {
             return (
+                // [NOTE][OPTIMIZE] Proper key is needed
                 <p key={index}>
                     {item}
                 </p>

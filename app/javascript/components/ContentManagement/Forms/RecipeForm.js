@@ -156,6 +156,7 @@ class RecipeForm extends React.Component {
     mapIngredientInputs = (ingredientList) => {
         return ingredientList.map((item, index) => {
             return (
+            // [NOTE][OPTIMIZE] Proper key is needed
             <li className="ingredients-edits" key={index}>
                 <label>
                     {index}
@@ -200,6 +201,7 @@ class RecipeForm extends React.Component {
     mapSectionInputs = (sectionsList) => {
         return sectionsList.map((item, index) => {
             return (
+            // [NOTE][OPTIMIZE] Proper key is needed
             <li className="section-edits" key={index}>
                 <label>
                     {index}

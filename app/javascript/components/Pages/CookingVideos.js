@@ -31,6 +31,7 @@ class CookingVideos extends React.Component {
     mapVideos = (videoDataArray) => {
         const mappedVideos = videoDataArray.map( (item, index) => {
             return(
+                // [NOTE][OPTIMIZE] Verify proper key optimization
                 <EmbeddedYoutubeVideo key={`ytvid:${item.id}`} youtubeVideoId={item.id} />
             );
         });

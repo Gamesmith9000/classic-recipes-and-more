@@ -76,6 +76,7 @@ class PhotoPicker extends React.Component {
                 return (
                 <li 
                     className="photo-preview selected" 
+                    // [NOTE][OPTIMIZE] Proper key is needed
                     key={index}
                 >
                     <div className='selected-preview-item-buttons'>
@@ -106,6 +107,7 @@ class PhotoPicker extends React.Component {
             return (
                 <li 
                     className="photo-preview" 
+                    // [NOTE][OPTIMIZE] Proper key is needed
                     key={index}
                     onClick={(event) => this.handlePhotoPreviewSelect(event, item.id)}
                 >
@@ -123,6 +125,7 @@ class PhotoPicker extends React.Component {
     mapSortSelectAttributeOptions = () => {
         return this.state.sorting?.validFields?.map((item) => {
             return (
+                // [NOTE][OPTIMIZE] Proper key is needed
                 <option key={`map-sortSelectField-photo-${item}`} value={item}>
                     { item.charAt(0).toUpperCase() + item.slice(1) }
                 </option>

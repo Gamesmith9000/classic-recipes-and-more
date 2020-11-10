@@ -72,6 +72,7 @@ class AboutPageTextForm extends React.Component {
     mapSectionInputs = (sectionList) => {
         return sectionList.map((item, index) => {
             return (
+            // [NOTE][OPTIMIZE] Proper key is needed
             <li className="section-edits" key={index}>
                 <label>
                     {index}

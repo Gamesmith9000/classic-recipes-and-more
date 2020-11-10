@@ -14,6 +14,7 @@ class SectionSelector extends React.Component {
         return ContentSectionsInfo.sections.map(function(value, index) {
             return(
                 <button 
+                    // [NOTE][OPTIMIZE] Proper key is needed
                     key={index}
                     onClick={() => changeContent(index)}>
                     {value.name}
