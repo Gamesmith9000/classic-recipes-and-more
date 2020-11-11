@@ -5,11 +5,14 @@ import { EmptyPickerEntriesDisplay} from '../../../ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {
-    // [NOTE] This logic was ported from RecipePicker component. Attempt to find a more DRY implementation
+    // [NOTE][DRY] This logic was ported from RecipePicker component. Attempt to find a more DRY implementation
 
     // [NOTE][OPTIMIZE] Important: This component has no caching for api calls. This is a crucial place for optimization.
     //                   this might even require the helper of higher up components & their state
+
     // [NOTE] Important: tag filtering has not yet been implemented
+
+    // [NOTE][DRY] Consider making Picker sorters into their own standalone components (which could work alongside )
 
     constructor () {
         super();
@@ -74,11 +77,7 @@ class PhotoPicker extends React.Component {
             );
             if(isSelected === true) {
                 return (
-                <li 
-                    className="photo-preview selected" 
-                    // [NOTE][OPTIMIZE] Proper key is needed
-                    key={index}
-                >
+                <li className="photo-preview selected" key={item.id} >
                     <div className='selected-preview-item-buttons'>
                         { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
                             <Fragment>
@@ -107,15 +106,13 @@ class PhotoPicker extends React.Component {
             return (
                 <li 
                     className="photo-preview" 
-                    // [NOTE][OPTIMIZE] Proper key is needed
-                    key={index}
+                    key={item.id}
                     onClick={(event) => this.handlePhotoPreviewSelect(event, item.id)}
                 >
                     { commonItems }
                 </li>
             );
         });
-        // [NOTE] Consider changing li key to something other than index.
 
         return (
             <ul className="photo-previews-list">{mappedPhotoPreview}</ul>
@@ -124,9 +121,9 @@ class PhotoPicker extends React.Component {
 
     mapSortSelectAttributeOptions = () => {
         return this.state.sorting?.validFields?.map((item) => {
+            console.log(item);
             return (
-                // [NOTE][OPTIMIZE] Proper key is needed
-                <option key={`map-sortSelectField-photo-${item}`} value={item}>
+                <option key={item} value={item}>
                     { item.charAt(0).toUpperCase() + item.slice(1) }
                 </option>
             );
@@ -168,10 +165,10 @@ class PhotoPicker extends React.Component {
                     ? 
                         <EmptyPickerEntriesDisplay entryTypeName='photo' />
                     :
-                    <Fragment>
-                        { this.mapPhotoPreviews(this.state.photoData) }
-                        { this.renderSortSelect() }
-                    </Fragment> 
+                        <Fragment>
+                            { this.mapPhotoPreviews(this.state.photoData) }
+                            { this.renderSortSelect() }
+                        </Fragment> 
                 }
             </div>
         )

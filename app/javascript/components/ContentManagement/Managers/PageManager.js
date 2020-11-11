@@ -10,7 +10,7 @@ class PageManager extends React.Component {
     }
 
     changeSelectedPage = (newSelectedPageIdentifier) => {
-        // [NOTE] As is the case in SectionSelector component, the max identifier number is hard coded here:
+        // [NOTE][REFACTOR] The max identifier number is hard coded here:
         if (!Number.isInteger(newSelectedPageIdentifier) || newSelectedPageIdentifier < 0 || newSelectedPageIdentifier > 1 || newSelectedPageIdentifier === this.state.selectedPage) {
             return;
         }

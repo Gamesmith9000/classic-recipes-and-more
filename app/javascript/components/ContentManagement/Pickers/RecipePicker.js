@@ -60,11 +60,7 @@ class RecipePicker extends React.Component {
             );
             if(isSelected === true) {
                 return (
-                <li 
-                    className="recipe-preview selected" 
-                    // [NOTE][OPTIMIZE] Proper key is needed
-                    key={index}
-                >
+                <li className="recipe-preview selected" key={item.id} >
                     <div className='selected-preview-item-buttons'>
                         <button onClick={this.props.handleModifyRecipeButtonInput}>
                             Modify
@@ -84,15 +80,13 @@ class RecipePicker extends React.Component {
             return (
                 <li 
                     className="recipe-preview" 
-                    // [NOTE][OPTIMIZE] Proper key is needed
-                    key={index}
+                    key={item.id}
                     onClick={(event) => this.handleRecipePreviewSelect(event, item.id)}
                 >
                     { commonItems }
                 </li>
             );
         });
-        // [NOTE] Consider changing li key to something other than index.
 
         return (
             <ul className="recipe-previews-list">{mappedRecipePreview}</ul>
@@ -102,8 +96,7 @@ class RecipePicker extends React.Component {
     mapSortSelectAttributeOptions = () => {
         return this.state.sorting.validFields.map((item) => {
             return (
-                // [NOTE][OPTIMIZE] Proper key is needed
-                <option key={`map-sortSelectField-recipe-${item}`} value={item}>
+                <option key={item} value={item}>
                     { item.charAt(0).toUpperCase() + item.slice(1) }
                 </option>
             );

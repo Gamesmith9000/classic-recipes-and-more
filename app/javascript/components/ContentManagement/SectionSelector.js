@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { ContentSectionsInfo } from '../../ComponentHelpers';
 
 class SectionSelector extends React.Component {
-    //  [NOTE] This will need to be refactored (and renamed) into a 'picker'
+    //  [NOTE][REFACTOR] This will need to be refactored (and renamed) into a 'picker'
 
     constructor () {
         super();
