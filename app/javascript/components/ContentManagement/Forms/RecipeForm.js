@@ -12,10 +12,12 @@ class RecipeForm extends React.Component {
             existingRecipe: false,
             featured: BackendConstants.models.recipe.defaults.featured,
             ingredients: [''],
+            previewPhotoId: null,
             priorRecipeState: {
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [''],
+                previewPhotoId: null,
                 sections: [{
                     id: null,
                     ordered_photo_ids: null,
@@ -104,6 +106,7 @@ class RecipeForm extends React.Component {
                     description: this.state.description,
                     featured: this.state.featured,
                     ingredients: this.state.ingredients,
+                    previewPhotoId: this.state.previewPhotoId,
                     sections: this.state.sections,
                     title: this.state.title
                 }
@@ -145,12 +148,23 @@ class RecipeForm extends React.Component {
     isExistingRecipeWithChanges = () => {
         if(this.state.existingRecipe !== true) { return false; }
 
-        if(arraysHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) &&
-        arraysHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) &&
-        this.state.description === this.state.priorRecipeState.description &&
-        this.state.featured === this.state.priorRecipeState.featured &&
-        this.state.title === this.state.priorRecipeState.title) { return false; }
-        else { return true; }
+        if(
+            this.state.description !== this.state.priorRecipeState.description || 
+            this.state.featured !== this.state.priorRecipeState.featured || 
+            this.state.previewPhotoId !== this.state.priorRecipeState.previewPhotoId || 
+            this.state.title !== this.state.priorRecipeState.title
+        ){ 
+            return true; 
+        }
+
+        if(
+            arraysHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
+            arraysHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
+        ){ 
+            return true; 
+        }
+        
+        return false;
     }
 
     mapIngredientInputs = (ingredientList) => {
@@ -251,6 +265,8 @@ class RecipeForm extends React.Component {
                 }
             })
             .then(res => {
+                console.log(res);
+
                 const sectionsData = mapSectionsData(res);
                 const attributes = res.data.data.attributes;
                 
@@ -259,10 +275,12 @@ class RecipeForm extends React.Component {
                     existingRecipe: true,
                     featured: attributes.featured,
                     ingredients: attributes.ingredients,
+                    previewPhotoId: attributes.preview_photo_id,
                     priorRecipeState: {
                         description: attributes.description,
                         featured: attributes.featured,
                         ingredients: attributes.ingredients,
+                        previewPhotoId: attributes.preview_photo_id,
                         sections: sectionsData,
                         title: attributes.title,                        
                     },

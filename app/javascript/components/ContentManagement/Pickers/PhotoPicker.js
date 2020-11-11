@@ -166,8 +166,8 @@ class PhotoPicker extends React.Component {
                         <EmptyPickerEntriesDisplay entryTypeName='photo' />
                     :
                         <Fragment>
-                            { this.mapPhotoPreviews(this.state.photoData) }
                             { this.renderSortSelect() }
+                            { this.mapPhotoPreviews(this.state.photoData) }
                         </Fragment> 
                 }
             </div>

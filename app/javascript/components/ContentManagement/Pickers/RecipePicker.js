@@ -139,8 +139,8 @@ class RecipePicker extends React.Component {
                         <EmptyPickerEntriesDisplay entryTypeName='recipe' />
                     : 
                         <Fragment>
-                            { this.mapRecipePreviews(this.state.recipeData) }
                             { this.renderSortSelect() }
+                            { this.mapRecipePreviews(this.state.recipeData) }
                         </Fragment>
                 }
             </div>
