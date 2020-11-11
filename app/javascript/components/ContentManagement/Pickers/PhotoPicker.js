@@ -62,6 +62,7 @@ class PhotoPicker extends React.Component {
     mapPhotoPreviews = (photoDataList) => {
         if(!photoDataList || !this.state.sorting) return;
 
+        const useForExport = Boolean(this.props.handleUsePhotoForExport);
         const { byId, fieldIndex, validFields} = this.state.sorting;
 
         const sortedPhotoDataList = sortByAttributeNameOrId(photoDataList, validFields, fieldIndex, byId);
@@ -121,7 +122,6 @@ class PhotoPicker extends React.Component {
 
     mapSortSelectAttributeOptions = () => {
         return this.state.sorting?.validFields?.map((item) => {
-            console.log(item);
             return (
                 <option key={item} value={item}>
                     { item.charAt(0).toUpperCase() + item.slice(1) }
@@ -161,6 +161,20 @@ class PhotoPicker extends React.Component {
     render() {
         return (
             <div className="photo-picker">
+                { this.props.handleUsePhotoForExport &&
+                    <Fragment>
+                        <h3>Select a Photo:</h3>
+                        { this.props.handleCancelForExport &&
+                            <Fragment>
+                                <button onClick={this.props.handleCancelForExport}>
+                                    Cancel
+                                </button>
+                                <br/>
+                                <br/>
+                            </Fragment>
+                        }
+                    </Fragment>
+                }
                 {(!this.state.photoData || this.state.photoData.length === 0)
                     ? 
                         <EmptyPickerEntriesDisplay entryTypeName='photo' />

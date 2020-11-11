@@ -11,7 +11,7 @@ class RecipePicker extends React.Component {
             sorting: {
                 byId: true,
                 fieldIndex: 0,
-                ignoredFields: ['ingredients'],
+                ignoredFields: ['ingredients', 'preview_photo_id'],
                 validFields: []
             }
         }

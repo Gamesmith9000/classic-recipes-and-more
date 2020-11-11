@@ -3,6 +3,7 @@ import axios from 'axios'
 import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
 import { mapSectionsData } from '../../../ResponseDataHelpers'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../ComponentHelpers'
+import PhotoPicker from '../Pickers/PhotoPicker'
 
 class RecipeForm extends React.Component {
     constructor() {
@@ -12,7 +13,12 @@ class RecipeForm extends React.Component {
             existingRecipe: false,
             featured: BackendConstants.models.recipe.defaults.featured,
             ingredients: [''],
+            photoPicker: {
+                isOpen: false,
+                selectedPhotoId: null
+            },
             previewPhotoId: null,
+            previewPhotoUrl: null,
             priorRecipeState: {
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
@@ -37,6 +43,18 @@ class RecipeForm extends React.Component {
         }
     }
 
+    attemptPreviewImageUrlFetch = () => {
+        console.log('attemptPreviewImageUrlFetch');
+        axios.get(`/api/v1/photos/${this.state.previewPhotoId}`)
+        .then(res => {
+            //[NOTE][HARD-CODED] Image preview size is hard coded and the same across recipes
+            const url = res.data?.data?.attributes?.file?.small?.url;
+            this.setState({ previewPhotoUrl: url });
+        })
+        .catch(err => console.log(err));
+
+    }
+
     handleAddIngredient = (event) => {
         event.preventDefault();
         let updatedIngredientsState = this.state.ingredients.slice();
@@ -54,6 +72,21 @@ class RecipeForm extends React.Component {
             text_content: ''
         });
         this.setState({sections: updatedSectionsState});
+    }
+
+    handleClearPreviewPhoto = (event) => {
+        event.preventDefault();
+        this.setState({ 
+            previewPhotoId: null,
+            previewPhotoUrl: null
+        });
+        
+    }
+
+    handleChangeSelectedPhotoId = (newPhotoId) => {
+        let photoPickerState = this.state.photoPicker;
+        photoPickerState.selectedPhotoId = newPhotoId ? newPhotoId: null;
+        this.setState({ photoPicker: photoPickerState });
     }
 
     handleDescriptionInputChange = (event) => {
@@ -86,11 +119,12 @@ class RecipeForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
         const { description, featured, ingredients, sections, title } = this.state;
+        const preview_photo_id = this.state.previewPhotoId;
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
 
-        axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, sections, title } })
+        axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, preview_photo_id, sections, title } })
         .then(res => {
             if(this.state.existingRecipe === false) { this.props.handleClose(); }
             else { this.handleFormSubmitResponse(res); }
@@ -99,7 +133,7 @@ class RecipeForm extends React.Component {
     }
 
     handleFormSubmitResponse = (res) =>{
-        if(res?.status === 200 && res.data && res.data.data?.type === "recipe") {
+        if(res?.status === 200 && res.data?.data?.type === "recipe") {
             this.setState({
                 errors: null,
                 priorRecipeState: {
@@ -119,6 +153,22 @@ class RecipeForm extends React.Component {
         let updatedIngredientsState = this.state.ingredients.slice();
         updatedIngredientsState[index] = event.target.value;
         this.setState({ingredients: updatedIngredientsState});
+    }
+
+    handlePreviewPhotoIdChange = (event) => {
+        event.preventDefault();
+
+        const newId = this.state.photoPicker.selectedPhotoId;
+        let photoPickerState = this.state.photoPicker;
+        photoPickerState.isOpen = false;
+        photoPickerState.selectedPhotoId = null;
+
+        this.setState({
+            previewPhotoId: newId,
+            photoPicker: photoPickerState
+        });
+
+        this.attemptPreviewImageUrlFetch();
     }
 
     handleSectionMove = (index, direction) => {
@@ -143,6 +193,14 @@ class RecipeForm extends React.Component {
 
     handleTitleInputChange = (event) => {
         this.setState({title: event.target.value});
+    }
+
+    handleTogglePhotoPickerOpenState = (event) => {
+        event.preventDefault();
+
+        let photoPickerState = this.state.photoPicker;
+        photoPickerState.isOpen = !photoPickerState.isOpen;
+        this.setState({ photoPicker: photoPickerState });
     }
 
     isExistingRecipeWithChanges = () => {
@@ -257,6 +315,44 @@ class RecipeForm extends React.Component {
         // [NOTE] Consider changing li key to something other than index.
     }
 
+    renderPreviewPhotoControl = () => {
+        const { previewPhotoId, previewPhotoUrl, photoPicker: { isOpen, selectedPhotoId } } = this.state;
+
+        if(previewPhotoId && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
+
+        return(
+            <label>
+                Preview Photo
+                <br/>
+                { isOpen === true
+                ?
+                    <PhotoPicker 
+                        changeSelectedPhotoId={this.handleChangeSelectedPhotoId}
+                        selectedPhotoId={selectedPhotoId}
+                        handleCancelForExport={this.handleTogglePhotoPickerOpenState}
+                        handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
+                    />
+                :
+                    <Fragment>
+                        { previewPhotoId
+                            ? <img src={this.state.previewPhotoUrl} />
+                            : '(No photo chosen)'
+                        }
+                        <br />
+                        <button onClick={this.handleTogglePhotoPickerOpenState}>
+                            { previewPhotoId ? 'Change' : 'Select' }
+                        </button>
+                        { previewPhotoId &&
+                            <button onClick={this.handleClearPreviewPhoto}>
+                                Use No Photo
+                            </button>
+                        }
+                    </Fragment>
+                }
+            </label>
+        );
+    }
+
     componentDidMount () {
         if(this.props.recipeId) {
             axios.get(`/api/v1/recipes/${this.props.recipeId}`, { 
@@ -276,6 +372,7 @@ class RecipeForm extends React.Component {
                     featured: attributes.featured,
                     ingredients: attributes.ingredients,
                     previewPhotoId: attributes.preview_photo_id,
+                    previewPhotoUrl: null,
                     priorRecipeState: {
                         description: attributes.description,
                         featured: attributes.featured,
@@ -313,6 +410,7 @@ class RecipeForm extends React.Component {
                         propertyName = "title"
                     />
                 </label>
+                <br />
                 <label>
                     Description
                     <textarea 
@@ -359,13 +457,21 @@ class RecipeForm extends React.Component {
                 </label>
                 <br/>
                 <br/>
-                <button onClick={this.handleFormSubmit}>
-                    {this.state.existingRecipe === true ? 'Update' : 'Create'}
-                </button>
-                <button onClick={this.props.handleClose}>Close</button>
-                <UnsavedChangesDisplay 
-                    hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}
-                />
+                { this.renderPreviewPhotoControl() }
+                <br/>
+                <br/>
+                { this.state.photoPicker.isOpen === false &&
+                    <Fragment>
+                        <hr />
+                        <button onClick={this.handleFormSubmit}>
+                            {this.state.existingRecipe === true ? 'Update' : 'Create'}
+                        </button>
+                        <button onClick={this.props.handleClose}>Close</button>
+                        <UnsavedChangesDisplay 
+                            hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}
+                        />
+                    </Fragment>
+                }
             </form>
         )
     }

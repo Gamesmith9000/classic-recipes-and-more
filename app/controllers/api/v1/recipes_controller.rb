@@ -100,6 +100,7 @@ module Api
                 params.require(:recipe).permit(
                     :description,
                     :featured,
+                    :preview_photo_id,
                     :title, 
                     :ingredients => [], 
                     :paragraphs => [],

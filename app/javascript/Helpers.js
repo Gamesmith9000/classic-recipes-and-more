@@ -34,6 +34,10 @@ export const BackendConstants = {
                     minimum: 2
                 }
             }
+        },
+
+        photoUploader: {
+            versions: ['large', 'medium', 'small', 'thumb']
         }
     }
 }
