@@ -35,6 +35,15 @@ class PhotoPicker extends React.Component {
     handlePhotoPreviewSelect = (event, photoId) => {
         event.preventDefault();
         this.props.changeSelectedPhotoId(parseInt(photoId));
+        if(this.props.changeSelectedPhotoUrl) {
+            //[NOTE][HARD-CODED] Image preview size is hard coded
+            const photoUrl = this.state.photoData.find(
+                function(element) {
+                    return parseInt(element.id) === parseInt(photoId);
+                }
+            )?.attributes?.file?.small?.url;
+            this.props.changeSelectedPhotoUrl(photoUrl);
+        }
     }
 
     handleSortSelectInputChange = (event) => {

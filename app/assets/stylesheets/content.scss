@@ -69,6 +69,13 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     */
 }
 
+.recipe-form {
+    .preview-photo {
+        background-color: gray;
+        border: 1px darkgray solid;
+    }
+}
+
 .selected-preview-item-buttons {
     display: grid;
 

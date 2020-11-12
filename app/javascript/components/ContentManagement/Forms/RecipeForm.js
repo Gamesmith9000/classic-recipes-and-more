@@ -15,7 +15,8 @@ class RecipeForm extends React.Component {
             ingredients: [''],
             photoPicker: {
                 isOpen: false,
-                selectedPhotoId: null
+                selectedPhotoId: null,
+                selectedPhotoUrl: null
             },
             previewPhotoId: null,
             previewPhotoUrl: null,
@@ -44,7 +45,6 @@ class RecipeForm extends React.Component {
     }
 
     attemptPreviewImageUrlFetch = () => {
-        console.log('attemptPreviewImageUrlFetch');
         axios.get(`/api/v1/photos/${this.state.previewPhotoId}`)
         .then(res => {
             //[NOTE][HARD-CODED] Image preview size is hard coded and the same across recipes
@@ -86,6 +86,12 @@ class RecipeForm extends React.Component {
     handleChangeSelectedPhotoId = (newPhotoId) => {
         let photoPickerState = this.state.photoPicker;
         photoPickerState.selectedPhotoId = newPhotoId ? newPhotoId: null;
+        this.setState({ photoPicker: photoPickerState });
+    }
+
+    handleChangeSelectedPhotoUrl = (newPhotoUrl) => {
+        let photoPickerState = this.state.photoPicker;
+        photoPickerState.selectedPhotoUrl = newPhotoUrl ? newPhotoUrl: null;
         this.setState({ photoPicker: photoPickerState });
     }
 
@@ -159,16 +165,18 @@ class RecipeForm extends React.Component {
         event.preventDefault();
 
         const newId = this.state.photoPicker.selectedPhotoId;
+        const newUrl = this.state.photoPicker.selectedPhotoUrl;
+        
         let photoPickerState = this.state.photoPicker;
         photoPickerState.isOpen = false;
         photoPickerState.selectedPhotoId = null;
+        photoPickerState.selectedPhotoUrl = null;
 
         this.setState({
             previewPhotoId: newId,
+            previewPhotoUrl: newUrl,
             photoPicker: photoPickerState
         });
-
-        this.attemptPreviewImageUrlFetch();
     }
 
     handleSectionMove = (index, direction) => {
@@ -321,35 +329,38 @@ class RecipeForm extends React.Component {
         if(previewPhotoId && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
 
         return(
-            <label>
-                Preview Photo
-                <br/>
-                { isOpen === true
-                ?
-                    <PhotoPicker 
-                        changeSelectedPhotoId={this.handleChangeSelectedPhotoId}
-                        selectedPhotoId={selectedPhotoId}
-                        handleCancelForExport={this.handleTogglePhotoPickerOpenState}
-                        handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
-                    />
-                :
-                    <Fragment>
-                        { previewPhotoId
-                            ? <img src={this.state.previewPhotoUrl} />
-                            : '(No photo chosen)'
-                        }
-                        <br />
-                        <button onClick={this.handleTogglePhotoPickerOpenState}>
-                            { previewPhotoId ? 'Change' : 'Select' }
-                        </button>
-                        { previewPhotoId &&
-                            <button onClick={this.handleClearPreviewPhoto}>
-                                Use No Photo
+            <div className="preview-photo">
+                <label>
+                    Preview Photo
+                    <br/>
+                    { isOpen === true
+                    ?
+                        <PhotoPicker 
+                            changeSelectedPhotoId={this.handleChangeSelectedPhotoId}
+                            changeSelectedPhotoUrl={this.handleChangeSelectedPhotoUrl}
+                            selectedPhotoId={selectedPhotoId}
+                            handleCancelForExport={this.handleTogglePhotoPickerOpenState}
+                            handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
+                        />
+                    :
+                        <Fragment>
+                            { previewPhotoId
+                                ? <img src={this.state.previewPhotoUrl} />
+                                : '(No photo chosen)'
+                            }
+                            <br />
+                            <button onClick={this.handleTogglePhotoPickerOpenState}>
+                                { previewPhotoId ? 'Change' : 'Select' }
                             </button>
-                        }
-                    </Fragment>
-                }
-            </label>
+                            { previewPhotoId &&
+                                <button onClick={this.handleClearPreviewPhoto}>
+                                    Use No Photo
+                                </button>
+                            }
+                        </Fragment>
+                    }
+                </label>
+            </div>
         );
     }
 
@@ -361,8 +372,6 @@ class RecipeForm extends React.Component {
                 }
             })
             .then(res => {
-                console.log(res);
-
                 const sectionsData = mapSectionsData(res);
                 const attributes = res.data.data.attributes;
                 
@@ -411,6 +420,8 @@ class RecipeForm extends React.Component {
                     />
                 </label>
                 <br />
+                { this.renderPreviewPhotoControl() }
+                <br />
                 <label>
                     Description
                     <textarea 
@@ -455,9 +466,6 @@ class RecipeForm extends React.Component {
                     }
                     {<button onClick={this.handleAddSection}>+</button>}
                 </label>
-                <br/>
-                <br/>
-                { this.renderPreviewPhotoControl() }
                 <br/>
                 <br/>
                 { this.state.photoPicker.isOpen === false &&
