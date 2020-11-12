@@ -119,7 +119,7 @@ class AboutPageTextForm extends React.Component {
             <Fragment>
                 <h2>Editing "About" Page</h2>
                 {this.state.sections &&
-                    <form className="about-text-form" onSubmit={this.handleFormSubmit}>
+                    <form className="about-page-form" onSubmit={this.handleFormSubmit}>
                     <label>
                         Sections
                         <br />

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import AboutPageTextForm from '../Forms/AboutPageTextForm'
+import PhotoGalleryPageForm from '../Forms/PhotoGalleryPageForm'
 
 class PageManager extends React.Component {
     constructor () {
@@ -34,7 +35,7 @@ class PageManager extends React.Component {
                 renderedItem = <AboutPageTextForm />;
                 break;
             case 1:
-                renderedItem = <p>PHOTO GALLERY EDITING NOT YET IMPLEMENTED</p>
+                renderedItem = <PhotoGalleryPageForm />
                 break;
 
         }
