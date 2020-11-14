@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { bumpArrayElement, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../../Helpers'
 import { UnsavedChangesDisplay } from '../../../ComponentHelpers'
 
@@ -16,7 +17,8 @@ class AboutPageTextForm extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
         .then(res => {
-            console.log(res);
+            /* [NOTE][REFACTOR] Find a more straightforward way to initialize the objects for use here
+            /                    and in handleAddSection function. Also for future patterns like this    */
 
             this.setState({
                 nextUniqueLocalId: res.data.data.attributes.about_page_sections.length, 
@@ -73,7 +75,7 @@ class AboutPageTextForm extends React.Component {
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
-        
+
         const outgoingSectionsData = this.state.sections.map((element) => { return element.textContent; });
 
         axios.patch('/api/v1/aux/main.json', { aux_data: { about_page_sections: outgoingSectionsData } })
@@ -95,44 +97,36 @@ class AboutPageTextForm extends React.Component {
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
             return (
-            <li className="section-edits" key={element.localId}>
-                <label>
-                    {index}&nbsp;
-                    <textarea 
-                        className="section-input"
-                        onChange={(event) => this.handleSectionInputChange(event, arrayIndex)}
-                        value={this.state.sections[arrayIndex].textContent}
-                    />
-
-                    {sectionList.length > 1 &&
-                        <Fragment>
-                            <button 
-                                className={index > 0 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.setState({sections: bumpArrayElement(this.state.sections, index, -1)});
-                                }}
-                            >
-                                ▲
-                            </button>
-                            <button 
-                                className={index < sectionList.length - 1 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.setState({sections: bumpArrayElement(this.state.sections, index, 1)});
-                                }}
-                            >
-                                ▼
-                            </button>
-                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
-                                Delete
-                            </button>
-                        </Fragment>
-                    }
-                </label>
-            </li>
+                <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
+                    { (provided) => (
+                        <li {...provided.dragHandleProps} {...provided.draggableProps} className="section-edits" ref={provided.innerRef}>
+                            <label>
+                                <textarea 
+                                    className="section-input"
+                                    onChange={(event) => this.handleSectionInputChange(event, arrayIndex)}
+                                    value={this.state.sections[arrayIndex].textContent}
+                                />
+                                { sectionList.length > 1 &&
+                                    <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
+                                        Delete
+                                    </button>
+                                }
+                            </label>
+                        </li>
+                    )}
+                </Draggable>
             )
         });
+    }
+
+    onSectionDragEnd = (result) => {
+        if(!result.destination) { return; }
+
+        let newSectionsState = this.state.sections.slice();
+        const movedItem = newSectionsState.splice(result.source.index, 1)[0];
+        newSectionsState.splice(result.destination.index, 0, movedItem);
+
+        this.setState({ sections: newSectionsState });
     }
 
     render() {
@@ -146,9 +140,18 @@ class AboutPageTextForm extends React.Component {
                         <form className="about-page-form" onSubmit={this.handleFormSubmit}>
                             <label>
                                 <h3>Sections</h3>
-                                { this.state.sections &&
-                                    this.mapSectionInputs(this.state.sections)
-                                }
+                                <DragDropContext onDragEnd={this.onSectionDragEnd}>
+                                    <Droppable droppableId="sections-editor">
+                                        { (provided) => (
+                                            <ul {...provided.droppableProps} className="sections-editor" ref={provided.innerRef}>
+                                                { this.state.sections &&
+                                                    this.mapSectionInputs(this.state.sections)
+                                                }
+                                                { provided.placeholder }
+                                            </ul>
+                                        )}
+                                    </Droppable>
+                                </DragDropContext>
                                 <button onClick={this.handleAddSection}>+</button>
                             </label>
                             <br />

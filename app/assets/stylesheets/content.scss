@@ -41,7 +41,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     .ingredients-edits > label, .paragraph-edits > label {
         display: flex;
     }
-
+//  [NOTE] This will need to be deleted after drag-and-drop is fully implemented (class will then be unused)
     .move-item {
         &.hidden {
             visibility: hidden;
