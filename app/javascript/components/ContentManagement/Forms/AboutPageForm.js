@@ -1,10 +1,10 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { bumpArrayElement, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../../Helpers'
+import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../../Helpers'
 import { UnsavedChangesDisplay } from '../../../ComponentHelpers'
 
-class AboutPageTextForm extends React.Component {
+class AboutPageForm extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -166,4 +166,4 @@ class AboutPageTextForm extends React.Component {
     }
 }
 
-export default AboutPageTextForm
+export default AboutPageForm

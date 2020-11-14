@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import AboutPageTextForm from '../Forms/AboutPageTextForm'
+import AboutPageForm from '../Forms/AboutPageForm'
 import PhotoGalleryPageForm from '../Forms/PhotoGalleryPageForm'
 
 class PageManager extends React.Component {
@@ -32,7 +32,7 @@ class PageManager extends React.Component {
         let renderedItem;
         switch(this.state.selectedPage){
             case 0:
-                renderedItem = <AboutPageTextForm />;
+                renderedItem = <AboutPageForm />;
                 break;
             case 1:
                 renderedItem = <PhotoGalleryPageForm />
