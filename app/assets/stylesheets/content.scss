@@ -69,6 +69,14 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     */
 }
 
+.about-page-editor {
+    .section-edits {
+        background-color: grey;
+        border: 1px solid black;
+        margin-bottom: 5px;
+    }
+}
+
 .recipe-form {
     .preview-photo {
         background-color: gray;

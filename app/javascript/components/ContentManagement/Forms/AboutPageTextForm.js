@@ -1,85 +1,107 @@
 import React, {Fragment} from 'react'
 import axios from 'axios'
-import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
+import { bumpArrayElement, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../../Helpers'
 import { UnsavedChangesDisplay } from '../../../ComponentHelpers'
 
 class AboutPageTextForm extends React.Component {
     constructor() {
         super();
         this.state = {
-            sections: null,
-            priorSectionsState: null
+            nextUniqueLocalId: 0,
+            priorSectionsState: null,
+            sections: null            
         }
     }
 
     componentDidMount () {
-        setAxiosCsrfToken();
-
         axios.get('/api/v1/aux/main.json')
         .then(res => {
             console.log(res);
+
             this.setState({
-                sections: res.data.data.attributes.about_page_sections,
-                priorSectionsState: res.data.data.attributes.about_page_sections
+                nextUniqueLocalId: res.data.data.attributes.about_page_sections.length, 
+                sections: res.data.data.attributes.about_page_sections.map((value, index) => {
+                    return {
+                        localId: index,
+                        textContent: value
+                    };
+                }),
+                priorSectionsState: res.data.data.attributes.about_page_sections.map((value, index) => {
+                    return {
+                        localId: index,
+                        textContent: value
+                    };
+                })
             });
         })
         .catch(err => console.log(err));
     }
 
-    // [NOTE] Paragraph edit logic was ported from RecipeForm component. Attempt to find a more DRY implementation
-    // [NOTE] Later, 'Paragraph' instances and logic were converted to 'Section' instead
+    getSectionIndexFromState = (localId) => {
+        for(let i = 0; i < this.state.sections.length; i++){
+            if(this.state.sections[i]?.localId === localId) { return i; }
+        }
+        return -1;
+    }
 
     handleAddSection = (event) => {
         event.preventDefault();
-        let updatedsectionsState = this.state.sections.slice();
-        updatedsectionsState.push('');
-        this.setState({sections: updatedsectionsState});
+
+        let updatedSectionsState = this.state.sections.slice();
+        const nextId = this.state.nextUniqueLocalId;
+        const newSection = {
+            localId: nextId,
+            textContent: ''
+        };
+        updatedSectionsState.push(newSection);
+        this.setState({
+            nextUniqueLocalId: nextId + 1,
+            sections: updatedSectionsState 
+        });
     }
 
-    handleDeleteSectionButtonInput = (event, index) => {
+    handleDeleteSectionButtonInput = (event, sectionIndex) => {
         event.preventDefault();
-        if(window.confirm("Are you sure you want to delete this section?")) {
-            let newsectionsState = this.state.sections.slice();
-            newsectionsState.splice(index, 1);
-            this.setState({sections: newsectionsState});
+
+        if(window.confirm("Are you sure you want to delete this section?") === true) {
+            let newSectionsState = this.state.sections.slice();
+            newSectionsState.splice(sectionIndex, 1);
+            this.setState({ sections: newSectionsState });
         }
     }
 
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
+        
+        const outgoingSectionsData = this.state.sections.map((element) => { return element.textContent; });
 
-        axios.patch('/api/v1/aux/main.json', { 
-            aux_data: {
-                about_page_sections: this.state.sections
-            }
-        })
-        .then(res => {
-            console.log(res);
-            this.setState({
-                priorSectionsState: this.state.sections
-            });
-        })
+        axios.patch('/api/v1/aux/main.json', { aux_data: { about_page_sections: outgoingSectionsData } })
+        .then(res => this.setState({ priorSectionsState: this.state.sections }))
         .catch(err => console.log(err));
     }
 
-    handleSectionInputChange = (event, index) => {
-        let updatedsectionsState = this.state.sections.slice();
-        updatedsectionsState[index] = event.target.value;
-        this.setState({sections: updatedsectionsState});
+    handleSectionInputChange = (event, sectionIndex) => {
+        event.preventDefault();
+
+        let updatedSectionsState = this.state.sections.slice();
+        updatedSectionsState[sectionIndex].textContent = event.target.value;
+        this.setState({ sections: updatedSectionsState });
     }
 
     mapSectionInputs = (sectionList) => {
-        return sectionList.map((item, index) => {
+        return sectionList.map((element, index) => {
+            const arrayIndex = this.getSectionIndexFromState(element.localId);
+            if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
+
             return (
-            // [NOTE][OPTIMIZE] Proper key is needed
-            <li className="section-edits" key={index}>
+            <li className="section-edits" key={element.localId}>
                 <label>
-                    {index}
+                    {index}&nbsp;
                     <textarea 
                         className="section-input"
-                        onChange={(event) => this.handleSectionInputChange(event, index)}
-                        value={this.state.sections[index]}
+                        onChange={(event) => this.handleSectionInputChange(event, arrayIndex)}
+                        value={this.state.sections[arrayIndex].textContent}
                     />
 
                     {sectionList.length > 1 &&
@@ -102,7 +124,7 @@ class AboutPageTextForm extends React.Component {
                             >
                                 ▼
                             </button>
-                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, index)}>
+                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
                                 Delete
                             </button>
                         </Fragment>
@@ -111,32 +133,32 @@ class AboutPageTextForm extends React.Component {
             </li>
             )
         });
-        // [NOTE] Consider changing li key to something other than index.
     }
 
     render() {
+        const hasSectionsState = Boolean(this.state.sections);
+        const hasUnsavedChanges = (hasSectionsState === true && !objectsHaveMatchingValues(this.state.sections, this.state.priorSectionsState));
+
         return (
-            <Fragment>
+            <div className="about-page-editor">
                 <h2>Editing "About" Page</h2>
-                {this.state.sections &&
-                    <form className="about-page-form" onSubmit={this.handleFormSubmit}>
-                    <label>
-                        Sections
-                        <br />
-                        <br />
-                        {this.state.sections &&
-                            this.mapSectionInputs(this.state.sections)
-                        }
-                        <button onClick={this.handleAddSection}>+</button>
-                    </label>
-                    <br />
-                    <button type="submit">Update</button>
-                    <UnsavedChangesDisplay 
-                        hasUnsavedChanges={!arraysHaveMatchingValues(this.state.sections, this.state.priorSectionsState)} 
-                    />
-                    </form>
-                }
-            </Fragment>
+                    { hasSectionsState === true &&
+                        <form className="about-page-form" onSubmit={this.handleFormSubmit}>
+                            <label>
+                                <h3>Sections</h3>
+                                { this.state.sections &&
+                                    this.mapSectionInputs(this.state.sections)
+                                }
+                                <button onClick={this.handleAddSection}>+</button>
+                            </label>
+                            <br />
+                            <button disabled={!hasUnsavedChanges} type="submit">Update</button>
+                            <UnsavedChangesDisplay 
+                                hasUnsavedChanges={hasUnsavedChanges} 
+                            />
+                        </form>
+                    }
+            </div>
         )
     }
 }
