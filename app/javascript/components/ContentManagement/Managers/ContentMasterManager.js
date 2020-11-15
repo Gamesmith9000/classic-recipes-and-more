@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react'
-import SectionSelector from './SectionSelector';
-import { ContentSectionsInfo } from '../Utilities/ComponentHelpers';
+import SectionSelector from '../SectionSelector';
+import { ContentSectionsInfo } from '../../Utilities/ComponentHelpers';
 
-class ContentManagementDashboard extends React.Component {
+class ContentMasterManager extends React.Component {
     constructor () {
         super();
         this.state = ({
@@ -49,4 +49,4 @@ class ContentManagementDashboard extends React.Component {
     }
 }
 
-export default ContentManagementDashboard
+export default ContentMasterManager

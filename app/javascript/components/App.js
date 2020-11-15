@@ -8,7 +8,7 @@ import Home from './Pages/Home'
 import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
 
-import ContentManagementDashboard from './ContentManagement/ContentManagementDashboard'
+import ContentMasterManager from './ContentManagement/Managers/ContentMasterManager'
 
 function App(props) {
     const redirectOnSignIn = () => {
@@ -50,7 +50,7 @@ function App(props) {
                 <Route exact path="/recipe-photos" component={RecipePhotos} />
                 <Route exact path="/seasonal" component={SeasonalRecipes} />
 
-                {renderProtectedRoute("/content", ContentManagementDashboard)}
+                {renderProtectedRoute("/content", ContentMasterManager)}
             </Switch>
         </Fragment>
     );

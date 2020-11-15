@@ -47,6 +47,19 @@ export function EmptyPickerEntriesDisplay (props) {
     );
 }
 
+export function FlashMessagesDisplay (props) {
+    return (
+        <div className="flash-messages">
+            { flashMessages.alert &&
+                <p className="flash-alert">{flashMessages.alert}</p>
+            }
+            { flashMessages.notice &&
+                <p className="flash-notice">{flashMessages.notice}</p>
+            }
+        </div>
+    )
+}
+
 export function UnsavedChangesDisplay (props) {
     return (
         // [NOTE] a more pleasant display should be created
