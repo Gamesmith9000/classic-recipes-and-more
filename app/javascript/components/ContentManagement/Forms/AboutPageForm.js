@@ -1,8 +1,9 @@
-import React, {Fragment} from 'react'
 import axios from 'axios'
+import React from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../../Helpers'
-import { UnsavedChangesDisplay } from '../../../ComponentHelpers'
+
+import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
+import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class AboutPageForm extends React.Component {
     constructor() {

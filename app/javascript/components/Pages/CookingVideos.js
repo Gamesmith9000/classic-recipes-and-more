@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react'
 import axios from 'axios'
-import { EmbeddedYoutubeVideo } from '../../ComponentHelpers'
-import { setAxiosCsrfToken } from '../../Helpers'
+import React, { Fragment } from 'react'
+import { EmbeddedYoutubeVideo } from '../Utilities/ComponentHelpers'
+import { setAxiosCsrfToken } from '../Utilities/Helpers'
 
 class CookingVideos extends React.Component {
     constructor () {

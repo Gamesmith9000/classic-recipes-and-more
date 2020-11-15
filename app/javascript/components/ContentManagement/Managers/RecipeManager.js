@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
-import RecipeForm from '../Forms/RecipeForm';
 import RecipeDestroyer from '../Destroyers/RecipeDestroyer';
+import RecipeForm from '../Forms/RecipeForm';
 import RecipePicker from '../Pickers/RecipePicker';
 
 class RecipeManager extends React.Component {

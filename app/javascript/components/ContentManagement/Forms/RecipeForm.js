@@ -1,8 +1,10 @@
-import React, { Fragment } from 'react'
 import axios from 'axios'
-import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, setAxiosCsrfToken } from '../../../Helpers'
-import { mapSectionsData } from '../../../ResponseDataHelpers'
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../ComponentHelpers'
+import React, { Fragment } from 'react'
+
+import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
+import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import { mapSectionsData } from '../../Utilities/ResponseDataHelpers'
+
 import PhotoPicker from '../Pickers/PhotoPicker'
 
 class RecipeForm extends React.Component {

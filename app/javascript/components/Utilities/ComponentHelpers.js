@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react'
-import PageManager from './components/ContentManagement/Managers/PageManager'
-import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
-import RecipeManager from './components/ContentManagement/Managers/RecipeManager'
+
 import { validationErrorsToString } from './Helpers'
+import PageManager from '../ContentManagement/Managers/PageManager'
+import PhotoManager from '../ContentManagement/Managers/PhotoManager'
+import RecipeManager from '../ContentManagement/Managers/RecipeManager'
 
 
 export const ContentSectionsInfo = {
