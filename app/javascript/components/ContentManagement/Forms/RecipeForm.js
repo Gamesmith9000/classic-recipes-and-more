@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 
+import { ExportedPhotoPickerState, RecipeFormSectionState, RecipeFormRecipeState } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
 import { BackendConstants, bumpArrayElement, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapSectionsData } from '../../Utilities/ResponseDataHelpers'
@@ -11,15 +12,16 @@ class RecipeForm extends React.Component {
     constructor() {
         super();
         this.state = {
+            // current: new RecipeFormRecipeState( ),
+            // prior: new RecipeFormRecipeState( ),
+
+            // Note that 'existingRecipe' will not be moved into  'RecipeFormRecipeState'
+
             description: '',
             existingRecipe: false,
             featured: BackendConstants.models.recipe.defaults.featured,
             ingredients: [''],
-            photoPicker: {
-                isOpen: false,
-                selectedPhotoId: null,
-                selectedPhotoUrl: null
-            },
+            photoPicker: new ExportedPhotoPickerState(false, null, null),
             previewPhotoId: null,
             previewPhotoUrl: null,
             priorRecipeState: {
