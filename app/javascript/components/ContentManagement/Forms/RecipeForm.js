@@ -24,17 +24,10 @@ class RecipeForm extends React.Component {
             photoPicker: new ExportedPhotoPickerState(false, null, null),
             prior: defaultRecipeState(),
             
-            // Note that 'existingRecipe' will not be moved into  'RecipeFormRecipeState'
-            // The same goes for PhotoPicker external state
-
-            description: '',
-            featured: BackendConstants.models.recipe.defaults.featured,
             ingredients: [''],
             previewPhotoId: null,
             previewPhotoUrl: null,
             priorRecipeState: {
-                description: '',
-                featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [''],
                 previewPhotoId: null,
                 sections: [{
@@ -43,7 +36,6 @@ class RecipeForm extends React.Component {
                     recipeId: null,
                     text_content: ''
                 }],
-                title: '',
             },
             sections: [{
                 id: null,
@@ -51,8 +43,7 @@ class RecipeForm extends React.Component {
                 recipeId: null,
                 text_content: ''
                 }
-            ],
-            title: ''
+            ]
         }
     }
 
@@ -108,7 +99,9 @@ class RecipeForm extends React.Component {
     }
 
     handleDescriptionInputChange = (event) => {
-        this.setState({description: event.target.value});
+        let newRecipeState = this.state.current;
+        newRecipeState.description = event.target.value;
+        this.setState({ current: newRecipeState });
     }
 
     handleDeleteIngredientButtonInput = (event, index) => {
@@ -130,13 +123,16 @@ class RecipeForm extends React.Component {
     }
 
     handleFeaturedInputChange = (event) => {
-        this.setState({featured: event.target.checked});
+        let newRecipeState = this.state.current;
+        newRecipeState.featured = event.target.checked;
+        this.setState({ current: newRecipeState });
     }
 
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
-        const { description, featured, ingredients, sections, title } = this.state;
+        const { ingredients, sections } = this.state;
+        const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.previewPhotoId;
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
@@ -154,13 +150,11 @@ class RecipeForm extends React.Component {
         if(res?.status === 200 && res.data?.data?.type === "recipe") {
             this.setState({
                 errors: null,
+                prior: Object.assign({}, this.state.current),
                 priorRecipeState: {
-                    description: this.state.description,
-                    featured: this.state.featured,
                     ingredients: this.state.ingredients,
                     previewPhotoId: this.state.previewPhotoId,
                     sections: this.state.sections,
-                    title: this.state.title
                 }
             });
         }
@@ -191,20 +185,6 @@ class RecipeForm extends React.Component {
         });
     }
 
-    handleSectionMove = (index, direction) => {
-        if(direction !== -1 && direction !== 1) { return; }
-
-        const targetIndex = index - direction;
-        const originalTextAtIndex = this.state.sections[index].text_content;
-        const originalTextAtTarget = this.state.sections[targetIndex].text_content;
-
-        let newSectionsState = this.state.sections.slice();
-        newSectionsState[index].text_content = originalTextAtTarget;
-        newSectionsState[targetIndex].text_content = originalTextAtIndex;
-
-        this.setState({  sections: newSectionsState });
-    }
-
     handleSectionTextInputChange = (event, index) => {
         let updatedSectionsState = this.state.sections.slice();
         updatedSectionsState[index].text_content = event.target.value;
@@ -212,7 +192,9 @@ class RecipeForm extends React.Component {
     }
 
     handleTitleInputChange = (event) => {
-        this.setState({title: event.target.value});
+        let newRecipeState = this.state.current;
+        newRecipeState.title = event.target.value;
+        this.setState({ current: newRecipeState });
     }
 
     handleTogglePhotoPickerOpenState = (event) => {
@@ -226,11 +208,8 @@ class RecipeForm extends React.Component {
     isExistingRecipeWithChanges = () => {
         if(this.state.existingRecipe !== true) { return false; }
         if(
-            this.state.description !== this.state.priorRecipeState.description || 
-            this.state.featured !== this.state.priorRecipeState.featured || 
             this.state.previewPhotoId !== this.state.priorRecipeState.previewPhotoId || 
-            this.state.title !== this.state.priorRecipeState.title ||
-            // objectsHaveMatchingValues(this.state.current, this.state.prior) === false ||
+            objectsHaveMatchingValues(this.state.current, this.state.prior) === false ||
             objectsHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
             objectsHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
         ){ 
@@ -354,9 +333,7 @@ class RecipeForm extends React.Component {
                 
                 this.setState({
                     current: currentRecipeState(),
-                    description: attributes.description,
                     existingRecipe: true,
-                    featured: attributes.featured,
                     ingredients: attributes.ingredients,
                     nextUniqueIngredientLocalId: ingredientsLength,
                     nextUniqueSectionLocalId: sectionsLength,
@@ -364,15 +341,11 @@ class RecipeForm extends React.Component {
                     previewPhotoUrl: null,
                     prior: currentRecipeState(),
                     priorRecipeState: {
-                        description: attributes.description,
-                        featured: attributes.featured,
                         ingredients: attributes.ingredients,
                         previewPhotoId: attributes.preview_photo_id,
                         sections: sectionsData,
-                        title: attributes.title,                        
                     },
-                    sections: sectionsData,
-                    title: attributes.title
+                    sections: sectionsData
                 });
             })
             .catch(err => console.log(err));
@@ -393,7 +366,7 @@ class RecipeForm extends React.Component {
                         maxLength={BackendConstants.models.recipe.validations.title.maximum} 
                         onChange={this.handleTitleInputChange}
                         type="text"
-                        value={this.state.title}
+                        value={this.state.current.title}
                     />
                     <ValidationErrorDisplay 
                         errorsObject = {this.state.errors}
@@ -410,7 +383,7 @@ class RecipeForm extends React.Component {
                         maxLength={BackendConstants.models.recipe.validations.description.maximum} 
                         onChange={this.handleDescriptionInputChange}
                         type="textarea"
-                        value={this.state.description}
+                        value={this.state.current.description}
                     />
                     <ValidationErrorDisplay 
                         errorsObject = {this.state.errors}
@@ -421,7 +394,7 @@ class RecipeForm extends React.Component {
                 <label>
                     Featured
                     <input 
-                        checked={this.state.featured}
+                        checked={this.state.current.featured}
                         className="featured-input"
                         onChange={this.handleFeaturedInputChange}
                         type="checkbox"
