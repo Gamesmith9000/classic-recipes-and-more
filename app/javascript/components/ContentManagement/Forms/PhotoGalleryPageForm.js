@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, {Fragment} from 'react'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
-import { arraysHaveMatchingValues, bumpArrayElement, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import { bumpArrayElement, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoGalleryPageForm extends React.Component {
     constructor() {

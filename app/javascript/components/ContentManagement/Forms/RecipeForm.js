@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { Fragment } from 'react'
 
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
-import { arraysHaveMatchingValues, BackendConstants, bumpArrayElement, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import { BackendConstants, bumpArrayElement, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapSectionsData } from '../../Utilities/ResponseDataHelpers'
 
 import PhotoPicker from '../Pickers/PhotoPicker'
@@ -215,23 +215,17 @@ class RecipeForm extends React.Component {
 
     isExistingRecipeWithChanges = () => {
         if(this.state.existingRecipe !== true) { return false; }
-
         if(
             this.state.description !== this.state.priorRecipeState.description || 
             this.state.featured !== this.state.priorRecipeState.featured || 
             this.state.previewPhotoId !== this.state.priorRecipeState.previewPhotoId || 
-            this.state.title !== this.state.priorRecipeState.title
+            this.state.title !== this.state.priorRecipeState.title ||
+            objectsHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
+            objectsHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
         ){ 
             return true; 
         }
-
-        if(
-            arraysHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
-            arraysHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
-        ){ 
-            return true; 
-        }
-        
+       
         return false;
     }
 

@@ -42,14 +42,6 @@ export const BackendConstants = {
     }
 }
 
-export function arraysHaveMatchingValues (array1, array2) {
-    console.log('WARNING: This method is being phased out. Call objectsHaveMatchingValues instead.');
-    if(array1.length !== array2.length) {
-        return false;
-    }
-    return array1.every((element, index) => element === array2[index]);
-}
-
 export function bumpArrayElement (array, index, direction) {
     if(direction !== -1 && direction !== 1) {
         return array;

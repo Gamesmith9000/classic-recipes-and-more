@@ -2,6 +2,7 @@ import axios from 'axios'
 import React from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
+import { AboutSectionData } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
@@ -18,23 +19,12 @@ class AboutPageForm extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
         .then(res => {
-            /* [NOTE][REFACTOR] Find a more straightforward way to initialize the objects for use here
-            /                    and in handleAddSection function. Also for future patterns like this    */
+            const aboutPageSections = res.data.data.attributes.aboutPageSections;
 
             this.setState({
-                nextUniqueLocalId: res.data.data.attributes.about_page_sections.length, 
-                sections: res.data.data.attributes.about_page_sections.map((value, index) => {
-                    return {
-                        localId: index,
-                        textContent: value
-                    };
-                }),
-                priorSectionsState: res.data.data.attributes.about_page_sections.map((value, index) => {
-                    return {
-                        localId: index,
-                        textContent: value
-                    };
-                })
+                nextUniqueLocalId: aboutPageSections.length, 
+                sections: aboutPageSections.map((value, index) => { return new AboutSectionData (index, value); }),
+                priorSectionsState: aboutPageSections.map((value, index) => { return new AboutSectionData (index, value); })
             });
         })
         .catch(err => console.log(err));
@@ -50,13 +40,10 @@ class AboutPageForm extends React.Component {
     handleAddSection = (event) => {
         event.preventDefault();
 
-        let updatedSectionsState = this.state.sections.slice();
         const nextId = this.state.nextUniqueLocalId;
-        const newSection = {
-            localId: nextId,
-            textContent: ''
-        };
-        updatedSectionsState.push(newSection);
+        let updatedSectionsState = this.state.sections.slice();
+        updatedSectionsState.push(new AboutSectionData(nextId, ''));
+
         this.setState({
             nextUniqueLocalId: nextId + 1,
             sections: updatedSectionsState 
@@ -108,7 +95,10 @@ class AboutPageForm extends React.Component {
                                     value={this.state.sections[arrayIndex].textContent}
                                 />
                                 { sectionList.length > 1 &&
-                                    <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
+                                    <button 
+                                        className="delete-item" 
+                                        onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}
+                                    >
                                         Delete
                                     </button>
                                 }
@@ -157,9 +147,7 @@ class AboutPageForm extends React.Component {
                             </label>
                             <br />
                             <button disabled={!hasUnsavedChanges} type="submit">Update</button>
-                            <UnsavedChangesDisplay 
-                                hasUnsavedChanges={hasUnsavedChanges} 
-                            />
+                            <UnsavedChangesDisplay hasUnsavedChanges={hasUnsavedChanges} />
                         </form>
                     }
             </div>
