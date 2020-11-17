@@ -20,7 +20,7 @@ class RecipeForm extends React.Component {
             current: defaultRecipeState(),
             existingRecipe: false,
             nextUniqueIngredientLocalId: 0,
-            nextUniqueIngredientLocalId: 0,
+            nextUniqueSectionLocalId: 0,
             photoPicker: new ExportedPhotoPickerState(false, null, null),
             prior: defaultRecipeState(),
             
@@ -230,6 +230,7 @@ class RecipeForm extends React.Component {
             this.state.featured !== this.state.priorRecipeState.featured || 
             this.state.previewPhotoId !== this.state.priorRecipeState.previewPhotoId || 
             this.state.title !== this.state.priorRecipeState.title ||
+            // objectsHaveMatchingValues(this.state.current, this.state.prior) === false ||
             objectsHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
             objectsHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
         ){ 
@@ -252,30 +253,10 @@ class RecipeForm extends React.Component {
                         type="text"
                         value={this.state.ingredients[index]}
                     />
-                    {ingredientList.length > 1 &&
-                        <Fragment>
-                            <button 
-                                className={index > 0 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.setState({ingredients: bumpArrayElement(this.state.ingredients, index, -1)});
-                                }}
-                            >
-                                ▲
-                            </button>
-                            <button 
-                                className={index < ingredientList.length - 1 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.setState({ingredients: bumpArrayElement(this.state.ingredients, index, 1)});
-                                }}
-                            >
-                                ▼
-                            </button>
-                            <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, index)}>
-                                Delete
-                            </button>
-                        </Fragment>
+                    { ingredientList.length > 1 &&
+                        <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, index)}>
+                            Delete
+                        </button>
                     }
                 </label>
             </li>
@@ -297,30 +278,10 @@ class RecipeForm extends React.Component {
                         value={this.state.sections[index].text_content}
                     />
 
-                    {sectionsList.length > 1 && 
-                        <Fragment>
-                            <button 
-                                className={index > 0 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.handleSectionMove(index, 1);
-                                }}
-                            >
-                                ▲
-                            </button>
-                            <button 
-                                className={index < sectionsList.length - 1 ? "move-item" : "move-item hidden"}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    this.handleSectionMove(index, -1);
-                                }}
-                            >
-                                ▼
-                            </button>
-                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, index)}>
-                                Delete
-                            </button>
-                        </Fragment>
+                    { sectionsList.length > 1 && 
+                        <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, index)}>
+                            Delete
+                        </button>
                     }
                 </label>
             </li>
@@ -376,14 +337,32 @@ class RecipeForm extends React.Component {
             .then(res => {
                 const sectionsData = mapSectionsData(res);
                 const attributes = res.data.data.attributes;
+
+                let ingredientsLength;
+                let sectionsLength;
+
+                const currentRecipeState = () => { 
+                    const ingredients = attributes.ingredients; // This will need to be reworked
+                    const sections = sectionsData;              // This will need to be reworked
+
+                    ingredientsLength = ingredients.length;
+                    sectionsLength = sections.length;
+
+                    return new RecipeFormRecipeState(attributes.description, attributes.featured, ingredients, 
+                        attributes.preview_photo_id, null, sections, attributes.title);
+                }
                 
                 this.setState({
+                    current: currentRecipeState(),
                     description: attributes.description,
                     existingRecipe: true,
                     featured: attributes.featured,
                     ingredients: attributes.ingredients,
+                    nextUniqueIngredientLocalId: ingredientsLength,
+                    nextUniqueSectionLocalId: sectionsLength,
                     previewPhotoId: attributes.preview_photo_id,
                     previewPhotoUrl: null,
+                    prior: currentRecipeState(),
                     priorRecipeState: {
                         description: attributes.description,
                         featured: attributes.featured,

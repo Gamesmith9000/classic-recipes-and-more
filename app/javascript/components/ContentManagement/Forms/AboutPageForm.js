@@ -19,7 +19,7 @@ class AboutPageForm extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
         .then(res => {
-            const aboutPageSections = res.data.data.attributes.aboutPageSections;
+            const aboutPageSections = res.data.data.attributes.about_page_sections;
 
             this.setState({
                 nextUniqueLocalId: aboutPageSections.length, 
