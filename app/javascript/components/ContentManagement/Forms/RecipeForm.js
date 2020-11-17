@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 
-import { ExportedPhotoPickerState, RecipeFormSectionState, RecipeFormRecipeState } from '../../Utilities/Constructors'
+import { ExportedPhotoPickerState, RecipeFormIngredientData, RecipeFormRecipeState, RecipeFormSectionState } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
 import { BackendConstants, bumpArrayElement, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapSectionsData } from '../../Utilities/ResponseDataHelpers'
@@ -11,17 +11,25 @@ import PhotoPicker from '../Pickers/PhotoPicker'
 class RecipeForm extends React.Component {
     constructor() {
         super();
+        const defaultRecipeState = () => { 
+            // The default value for ingredients might be problematic
+            const defaultSectionsData = [new RecipeFormSectionState(null, null, null, '')];
+            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, [''], null, null, defaultSectionsData, '');
+        }
         this.state = {
-            // current: new RecipeFormRecipeState( ),
-            // prior: new RecipeFormRecipeState( ),
-
+            current: defaultRecipeState(),
+            existingRecipe: false,
+            nextUniqueIngredientLocalId: 0,
+            nextUniqueIngredientLocalId: 0,
+            photoPicker: new ExportedPhotoPickerState(false, null, null),
+            prior: defaultRecipeState(),
+            
             // Note that 'existingRecipe' will not be moved into  'RecipeFormRecipeState'
+            // The same goes for PhotoPicker external state
 
             description: '',
-            existingRecipe: false,
             featured: BackendConstants.models.recipe.defaults.featured,
             ingredients: [''],
-            photoPicker: new ExportedPhotoPickerState(false, null, null),
             previewPhotoId: null,
             previewPhotoUrl: null,
             priorRecipeState: {
@@ -364,11 +372,7 @@ class RecipeForm extends React.Component {
 
     componentDidMount () {
         if(this.props.recipeId) {
-            axios.get(`/api/v1/recipes/${this.props.recipeId}`, { 
-                params: {
-                    id: this.props.recipeId
-                }
-            })
+            axios.get(`/api/v1/recipes/${this.props.recipeId}`)
             .then(res => {
                 const sectionsData = mapSectionsData(res);
                 const attributes = res.data.data.attributes;

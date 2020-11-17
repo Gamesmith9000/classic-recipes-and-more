@@ -74,6 +74,16 @@ export function isNonNullNonArrayObject (targetObject) {
 }
 
 export function objectsHaveMatchingValues (obj1, obj2) {
+    const obj1IsValuelessFalsey = isValuelessFalsey(obj1);
+    const obj2IsValuelessFalsey = isValuelessFalsey(obj2);
+    
+    if(obj1IsValuelessFalsey === true || obj2IsValuelessFalsey === true) {
+        if(obj1IsValuelessFalsey === true && obj2IsValuelessFalsey === true) {
+            return (obj1 === obj2);
+        }
+        else { return false; }
+    }
+
     const obj1Keys = Object.keys(obj1);
     const obj2Keys = Object.keys(obj2);
 
