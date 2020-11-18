@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 import { ExportedPhotoPickerState, RecipeFormRecipeState, RecipeFormSectionState, TextSectionWithId } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
@@ -224,21 +225,25 @@ class RecipeForm extends React.Component {
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
             return (
-                <li className="ingredients-edits" key={element.localId}>
-                    <label>
-                        <input 
-                            className="ingredient-input"
-                            onChange={(event) => this.handleIngredientInputChange(event, arrayIndex)}
-                            type="text"
-                            value={this.state.current.ingredients[arrayIndex].textContent}
-                        />
-                        { ingredientList.length > 1 &&
-                            <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, arrayIndex)}>
-                                Delete
-                            </button>
-                        }
-                    </label>
-                </li>
+                <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
+                    { (provided) => (
+                        <li {...provided.dragHandleProps} {...provided.draggableProps} className="ingredient-edits" ref={provided.innerRef}>
+                            <label>
+                                <input 
+                                    className="ingredient-input"
+                                    onChange={(event) => this.handleIngredientInputChange(event, arrayIndex)}
+                                    type="text"
+                                    value={this.state.current.ingredients[arrayIndex].textContent}
+                                />
+                                { ingredientList.length > 1 &&
+                                    <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, arrayIndex)}>
+                                        Delete
+                                    </button>
+                                }
+                            </label>
+                        </li>
+                    )}
+                </Draggable>
             )
         });
     }
@@ -266,6 +271,20 @@ class RecipeForm extends React.Component {
             )
         });
         // [NOTE] Consider changing li key to something other than index.
+    }
+
+    onDragEnd = (result) => {
+        console.log('onDragEnd needs to differentiate between different drag drop sections, but currently does not');
+        if(!result.destination) { return; }
+
+        let newIngredientsState = this.state.current.ingredients.slice();
+        const movedItem = newIngredientsState.splice(result.source.index, 1)[0];
+        newIngredientsState.splice(result.destination.index, 0, movedItem);
+
+        let newCurrentState = this.state.current;
+        newCurrentState.ingredients = newIngredientsState;
+
+        this.setState({ current: newCurrentState });
     }
 
     renderPreviewPhotoControl = () => {
@@ -359,84 +378,93 @@ class RecipeForm extends React.Component {
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>
                 <h2>{this.state.existingRecipe === true ? 'Edit' : 'New'} Recipe</h2>
-                {this.state.existingRecipe === true && this.props.recipeId &&
-                    <p>ID: {this.props.recipeId}</p>
-                }
-                <label>
-                    Title
-                    <input 
-                        className="title-input"
-                        maxLength={BackendConstants.models.recipe.validations.title.maximum} 
-                        onChange={(event) => this.handleUpdateStateOfCurrent(event, 'title')}
-                        type="text"
-                        value={this.state.current.title}
-                    />
-                    <ValidationErrorDisplay 
-                        errorsObject = {this.state.errors}
-                        propertyName = "title"
-                    />
-                </label>
-                <br />
-                { this.renderPreviewPhotoControl() }
-                <br />
-                <label>
-                    Description
-                    <textarea 
-                        className="description-input"
-                        maxLength={BackendConstants.models.recipe.validations.description.maximum} 
-                        onChange={(event) => this.handleUpdateStateOfCurrent(event, 'description')}
-                        type="textarea"
-                        value={this.state.current.description}
-                    />
-                    <ValidationErrorDisplay 
-                        errorsObject = {this.state.errors}
-                        propertyName = "description"
-                    />
-                </label>
-                <br />
-                <label>
-                    Featured
-                    <input 
-                        checked={this.state.current.featured === true}
-                        className="featured-input"
-                        onChange={(event) => this.handleUpdateStateOfCurrent(event, 'featured', 'checked', false)}
-                        type="checkbox"
-                    />
-                </label>
-                <br />
-                <br />
-                <label>
-                    Ingredients
-                    <br />
-                    {this.state.current.ingredients &&
-                        this.mapIngredientInputs(this.state.current.ingredients)
+                <DragDropContext onDragEnd={this.onDragEnd}>
+                    {this.state.existingRecipe === true && this.props.recipeId &&
+                        <p>ID: {this.props.recipeId}</p>
                     }
-                    <button onClick={this.handleAddIngredient}>+</button>
-                </label>
-                <br />
-                <br />
-                <label>
-                    Sections
-                    <br />
-                    {this.state.sections &&
-                        this.mapSectionInputs(this.state.sections)
-                    }
-                    {<button onClick={this.handleAddSection}>+</button>}
-                </label>
-                <br/>
-                <br/>
-                { this.state.photoPicker.isOpen === false &&
-                    <Fragment>
-                        <hr />
-                        <button onClick={this.handleFormSubmit}>
-                            {this.state.existingRecipe === true ? 'Update' : 'Create'}
-                        </button>
-                        <button onClick={this.props.handleClose}>Close</button>
-                        <UnsavedChangesDisplay 
-                            hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}
+                    <label>
+                        Title
+                        <input 
+                            className="title-input"
+                            maxLength={BackendConstants.models.recipe.validations.title.maximum} 
+                            onChange={(event) => this.handleUpdateStateOfCurrent(event, 'title')}
+                            type="text"
+                            value={this.state.current.title}
                         />
-                    </Fragment>
-                }
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "title"
+                        />
+                    </label>
+                    <br />
+                    { this.renderPreviewPhotoControl() }
+                    <br />
+                    <label>
+                        Description
+                        <textarea 
+                            className="description-input"
+                            maxLength={BackendConstants.models.recipe.validations.description.maximum} 
+                            onChange={(event) => this.handleUpdateStateOfCurrent(event, 'description')}
+                            type="textarea"
+                            value={this.state.current.description}
+                        />
+                        <ValidationErrorDisplay 
+                            errorsObject = {this.state.errors}
+                            propertyName = "description"
+                        />
+                    </label>
+                    <br />
+                    <label>
+                        Featured
+                        <input 
+                            checked={this.state.current.featured === true}
+                            className="featured-input"
+                            onChange={(event) => this.handleUpdateStateOfCurrent(event, 'featured', 'checked', false)}
+                            type="checkbox"
+                        />
+                    </label>
+                    <br />
+                    <br />
+                    <label>
+                        Ingredients
+                        <br />
+                        <Droppable droppableId="ingredients-editor">
+                            { (provided) => (
+                                <ul {...provided.droppableProps} className="ingredients-editor" ref={provided.innerRef}>
+                                    { this.state.current.ingredients &&
+                                        this.mapIngredientInputs(this.state.current.ingredients)
+                                    }
+                                    {provided.placeholder}
+                                </ul>
+                            )}
+                        </Droppable>
+                        <button onClick={this.handleAddIngredient}>+</button>
+                    </label>
+                    <br />
+                    <br />
+                    <label>
+                        Sections
+                        <br />
+                        {this.state.sections &&
+                            this.mapSectionInputs(this.state.sections)
+                        }
+                        {<button onClick={this.handleAddSection}>+</button>}
+                    </label>
+                    <br/>
+                    <br/>
+                    { this.state.photoPicker.isOpen === false &&
+                        <Fragment>
+                            <hr />
+                            <button onClick={this.handleFormSubmit}>
+                                {this.state.existingRecipe === true ? 'Update' : 'Create'}
+                            </button>
+                            <button onClick={this.props.handleClose}>Close</button>
+                            <UnsavedChangesDisplay 
+                                hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}
+                            />
+                        </Fragment>
+                    }
+                </DragDropContext>
             </form>
         )
     }
