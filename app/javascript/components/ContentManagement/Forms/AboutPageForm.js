@@ -2,7 +2,7 @@ import axios from 'axios'
 import React from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
-import { AboutSectionData } from '../../Utilities/Constructors'
+import { TextSectionWithId } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
@@ -23,8 +23,8 @@ class AboutPageForm extends React.Component {
 
             this.setState({
                 nextUniqueLocalId: aboutPageSections.length, 
-                sections: aboutPageSections.map((value, index) => { return new AboutSectionData (index, value); }),
-                priorSectionsState: aboutPageSections.map((value, index) => { return new AboutSectionData (index, value); })
+                sections: aboutPageSections.map((value, index) => { return new TextSectionWithId (index, value); }),
+                priorSectionsState: aboutPageSections.map((value, index) => { return new TextSectionWithId (index, value); })
             });
         })
         .catch(err => console.log(err));
@@ -42,7 +42,7 @@ class AboutPageForm extends React.Component {
 
         const nextId = this.state.nextUniqueLocalId;
         let updatedSectionsState = this.state.sections.slice();
-        updatedSectionsState.push(new AboutSectionData(nextId, ''));
+        updatedSectionsState.push(new TextSectionWithId(nextId, ''));
 
         this.setState({
             nextUniqueLocalId: nextId + 1,

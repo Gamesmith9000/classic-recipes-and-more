@@ -1,21 +1,8 @@
-//[NOTE][REFACTOR] Consider replacing AboutSectionData & RecipeFormIngredientData with a single
-//                  constructor, as they share, & are unlikelu to have changes too, their structures.
-//                  Maybe something like TextSectionData, or TextSectionWithId, etc.
-
-export function AboutSectionData (localId, textContent) {
-    this.localId = localId;
-    this.textContent = textContent;
-}
-
-export function ExportedPhotoPickerState (isOpen, selectedPhotoId, selectedPhotoUrl) {
+export function ExportedPhotoPickerState (isOpen, selectedPhotoId, selectedPhotoUrl, locationId = 0) {
     this.isOpen = isOpen;
+    this.locationId = locationId;
     this.selectedPhotoId = selectedPhotoId;
     this.selectedPhotoUrl = selectedPhotoUrl;
-}
-
-export function RecipeFormIngredientData (localId, textContent) {
-    this.localId = localId;
-    this.textContent = textContent;
 }
 
 export function RecipeFormRecipeState (description, featured, ingredients, previewPhotoId, sections, title) {
@@ -34,4 +21,9 @@ export function RecipeFormSectionState (id, ordered_photo_ids, recipeId, text_co
     this.ordered_photo_ids = ordered_photo_ids,
     this.recipeId = recipeId,
     this.text_content = text_content   
+}
+
+export function TextSectionWithId (localId, textContent) {
+    this.localId = localId;
+    this.textContent = textContent;
 }

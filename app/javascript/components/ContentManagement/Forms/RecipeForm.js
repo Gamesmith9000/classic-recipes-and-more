@@ -1,9 +1,9 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 
-import { ExportedPhotoPickerState, RecipeFormIngredientData, RecipeFormRecipeState, RecipeFormSectionState } from '../../Utilities/Constructors'
+import { ExportedPhotoPickerState, RecipeFormRecipeState, RecipeFormSectionState, TextSectionWithId } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
-import { BackendConstants, bumpArrayElement, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapSectionsData } from '../../Utilities/ResponseDataHelpers'
 
 import PhotoPicker from '../Pickers/PhotoPicker'
@@ -14,20 +14,19 @@ class RecipeForm extends React.Component {
         const defaultRecipeState = () => { 
             // The default value for ingredients might be problematic
             const defaultSectionsData = [new RecipeFormSectionState(null, null, null, '')];
-            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, [''], null, defaultSectionsData, '');
+            const defaultIngredientsData = [new TextSectionWithId (0, '')]
+            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, defaultIngredientsData, null, defaultSectionsData, '');
         }
         this.state = {
             current: defaultRecipeState(),
             existingRecipe: false,
             nextUniqueIngredientLocalId: 0,
             nextUniqueSectionLocalId: 0,
-            photoPicker: new ExportedPhotoPickerState(false, null, null),
+            photoPicker: new ExportedPhotoPickerState(false, 0, null, null),
             previewPhotoUrl: null,
             prior: defaultRecipeState(),
             
-            ingredients: [''],
             priorRecipeState: {
-                ingredients: [''],
                 sections: [{
                     id: null,
                     ordered_photo_ids: null,
@@ -55,11 +54,26 @@ class RecipeForm extends React.Component {
         .catch(err => console.log(err));
     }
 
+    getIngredientIndexFromState = (localId) => {
+        for(let i = 0; i < this.state.current.ingredients.length; i++){
+            if(this.state.current.ingredients[i]?.localId === localId) { return i; }
+        }
+        return -1;
+    }
+
     handleAddIngredient = (event) => {
         event.preventDefault();
-        let updatedIngredientsState = this.state.ingredients.slice();
-        updatedIngredientsState.push('');
-        this.setState({ingredients: updatedIngredientsState});
+
+        const nextId = this.state.nextUniqueIngredientLocalId;
+        let ingredients = this.state.current.ingredients.slice();
+        ingredients.push(new TextSectionWithId(nextId, ''));
+
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState.ingredients = ingredients;
+        this.setState({ 
+            current: updatedCurrentState,
+            nextUniqueIngredientLocalId: nextId + 1
+        });
     }
 
     handleAddSection = (event) => {
@@ -88,9 +102,12 @@ class RecipeForm extends React.Component {
     handleDeleteIngredientButtonInput = (event, index) => {
         event.preventDefault();
         if(window.confirm("Are you sure you want to delete this ingredient?")) {
-            let newIngredientsState = this.state.ingredients.slice();
-            newIngredientsState.splice(index, 1);
-            this.setState({ingredients: newIngredientsState});
+            let ingredients = this.state.current.ingredients.slice();
+            ingredients.splice(index, 1);
+
+            let updatedCurrentState = this.state.current;
+            updatedCurrentState.ingredients = ingredients;
+            this.setState({ current: updatedCurrentState }); 
         }
     }
 
@@ -106,9 +123,10 @@ class RecipeForm extends React.Component {
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
-        const { ingredients, sections } = this.state;
+        const { sections } = this.state;
         const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.current.previewPhotoId;
+        const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
@@ -127,18 +145,21 @@ class RecipeForm extends React.Component {
                 errors: null,
                 prior: Object.assign({}, this.state.current),
                 priorRecipeState: {
-                    ingredients: this.state.ingredients,
                     sections: this.state.sections,
                 }
             });
         }
         else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
     }
-
+// needs update - test preventDefault on/off
     handleIngredientInputChange = (event, index) => {
-        let updatedIngredientsState = this.state.ingredients.slice();
-        updatedIngredientsState[index] = event.target.value;
-        this.setState({ingredients: updatedIngredientsState});
+        // event.preventDefault();
+
+        let ingredients = this.state.current.ingredients.slice();
+        ingredients[index] = event.target.value;
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState.ingredients = ingredients;
+        this.setState({ current: updatedCurrentState });
     }
 
     handlePreviewPhotoIdChange = (event) => {
@@ -189,7 +210,6 @@ class RecipeForm extends React.Component {
         if(this.state.existingRecipe !== true) { return false; }
         if(
             objectsHaveMatchingValues(this.state.current, this.state.prior) === false ||
-            objectsHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
             objectsHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
         ){ 
             return true; 
@@ -199,28 +219,28 @@ class RecipeForm extends React.Component {
     }
 
     mapIngredientInputs = (ingredientList) => {
-        return ingredientList.map((item, index) => {
+        return ingredientList.map((element, index) => {
+            const arrayIndex = this.getIngredientIndexFromState(element.localId);
+            if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
+
             return (
-            // [NOTE][OPTIMIZE] Proper key is needed
-            <li className="ingredients-edits" key={index}>
-                <label>
-                    {index}
-                    <input 
-                        className="ingredient-input"
-                        onChange={(event) => this.handleIngredientInputChange(event, index)}
-                        type="text"
-                        value={this.state.ingredients[index]}
-                    />
-                    { ingredientList.length > 1 &&
-                        <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, index)}>
-                            Delete
-                        </button>
-                    }
-                </label>
-            </li>
+                <li className="ingredients-edits" key={element.localId}>
+                    <label>
+                        <input 
+                            className="ingredient-input"
+                            onChange={(event) => this.handleIngredientInputChange(event, arrayIndex)}
+                            type="text"
+                            value={this.state.current.ingredients[arrayIndex].textContent}
+                        />
+                        { ingredientList.length > 1 &&
+                            <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, arrayIndex)}>
+                                Delete
+                            </button>
+                        }
+                    </label>
+                </li>
             )
         });
-        // [NOTE] Consider changing li key to something other than index.
     }
 
     mapSectionInputs = (sectionsList) => {
@@ -249,7 +269,7 @@ class RecipeForm extends React.Component {
     }
 
     renderPreviewPhotoControl = () => {
-        const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, selectedPhotoId } } = this.state;
+        const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
 
         if(previewPhotoId && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
 
@@ -258,7 +278,7 @@ class RecipeForm extends React.Component {
                 <label>
                     Preview Photo
                     <br/>
-                    { isOpen === true
+                    { (isOpen === true && locationId === 0)
                     ?
                         <PhotoPicker 
                             changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
@@ -306,7 +326,9 @@ class RecipeForm extends React.Component {
                 let sectionsLength;
 
                 const currentRecipeState = () => { 
-                    const ingredients = attributes.ingredients; // This will need to be reworked
+                    const ingredients = attributes.ingredients.map((value, index) => {
+                        return (new TextSectionWithId(index, value))
+                    });
                     const sections = sectionsData;              // This will need to be reworked
 
                     ingredientsLength = ingredients.length;
@@ -319,13 +341,11 @@ class RecipeForm extends React.Component {
                 this.setState({
                     current: currentRecipeState(),
                     existingRecipe: true,
-                    ingredients: attributes.ingredients,
                     nextUniqueIngredientLocalId: ingredientsLength,
                     nextUniqueSectionLocalId: sectionsLength,
                     previewPhotoUrl: null,
                     prior: currentRecipeState(),
                     priorRecipeState: {
-                        ingredients: attributes.ingredients,
                         sections: sectionsData,
                     },
                     sections: sectionsData
@@ -388,8 +408,8 @@ class RecipeForm extends React.Component {
                 <label>
                     Ingredients
                     <br />
-                    {this.state.ingredients &&
-                        this.mapIngredientInputs(this.state.ingredients)
+                    {this.state.current.ingredients &&
+                        this.mapIngredientInputs(this.state.current.ingredients)
                     }
                     <button onClick={this.handleAddIngredient}>+</button>
                 </label>
