@@ -14,7 +14,7 @@ class RecipeForm extends React.Component {
         const defaultRecipeState = () => { 
             // The default value for ingredients might be problematic
             const defaultSectionsData = [new RecipeFormSectionState(null, null, null, '')];
-            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, [''], null, null, defaultSectionsData, '');
+            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, [''], null, defaultSectionsData, '');
         }
         this.state = {
             current: defaultRecipeState(),
@@ -22,14 +22,12 @@ class RecipeForm extends React.Component {
             nextUniqueIngredientLocalId: 0,
             nextUniqueSectionLocalId: 0,
             photoPicker: new ExportedPhotoPickerState(false, null, null),
-            previewPhotoId: null,
             previewPhotoUrl: null,
             prior: defaultRecipeState(),
             
             ingredients: [''],
             priorRecipeState: {
                 ingredients: [''],
-                previewPhotoId: null,
                 sections: [{
                     id: null,
                     ordered_photo_ids: null,
@@ -48,7 +46,7 @@ class RecipeForm extends React.Component {
     }
 
     attemptPreviewImageUrlFetch = () => {
-        axios.get(`/api/v1/photos/${this.state.previewPhotoId}`)
+        axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}`)
         .then(res => {
             //[NOTE][HARD-CODED] Image preview size is hard coded and the same across recipes
             const url = res.data?.data?.attributes?.file?.small?.url;
@@ -78,8 +76,11 @@ class RecipeForm extends React.Component {
 
     handleClearPreviewPhoto = (event) => {
         event.preventDefault();
+
+        let currentState = this.state.current;
+        currentState.previewPhotoId = null;
         this.setState({ 
-            previewPhotoId: null,
+            current: currentState,
             previewPhotoUrl: null
         });
     }
@@ -107,7 +108,7 @@ class RecipeForm extends React.Component {
         setAxiosCsrfToken();
         const { ingredients, sections } = this.state;
         const { description, featured, title } = this.state.current;
-        const preview_photo_id = this.state.previewPhotoId;
+        const preview_photo_id = this.state.current.previewPhotoId;
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
@@ -127,7 +128,6 @@ class RecipeForm extends React.Component {
                 prior: Object.assign({}, this.state.current),
                 priorRecipeState: {
                     ingredients: this.state.ingredients,
-                    previewPhotoId: this.state.previewPhotoId,
                     sections: this.state.sections,
                 }
             });
@@ -152,8 +152,11 @@ class RecipeForm extends React.Component {
         photoPickerState.selectedPhotoId = null;
         photoPickerState.selectedPhotoUrl = null;
 
+        let currentState = this.state.current;
+        currentState.previewPhotoId = newId;
+
         this.setState({
-            previewPhotoId: newId,
+            current: currentState,
             previewPhotoUrl: newUrl,
             photoPicker: photoPickerState
         });
@@ -185,7 +188,6 @@ class RecipeForm extends React.Component {
     isExistingRecipeWithChanges = () => {
         if(this.state.existingRecipe !== true) { return false; }
         if(
-            this.state.previewPhotoId !== this.state.priorRecipeState.previewPhotoId || 
             objectsHaveMatchingValues(this.state.current, this.state.prior) === false ||
             objectsHaveMatchingValues(this.state.ingredients, this.state.priorRecipeState.ingredients) === false ||
             objectsHaveMatchingValues(this.state.sections, this.state.priorRecipeState.sections) === false
@@ -247,7 +249,7 @@ class RecipeForm extends React.Component {
     }
 
     renderPreviewPhotoControl = () => {
-        const { previewPhotoId, previewPhotoUrl, photoPicker: { isOpen, selectedPhotoId } } = this.state;
+        const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, selectedPhotoId } } = this.state;
 
         if(previewPhotoId && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
 
@@ -311,7 +313,7 @@ class RecipeForm extends React.Component {
                     sectionsLength = sections.length;
 
                     return new RecipeFormRecipeState(attributes.description, attributes.featured, ingredients, 
-                        attributes.preview_photo_id, null, sections, attributes.title);
+                        attributes.preview_photo_id, sections, attributes.title);
                 }
                 
                 this.setState({
@@ -320,12 +322,10 @@ class RecipeForm extends React.Component {
                     ingredients: attributes.ingredients,
                     nextUniqueIngredientLocalId: ingredientsLength,
                     nextUniqueSectionLocalId: sectionsLength,
-                    previewPhotoId: attributes.preview_photo_id,
                     previewPhotoUrl: null,
                     prior: currentRecipeState(),
                     priorRecipeState: {
                         ingredients: attributes.ingredients,
-                        previewPhotoId: attributes.preview_photo_id,
                         sections: sectionsData,
                     },
                     sections: sectionsData
@@ -381,7 +381,6 @@ class RecipeForm extends React.Component {
                         className="featured-input"
                         onChange={(event) => this.handleUpdateStateOfCurrent(event, 'featured', 'checked', false)}
                         type="checkbox"
-                        
                     />
                 </label>
                 <br />

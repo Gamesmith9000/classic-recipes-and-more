@@ -18,14 +18,11 @@ export function RecipeFormIngredientData (localId, textContent) {
     this.textContent = textContent;
 }
 
-export function RecipeFormRecipeState (description, featured, ingredients, previewPhotoId, 
-    previewPhotoUrl, sections, title
-) {
+export function RecipeFormRecipeState (description, featured, ingredients, previewPhotoId, sections, title) {
     this.description = description,
     this.featured = featured,
     this.ingredients = ingredients,
     this.previewPhotoId = previewPhotoId,
-    this.previewPhotoUrl = previewPhotoUrl,
     this.sections = sections,
     this.title = title
 }
