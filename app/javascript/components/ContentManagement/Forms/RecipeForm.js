@@ -22,11 +22,11 @@ class RecipeForm extends React.Component {
             nextUniqueIngredientLocalId: 0,
             nextUniqueSectionLocalId: 0,
             photoPicker: new ExportedPhotoPickerState(false, null, null),
+            previewPhotoId: null,
+            previewPhotoUrl: null,
             prior: defaultRecipeState(),
             
             ingredients: [''],
-            previewPhotoId: null,
-            previewPhotoUrl: null,
             priorRecipeState: {
                 ingredients: [''],
                 previewPhotoId: null,
@@ -55,7 +55,6 @@ class RecipeForm extends React.Component {
             this.setState({ previewPhotoUrl: url });
         })
         .catch(err => console.log(err));
-
     }
 
     handleAddIngredient = (event) => {
@@ -83,7 +82,6 @@ class RecipeForm extends React.Component {
             previewPhotoId: null,
             previewPhotoUrl: null
         });
-        
     }
 
     handleChangeSelectedPhotoId = (newPhotoId) => {
@@ -96,12 +94,6 @@ class RecipeForm extends React.Component {
         let photoPickerState = this.state.photoPicker;
         photoPickerState.selectedPhotoUrl = newPhotoUrl ? newPhotoUrl: null;
         this.setState({ photoPicker: photoPickerState });
-    }
-
-    handleDescriptionInputChange = (event) => {
-        let newRecipeState = this.state.current;
-        newRecipeState.description = event.target.value;
-        this.setState({ current: newRecipeState });
     }
 
     handleDeleteIngredientButtonInput = (event, index) => {
@@ -120,12 +112,6 @@ class RecipeForm extends React.Component {
             newSectionsState.splice(index, 1);
             this.setState({sections: newSectionsState});
         }
-    }
-
-    handleFeaturedInputChange = (event) => {
-        let newRecipeState = this.state.current;
-        newRecipeState.featured = event.target.checked;
-        this.setState({ current: newRecipeState });
     }
 
     handleFormSubmit = (event) => {
@@ -189,12 +175,6 @@ class RecipeForm extends React.Component {
         let updatedSectionsState = this.state.sections.slice();
         updatedSectionsState[index].text_content = event.target.value;
         this.setState({sections: updatedSectionsState});
-    }
-
-    handleTitleInputChange = (event) => {
-        let newRecipeState = this.state.current;
-        newRecipeState.title = event.target.value;
-        this.setState({ current: newRecipeState });
     }
 
     handleTogglePhotoPickerOpenState = (event) => {
@@ -267,6 +247,15 @@ class RecipeForm extends React.Component {
             )
         });
         // [NOTE] Consider changing li key to something other than index.
+    }
+
+    updateStateOfCurrent = (event, propertyName, propertyOfEventTarget='value', preventDefault = true) => {
+        if(event && preventDefault === true) { event.preventDefault(); }
+        if(!event || !propertyName || !propertyOfEventTarget || !this.state?.current) { return; }
+
+        let newRecipeState = this.state.current;
+        newRecipeState[propertyName] = event.target?.[propertyOfEventTarget];
+        this.setState({ current: newRecipeState });
     }
 
     renderPreviewPhotoControl = () => {
@@ -364,7 +353,7 @@ class RecipeForm extends React.Component {
                     <input 
                         className="title-input"
                         maxLength={BackendConstants.models.recipe.validations.title.maximum} 
-                        onChange={this.handleTitleInputChange}
+                        onChange={(event) => this.updateStateOfCurrent(event, 'title')}
                         type="text"
                         value={this.state.current.title}
                     />
@@ -381,7 +370,7 @@ class RecipeForm extends React.Component {
                     <textarea 
                         className="description-input"
                         maxLength={BackendConstants.models.recipe.validations.description.maximum} 
-                        onChange={this.handleDescriptionInputChange}
+                        onChange={(event) => this.updateStateOfCurrent(event, 'description')}
                         type="textarea"
                         value={this.state.current.description}
                     />
@@ -394,10 +383,11 @@ class RecipeForm extends React.Component {
                 <label>
                     Featured
                     <input 
-                        checked={this.state.current.featured}
+                        checked={this.state.current.featured === true}
                         className="featured-input"
-                        onChange={this.handleFeaturedInputChange}
+                        onChange={(event) => this.updateStateOfCurrent(event, 'featured', 'checked', false)}
                         type="checkbox"
+                        
                     />
                 </label>
                 <br />
