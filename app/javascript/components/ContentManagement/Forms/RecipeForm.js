@@ -13,10 +13,8 @@ class RecipeForm extends React.Component {
     constructor() {
         super();
         const defaultRecipeState = () => { 
-            // The default value for ingredients might be problematic
             const defaultSectionsData = [new RecipeFormSectionState(null, null, null, '')];
-            const defaultIngredientsData = [new TextSectionWithId (0, '')]
-            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, defaultIngredientsData, null, defaultSectionsData, '');
+            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, null, null, defaultSectionsData, '');
         }
         this.state = {
             current: defaultRecipeState(),
@@ -152,12 +150,11 @@ class RecipeForm extends React.Component {
         }
         else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
     }
-// needs update - test preventDefault on/off
-    handleIngredientInputChange = (event, index) => {
-        // event.preventDefault();
 
+    handleIngredientInputChange = (event, index) => {
         let ingredients = this.state.current.ingredients.slice();
-        ingredients[index] = event.target.value;
+        ingredients[index].textContent = event.target.value;
+        
         let updatedCurrentState = this.state.current;
         updatedCurrentState.ingredients = ingredients;
         this.setState({ current: updatedCurrentState });
@@ -220,6 +217,7 @@ class RecipeForm extends React.Component {
     }
 
     mapIngredientInputs = (ingredientList) => {
+        console.log(ingredientList);
         return ingredientList.map((element, index) => {
             const arrayIndex = this.getIngredientIndexFromState(element.localId);
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
@@ -274,15 +272,18 @@ class RecipeForm extends React.Component {
     }
 
     onDragEnd = (result) => {
-        console.log('onDragEnd needs to differentiate between different drag drop sections, but currently does not');
+        console.log(result);
         if(!result.destination) { return; }
-
-        let newIngredientsState = this.state.current.ingredients.slice();
-        const movedItem = newIngredientsState.splice(result.source.index, 1)[0];
-        newIngredientsState.splice(result.destination.index, 0, movedItem);
+        if(result.destination.droppableId !== result.source?.droppableId) { return; }
 
         let newCurrentState = this.state.current;
-        newCurrentState.ingredients = newIngredientsState;
+
+        if(result.destination.droppableId === 'ingredients-editor') {
+            let newIngredientsState = this.state.current.ingredients.slice();
+            const movedItem = newIngredientsState.splice(result.source.index, 1)[0];
+            newIngredientsState.splice(result.destination.index, 0, movedItem);
+            newCurrentState.ingredients = newIngredientsState;
+        }
 
         this.setState({ current: newCurrentState });
     }
