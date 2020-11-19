@@ -1,3 +1,5 @@
+import { RecipeFormSectionState } from './Constructors'
+
 function getProperDataForAttributes (res) {
     // Find the location of the proper model data from Axios response, utilizing fast_jsonapi's formatting
     // Requires at least one item in response
@@ -75,11 +77,10 @@ export function getSortablePropertyNamesFromAttributes (res, ignoredPropertiesLi
     return validProperties;
 }
 
-export function mapSectionsData (responseData) {
-    return responseData.data.included.map((value) => {
-        let sectionData = value.attributes;
-        sectionData.id = value.id;
-        return sectionData;
+export function mapRecipeSectionsData (responseData) {
+    return responseData.data.included.map((value, index) => {
+        const { ordered_photo_ids, recipe_id, text_content } = value.attributes;
+        return new RecipeFormSectionState (index, ordered_photo_ids, recipe_id, text_content);
     });
 }
 

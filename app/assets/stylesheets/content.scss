@@ -41,12 +41,6 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     .ingredients-edits > label, .paragraph-edits > label {
         display: flex;
     }
-//  [NOTE] This will need to be deleted after drag-and-drop is fully implemented (class will then be unused)
-    .move-item {
-        &.hidden {
-            visibility: hidden;
-        }
-    }
 
     .page-selector, .section-selector {
         display: flex;
@@ -78,7 +72,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 }
 
 .recipe-form {
-    .ingredient-edits, .preview-photo {
+    .ingredient-edits, .preview-photo, .section-edits {
         background-color: gray;
         border: 1px darkgray solid;
     }
@@ -90,6 +84,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     .recipe-preview > & {
         grid-template-columns: repeat(3, 1fr);
     }
+
     .photo-preview > & {
         grid-template-rows: repeat(3, 1fr); // [NOTE][STYLE] Photo preview currently assumes that there will be 3 buttons, but this will not always be the case
         min-height: $max-photo-preview-height;

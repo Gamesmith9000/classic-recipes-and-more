@@ -14,10 +14,12 @@ export function RecipeFormRecipeState (description, featured, ingredients, previ
     this.title = title
 }
 
-export function RecipeFormSectionState (id, ordered_photo_ids, recipeId, text_content) {
-    // Note the use of the snake case to easy conversion for back-end
+export function RecipeFormSectionState (localId, ordered_photo_ids, recipeId, text_content) {
+    // Note the use of the snake case to easy conversion for back-end.
+    // Several pieces of data are retained which aid in form submission
+    //  (i.e. when using from mapRecipeSectionsData)
 
-    this.id = id,
+    this.localId = localId,
     this.ordered_photo_ids = ordered_photo_ids,
     this.recipeId = recipeId,
     this.text_content = text_content   
