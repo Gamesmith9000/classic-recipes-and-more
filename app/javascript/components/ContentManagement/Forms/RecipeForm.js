@@ -38,6 +38,16 @@ class RecipeForm extends React.Component {
         .catch(err => console.log(err));
     }
 
+    dragEndStateUpdate = (dragResult, listProperty) => {
+        let newCurrentState = this.state.current;
+        let newItemsState = this.state.current[listProperty].slice();
+        const movedItem = newItemsState.splice(dragResult.source.index, 1)[0];
+
+        newItemsState.splice(dragResult.destination.index, 0, movedItem);
+        newCurrentState[listProperty] = newItemsState;
+        this.setState({ current: newCurrentState });
+    }
+
     getIngredientIndexFromState = (localId) => {
         for(let i = 0; i < this.state.current.ingredients.length; i++){
             if(this.state.current.ingredients[i]?.localId === localId) { return i; }
@@ -221,12 +231,12 @@ class RecipeForm extends React.Component {
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
             return (
-                <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
+                <Draggable draggableId={`ingr-${element.localId}`} index={index} key={element.localId}>
                     { (provided) => (
                         <li {...provided.dragHandleProps} {...provided.draggableProps} className="ingredient-edits" ref={provided.innerRef}>
                             <label>
                                 <input 
-                                    className="ingredient-input"
+                                    className="ingredient-text-input"
                                     onChange={(event) => this.handleIngredientTextInputChange(event, arrayIndex)}
                                     type="text"
                                     value={this.state.current.ingredients[arrayIndex].textContent}
@@ -250,39 +260,47 @@ class RecipeForm extends React.Component {
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
             return (
-                <li className="section-edits" key={element.localId}>
-                    <label>
-                        <textarea 
-                            className="section-text-input" 
-                            onChange={(event) => this.handleSectionTextInputChange(event, arrayIndex)}
-                            value={this.state.current.sections[arrayIndex].text_content}
-                        />
-                        { sectionsList.length > 1 && 
-                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
-                                Delete
-                            </button>
-                        }
-                    </label>
-                </li>
+                <Draggable draggableId={`sect-${element.localId}`} index={index} key={element.localId}>
+                    { (provided) => (
+                        <li {...provided.dragHandleProps} {...provided.draggableProps} className="section-edits" ref={provided.innerRef}>
+                            <label>
+                                <textarea 
+                                    className="section-text-input" 
+                                    onChange={(event) => this.handleSectionTextInputChange(event, arrayIndex)}
+                                    value={this.state.current.sections[arrayIndex].text_content}
+                                />
+                                { sectionsList.length > 1 && 
+                                    <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
+                                        Delete
+                                    </button>
+                                }
+                            </label>
+                        </li>
+                    )}
+                </Draggable>
             )
         });
     }
 
+
+
     onDragEnd = (result) => {
-        console.log(result);
         if(!result.destination) { return; }
-        if(result.destination.droppableId !== result.source?.droppableId) { return; }
 
-        let newCurrentState = this.state.current;
-
-        if(result.destination.droppableId === 'ingredients-editor') {
-            let newIngredientsState = this.state.current.ingredients.slice();
-            const movedItem = newIngredientsState.splice(result.source.index, 1)[0];
-            newIngredientsState.splice(result.destination.index, 0, movedItem);
-            newCurrentState.ingredients = newIngredientsState;
+        let listProperty;
+        
+        switch(result.destination.droppableId) {
+            case 'ingredients-editor':
+                listProperty = 'ingredients'
+                break;
+            case 'sections-editor':
+                listProperty = 'sections'
+                break;
+            default:
+                listProperty = null;
         }
 
-        this.setState({ current: newCurrentState });
+        if(listProperty) { this.dragEndStateUpdate(result, listProperty); }
     }
 
     renderPreviewPhotoControl = () => {
@@ -423,7 +441,7 @@ class RecipeForm extends React.Component {
                     <label>
                         Ingredients
                         <br />
-                        <Droppable droppableId="ingredients-editor">
+                        <Droppable droppableId="ingredients-editor" type="ingredient">
                             { (provided) => (
                                 <ul {...provided.droppableProps} className="ingredients-editor" ref={provided.innerRef}>
                                     { this.mapIngredientInputs(this.state.current.ingredients) }
@@ -438,8 +456,15 @@ class RecipeForm extends React.Component {
                     <label>
                         Sections
                         <br />
-                        { this.mapSectionInputs(this.state.current.sections) }
-                        {<button onClick={this.handleAddSection}>+</button>}
+                        <Droppable droppableId="sections-editor" type="section">
+                            { (provided) => (
+                                <ul {...provided.droppableProps} className="sections-editor" ref={provided.innerRef}>
+                                    { this.mapSectionInputs(this.state.current.sections) }
+                                    {provided.placeholder}
+                                </ul>
+                            )}
+                        </Droppable>
+                        <button onClick={this.handleAddSection}>+</button>
                     </label>
                     <br/>
                     <br/>

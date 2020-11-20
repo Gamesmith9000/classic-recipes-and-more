@@ -72,6 +72,9 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 }
 
 .recipe-form {
+    li {
+        list-style-type: none;
+    }
     .ingredient-edits, .preview-photo, .section-edits {
         background-color: gray;
         border: 1px darkgray solid;
