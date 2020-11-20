@@ -22,7 +22,7 @@ class RecipeForm extends React.Component {
             existingRecipe: false,
             nextUniqueIngredientLocalId: 1,
             nextUniqueSectionLocalId: 1,
-            photoPicker: new ExportedPhotoPickerState(false, 0, null, null),
+            photoPicker: new ExportedPhotoPickerState(false, 0, null, 0),
             previewPhotoUrl: null,
             prior: defaultRecipeState()
         }
