@@ -109,7 +109,7 @@ class RecipeForm extends React.Component {
 
     handleDeleteSectionButtonInput = (event, index) => {
         event.preventDefault();
-        
+
         if(window.confirm("Are you sure you want to delete this section?")) {
             let sections = this.state.current.sections.slice();
             sections.splice(index, 1);
@@ -124,9 +124,14 @@ class RecipeForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        const { description, featured, sections, title } = this.state.current;
+        const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.current.previewPhotoId;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
+        const sections = this.state.current.sections.map((element, index)=>{
+            const section = Object.assign({}, element);
+            delete section.localId;
+            return section;
+        });
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
@@ -363,6 +368,8 @@ class RecipeForm extends React.Component {
     }
 
     render() {
+        const allowSubmit = (this.state.existingRecipe === false || !objectsHaveMatchingValues(this.state.current, this.state.prior));
+
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>
                 <h2>{this.state.existingRecipe === true ? 'Edit' : 'New'} Recipe</h2>
@@ -439,13 +446,11 @@ class RecipeForm extends React.Component {
                     { this.state.photoPicker.isOpen === false &&
                         <Fragment>
                             <hr />
-                            <button onClick={this.handleFormSubmit}>
+                            <button disabled={allowSubmit === false} onClick={this.handleFormSubmit}>
                                 {this.state.existingRecipe === true ? 'Update' : 'Create'}
                             </button>
                             <button onClick={this.props.handleClose}>Close</button>
-                            <UnsavedChangesDisplay 
-                                hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}
-                            />
+                            <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
                         </Fragment>
                     }
                 </DragDropContext>

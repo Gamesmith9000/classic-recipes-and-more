@@ -110,7 +110,7 @@ class PhotoEditForm extends React.Component {
                         />
                     </label>
                     <br/>
-                    <button onClick={this.handleFormSubmit}>Update</button>
+                    <button disabled={this.hasChanges() === false} onClick={this.handleFormSubmit}>Update</button>
                     <button onClick={this.props.handleClose}>Close</button>
                     <UnsavedChangesDisplay hasUnsavedChanges={this.hasChanges() === true} />
                 </form>
