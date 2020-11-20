@@ -80,7 +80,7 @@ export function getSortablePropertyNamesFromAttributes (res, ignoredPropertiesLi
 export function mapRecipeSectionsData (responseData) {
     return responseData.data.included.map((value, index) => {
         const { ordered_photo_ids, recipe_id, text_content } = value.attributes;
-        return new RecipeFormSectionState (index, ordered_photo_ids, recipe_id, text_content);
+        return new RecipeFormSectionState (value.id, index, ordered_photo_ids, recipe_id, text_content);
     });
 }
 

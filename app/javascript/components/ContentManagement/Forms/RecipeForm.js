@@ -14,7 +14,7 @@ class RecipeForm extends React.Component {
         super();
         const defaultRecipeState = () => { 
             const defaultIngredientsData = [new TextSectionWithId (0, '')]
-            const defaultSectionsData = [new RecipeFormSectionState (0, null, null, '')];
+            const defaultSectionsData = [new RecipeFormSectionState (null, 0, [], null, '')];
             return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, defaultIngredientsData, null, defaultSectionsData, '');
         }
         this.state = {
@@ -24,7 +24,7 @@ class RecipeForm extends React.Component {
             nextUniqueSectionLocalId: 1,
             photoPicker: new ExportedPhotoPickerState(false, 0, null, null),
             previewPhotoUrl: null,
-            prior: defaultRecipeState(),
+            prior: defaultRecipeState()
         }
     }
 
@@ -41,6 +41,13 @@ class RecipeForm extends React.Component {
     getIngredientIndexFromState = (localId) => {
         for(let i = 0; i < this.state.current.ingredients.length; i++){
             if(this.state.current.ingredients[i]?.localId === localId) { return i; }
+        }
+        return -1;
+    }
+
+    getSectionIndexFromState = (localId) => {
+        for(let i = 0; i < this.state.current.sections.length; i++){
+            if(this.state.current.sections[i]?.localId === localId) { return i; }
         }
         return -1;
     }
@@ -62,14 +69,18 @@ class RecipeForm extends React.Component {
 
     handleAddSection = (event) => {
         event.preventDefault();
-        let updatedSectionsState = this.state.sections.slice();
-        updatedSectionsState.push({
-            id: null,
-            ordered_photo_ids: null,
-            recipeId: null,
-            text_content: ''
+
+        const nextId = this.state.nextUniqueSectionLocalId;
+        const recipeId = this.state.existingRecipe === true ? this.state.current.sections[0].recipe_id : null;
+        let sections = this.state.current.sections.slice();
+        sections.push(new RecipeFormSectionState(null, nextId, [], recipeId, ''));
+
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState.sections = sections;
+        this.setState({
+            current:updatedCurrentState,
+            nextUniqueSectionLocalId: nextId + 1
         });
-        this.setState({sections: updatedSectionsState});
     }
 
     handleClearPreviewPhoto = (event) => {
@@ -85,6 +96,7 @@ class RecipeForm extends React.Component {
 
     handleDeleteIngredientButtonInput = (event, index) => {
         event.preventDefault();
+
         if(window.confirm("Are you sure you want to delete this ingredient?")) {
             let ingredients = this.state.current.ingredients.slice();
             ingredients.splice(index, 1);
@@ -97,10 +109,14 @@ class RecipeForm extends React.Component {
 
     handleDeleteSectionButtonInput = (event, index) => {
         event.preventDefault();
+        
         if(window.confirm("Are you sure you want to delete this section?")) {
-            let newSectionsState = this.state.sections.slice();
-            newSectionsState.splice(index, 1);
-            this.setState({sections: newSectionsState});
+            let sections = this.state.current.sections.slice();
+            sections.splice(index, 1);
+
+            let updatedCurrentState = this.state.current;
+            updatedCurrentState.sections = sections;
+            this.setState({ current: updatedCurrentState});
         }
     }
 
@@ -164,9 +180,12 @@ class RecipeForm extends React.Component {
     }
 
     handleSectionTextInputChange = (event, index) => {
-        let updatedSectionsState = this.state.sections.slice();
-        updatedSectionsState[index].text_content = event.target.value;
-        this.setState({sections: updatedSectionsState});
+        let sections = this.state.current.sections.slice();
+        sections[index].text_content = event.target.value;
+
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState.sections = sections;
+        this.setState({ current: updatedCurrentState });
     }
 
     handleTogglePhotoPickerOpenState = (event) => {
@@ -221,39 +240,27 @@ class RecipeForm extends React.Component {
     }
 
     mapSectionInputs = (sectionsList) => {
-        // Temporary items:
-        if(!sectionsList) {
-            console.log('sectionsList is falsey. Exiting');
-            return;
-        }
-        if(!this.state.sections){
-            console.log('This function still relies on state.sections. Exiting')
-            return;
-        }
+        return sectionsList.map((element, index) => {
+            const arrayIndex = this.getSectionIndexFromState(element.localId);
+            if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
-        console.log(sectionsList);
-        return sectionsList.map((item, index) => {
             return (
-            // [NOTE][OPTIMIZE] Proper key is needed
-            <li className="section-edits" key={index}>
-                <label>
-                    {index}
-                    <textarea 
-                        className="section-text-input" 
-                        onChange={(event) => this.handleSectionTextInputChange(event, index)}
-                        value={this.state.sections[index].text_content}
-                    />
-
-                    { sectionsList.length > 1 && 
-                        <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, index)}>
-                            Delete
-                        </button>
-                    }
-                </label>
-            </li>
+                <li className="section-edits" key={element.localId}>
+                    <label>
+                        <textarea 
+                            className="section-text-input" 
+                            onChange={(event) => this.handleSectionTextInputChange(event, arrayIndex)}
+                            value={this.state.current.sections[arrayIndex].text_content}
+                        />
+                        { sectionsList.length > 1 && 
+                            <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
+                                Delete
+                            </button>
+                        }
+                    </label>
+                </li>
             )
         });
-        // [NOTE] Consider changing li key to something other than index.
     }
 
     onDragEnd = (result) => {
@@ -325,11 +332,11 @@ class RecipeForm extends React.Component {
             axios.get(`/api/v1/recipes/${this.props.recipeId}`)
             .then(res => {
                 const attributes = res.data.data.attributes;
-                const sections = mapRecipeSectionsData(res);
                 let ingredientsLength;
                 let sectionsLength;
 
                 const currentRecipeState = () => { 
+                    const sections = mapRecipeSectionsData(res);
                     const ingredients = attributes.ingredients.map((value, index) => {
                         return (new TextSectionWithId(index, value))
                     });
@@ -348,7 +355,7 @@ class RecipeForm extends React.Component {
                     nextUniqueIngredientLocalId: ingredientsLength,
                     nextUniqueSectionLocalId: sectionsLength,
                     previewPhotoUrl: null,
-                    prior: currentRecipeState(),
+                    prior: currentRecipeState()
                 });
             })
             .catch(err => console.log(err));
