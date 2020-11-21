@@ -9,9 +9,10 @@ class Navbar extends React.Component {
                 <div className="navbar-links-section">
                     <Link to="/" className="navbar-link">Home</Link> 
                     <Link to="/about" className="navbar-link">About</Link>
-                    <Link to="/cookbook" className="navbar-link">Our Cookbook</Link>
+                    <Link to="/cookbook" className="navbar-link">Cookbook</Link>
                     <Link to="/recipe-photos" className="navbar-link">Photo Gallery</Link>
                     <Link to="/seasonal" className="navbar-link">Seasonal Recipes</Link>
+                    <Link to="/shop" className="navbar-link">Shop</Link>
                     <Link to="/cooking-videos" className="navbar-link">Videos</Link>
                     
                     <Link to="/content" className="navbar-link">CONTENT MANAGER HOME</Link>

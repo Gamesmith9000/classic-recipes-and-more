@@ -7,6 +7,8 @@ import CookingVideos from './Pages/CookingVideos'
 import Home from './Pages/Home'
 import RecipePhotos from './Pages/RecipePhotos'
 import SeasonalRecipes from './Pages/SeasonalRecipes'
+import Shop from './Pages/Shop'
+
 
 import ContentMasterManager from './ContentManagement/Managers/ContentMasterManager'
 
@@ -48,6 +50,7 @@ function App(props) {
                 <Route exact path="/cookbook" component={Cookbook} />
                 <Route exact path="/cooking-videos" component={CookingVideos} />
                 <Route exact path="/recipe-photos" component={RecipePhotos} />
+                <Route exact path="/shop" component={Shop} />
                 <Route exact path="/seasonal" component={SeasonalRecipes} />
 
                 {renderProtectedRoute("/content", ContentMasterManager)}
