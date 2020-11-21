@@ -134,14 +134,12 @@ class RecipeForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
+        const existingRecipe = this.state.existingRecipe;
+
         const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.current.previewPhotoId;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
-        const sections = this.state.current.sections.map((element, index)=>{
-            const section = Object.assign({}, element);
-            delete section.localId;
-            return section;
-        });
+        const sections = this.prepareSectionDataForSubmit();
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
@@ -301,6 +299,47 @@ class RecipeForm extends React.Component {
         }
 
         if(listProperty) { this.dragEndStateUpdate(result, listProperty); }
+    }
+
+    prepareSectionDataForSubmit = () => {
+        let sections = this.state.current.sections.slice().map((element) => {
+            const section = Object.assign({}, element);
+            delete section.localId;
+            return section;
+        });
+
+        console.log(sections);
+
+        const priorSections = this.state.prior.sections;
+
+        if(this.state.existingRecipe === true) {
+            let priorIds = [];
+            for(let i = 0; i < priorSections.length; i++) {
+                const idValue = priorSections[i].id
+                console.log(idValue);
+                if(!isValuelessFalsey(idValue)) {
+                    priorIds.push(idValue);
+                }
+            }
+
+            priorIds.sort();
+
+            console.log(priorIds);
+
+            const moreSectionsAdded = !(priorSections.length >= sections.length);
+
+            console.log(`moreSectionsAdded? ${moreSectionsAdded}`);
+
+            for(let i = 0; i < this.state.current.sections.length; i++) {
+                const inRange = !(moreSectionsAdded === true && i >= priorIds.length);
+                console.log(`Is ${i} in range? ${inRange}`);
+                sections[i].id = inRange === true ? priorIds[i] : null;
+            }          
+        
+            console.log(sections);
+        }
+
+        return sections;
     }
 
     renderPreviewPhotoControl = () => {
