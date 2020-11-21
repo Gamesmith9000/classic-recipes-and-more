@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { ContentSectionsInfo } from '../../ComponentHelpers';
+import { ContentSectionsInfo } from '../Utilities/ComponentHelpers';
 
 class SectionSelector extends React.Component {
     //  [NOTE][REFACTOR] This will need to be refactored (and renamed) into a 'picker'

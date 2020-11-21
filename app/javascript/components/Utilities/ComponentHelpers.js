@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react'
-import PageManager from './components/ContentManagement/Managers/PageManager'
-import PhotoManager from './components/ContentManagement/Managers/PhotoManager'
-import RecipeManager from './components/ContentManagement/Managers/RecipeManager'
+
 import { validationErrorsToString } from './Helpers'
+import PageManager from '../ContentManagement/Managers/PageManager'
+import PhotoManager from '../ContentManagement/Managers/PhotoManager'
+import RecipeManager from '../ContentManagement/Managers/RecipeManager'
 
 
 export const ContentSectionsInfo = {
@@ -44,6 +45,19 @@ export function EmptyPickerEntriesDisplay (props) {
             { `No ${itemName}s have been added yet.` }
         </p>
     );
+}
+
+export function FlashMessagesDisplay (props) {
+    return (
+        <div className="flash-messages">
+            { flashMessages.alert &&
+                <p className="flash-alert">{flashMessages.alert}</p>
+            }
+            { flashMessages.notice &&
+                <p className="flash-notice">{flashMessages.notice}</p>
+            }
+        </div>
+    )
 }
 
 export function UnsavedChangesDisplay (props) {

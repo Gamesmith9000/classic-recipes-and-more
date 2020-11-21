@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react'
-import SectionSelector from './SectionSelector';
-import { ContentSectionsInfo } from '../../ComponentHelpers';
+import SectionSelector from '../SectionSelector';
+import { ContentSectionsInfo } from '../../Utilities/ComponentHelpers';
 
-class ContentManagementDashboard extends React.Component {
+class ContentMasterManager extends React.Component {
     constructor () {
         super();
         this.state = ({
             contentSectionOpen: true,
-            selectedContentSection: 0
+            selectedContentSection: 1
         });
     }
 
@@ -22,15 +22,11 @@ class ContentManagementDashboard extends React.Component {
     }
     
     closeContentSection = () => {
-        this.setState({
-            contentSectionOpen: false
-        });
+        this.setState({ contentSectionOpen: false });
     }
 
     openContentSection = () => {
-        this.setState({
-            contentSectionOpen: true
-        });
+        this.setState({ contentSectionOpen: true });
     } 
 
     render() {
@@ -45,7 +41,7 @@ class ContentManagementDashboard extends React.Component {
                     selectedContentSection={this.state.selectedContentSection}
                 />
                 <hr />
-                {this.state.contentSectionOpen === true &&
+                { this.state.contentSectionOpen === true &&
                     <Fragment>{ContentSectionsInfo.sections[this.state.selectedContentSection].component}</Fragment>
                 }
             </div>
@@ -53,4 +49,4 @@ class ContentManagementDashboard extends React.Component {
     }
 }
 
-export default ContentManagementDashboard
+export default ContentMasterManager

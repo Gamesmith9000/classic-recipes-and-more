@@ -1,7 +1,7 @@
-import React from 'react'
 import axios from 'axios'
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../ComponentHelpers'
-import { setAxiosCsrfToken } from '../../../Helpers'
+import React from 'react'
+import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
+import { setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoEditForm extends React.Component {
     constructor(props) {
@@ -110,7 +110,7 @@ class PhotoEditForm extends React.Component {
                         />
                     </label>
                     <br/>
-                    <button onClick={this.handleFormSubmit}>Update</button>
+                    <button disabled={this.hasChanges() === false} onClick={this.handleFormSubmit}>Update</button>
                     <button onClick={this.props.handleClose}>Close</button>
                     <UnsavedChangesDisplay hasUnsavedChanges={this.hasChanges() === true} />
                 </form>

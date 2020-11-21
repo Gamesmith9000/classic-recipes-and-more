@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react'
 import axios from 'axios'
-import { EmptyPickerEntriesDisplay} from '../../../ComponentHelpers'
-import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../../ResponseDataHelpers'
+import React, { Fragment } from 'react'
+import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
+import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 
 class RecipePicker extends React.Component {
     constructor () {

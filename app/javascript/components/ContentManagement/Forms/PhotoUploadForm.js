@@ -1,7 +1,7 @@
-import React, {Fragment} from 'react'
 import axios from 'axios'
-import { ValidationErrorDisplay } from '../../../ComponentHelpers'
-import { BackendConstants, setAxiosCsrfToken } from '../../../Helpers'
+import React from 'react'
+import { ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
+import { BackendConstants, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoUploadForm extends React.Component {
     constructor(props) {

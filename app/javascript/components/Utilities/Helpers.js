@@ -42,13 +42,6 @@ export const BackendConstants = {
     }
 }
 
-export function arraysHaveMatchingValues (array1, array2) {
-    if(array1.length !== array2.length) {
-        return false;
-    }
-    return array1.every((element, index) => element === array2[index]);
-}
-
 export function bumpArrayElement (array, index, direction) {
     if(direction !== -1 && direction !== 1) {
         return array;
@@ -68,9 +61,54 @@ export function bumpArrayElement (array, index, direction) {
     }
 }
 
+export function isValuelessFalsey (value) {
+    if(value === null || value === undefined || Number.isNaN(value) === true) {
+        return true;
+    }
+    else { return false; }
+}
+
 export function isNonNullNonArrayObject (targetObject) {
     if(!targetObject || Array.isArray(targetObject)) { return false; }
     return (typeof(targetObject) === 'object');
+}
+
+export function objectsHaveMatchingValues (obj1, obj2) {
+    const obj1IsValuelessFalsey = isValuelessFalsey(obj1);
+    const obj2IsValuelessFalsey = isValuelessFalsey(obj2);
+    
+    if(obj1IsValuelessFalsey === true || obj2IsValuelessFalsey === true) {
+        if(obj1IsValuelessFalsey === true && obj2IsValuelessFalsey === true) {
+            return (obj1 === obj2);
+        }
+        else { return false; }
+    }
+
+    const obj1Keys = Object.keys(obj1);
+    const obj2Keys = Object.keys(obj2);
+
+    if(obj1Keys.length != obj2Keys.length) { return false; }
+
+    for(let i = 0; i < obj1Keys.length; i++) {
+        const key = obj1Keys[i];
+        if(key !== obj2Keys[i]) { return false; }
+
+        const value1 = obj1[key];
+        const value2 = obj2[key];
+        
+        const value1IsObject = (typeof(value1) === 'object');
+        const value2IsObject = (typeof(value2) === 'object'); 
+    
+        if(value1IsObject !== value2IsObject) { return false; }
+        if(value1IsObject === true) {
+            if(objectsHaveMatchingValues(value1, value2) === false) { return false; }
+        }
+        else /* if(value1IsObject === false) */ {
+            if(value1 !== value2) { return false; }
+        }
+    }
+
+    return true;
 }
 
 export function setAxiosCsrfToken () {
