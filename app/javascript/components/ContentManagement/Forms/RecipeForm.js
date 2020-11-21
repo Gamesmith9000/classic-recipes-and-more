@@ -134,8 +134,6 @@ class RecipeForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        const existingRecipe = this.state.existingRecipe;
-
         const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.current.previewPhotoId;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
@@ -308,35 +306,22 @@ class RecipeForm extends React.Component {
             return section;
         });
 
-        console.log(sections);
-
-        const priorSections = this.state.prior.sections;
-
         if(this.state.existingRecipe === true) {
+            const priorSections = this.state.prior.sections;
             let priorIds = [];
+
             for(let i = 0; i < priorSections.length; i++) {
                 const idValue = priorSections[i].id
-                console.log(idValue);
-                if(!isValuelessFalsey(idValue)) {
-                    priorIds.push(idValue);
-                }
+                if(!isValuelessFalsey(idValue)) { priorIds.push(idValue); }
             }
 
-            priorIds.sort();
-
-            console.log(priorIds);
-
             const moreSectionsAdded = !(priorSections.length >= sections.length);
-
-            console.log(`moreSectionsAdded? ${moreSectionsAdded}`);
+            priorIds.sort();
 
             for(let i = 0; i < this.state.current.sections.length; i++) {
                 const inRange = !(moreSectionsAdded === true && i >= priorIds.length);
-                console.log(`Is ${i} in range? ${inRange}`);
                 sections[i].id = inRange === true ? priorIds[i] : null;
-            }          
-        
-            console.log(sections);
+            }
         }
 
         return sections;
