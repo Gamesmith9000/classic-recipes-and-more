@@ -4,7 +4,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      get 'current_admin', :to => 'aux#current_admin'
       get 'youtube_video_data', :to => 'aux#youtube_video_data'
       get 'aux/main', :to => 'aux#show'
       patch 'aux/main', :to => 'aux#update'

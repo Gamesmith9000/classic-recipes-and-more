@@ -1,15 +1,8 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
-    before_action :authenticate_admin!, only: :update
-
+    before_action :authenticate_admin!, except: [:show, :youtube_video_data]
+    
     # General API methods
-
-    def current_admin
-        respond_to do |format|
-            format.html { html_disallowed_response }
-            format.json { render json: current_admin }
-        end
-    end
     
     def youtube_video_data
         respond_to do |format|
@@ -65,10 +58,12 @@ class Api::V1::AuxController < ApplicationController
 
     def html_disallowed_response
         # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
+        # [NOTE][DRY] This method is repeated across other API controllers
         redirect_back(fallback_location: root_path)
     end
 
     def render_serialized_json (values)
+        # [NOTE][DRY] This method is repeated across other API controllers
         render json: AuxDataSerializer.new(values).serialized_json
     end
 

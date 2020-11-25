@@ -2,7 +2,7 @@ module Api
     module V1
         class PhotosController < ApplicationController
             protect_from_forgery with: :null_session
-            before_action :authenticate_admin!, only: [:create, :update, :destroy]
+            before_action :authenticate_admin!, except: [:index, :show]
 
             def index
                 photos = Photo.all
@@ -53,6 +53,7 @@ module Api
             end
 
             def render_serialized_json (values)
+                # [NOTE][DRY] This is method is defined and used identically across API controllers
                 render json: PhotoSerializer.new(values).serialized_json
             end
         end
