@@ -36,8 +36,10 @@ class Api::V1::AuxController < ApplicationController
     #   [DESIGN] Creation and deletion must be done via console
 
     def show
-        aux_data = AuxData.first
-        render_serialized_json(aux_data)
+        respond_to do |format|
+            format.html { html_disallowed_response }
+            format.json { render_serialized_json(AuxData.first) }
+        end
     end
 
     def update
@@ -46,7 +48,7 @@ class Api::V1::AuxController < ApplicationController
         if aux_data.update(aux_data_params)
             render_serialized_json(aux_data)   
         else
-            render json: {error: aux_data.errors.messages}, status: 422
+            render json: { error: aux_data.errors.messages }, status: 422
         end
     end
 
@@ -63,7 +65,6 @@ class Api::V1::AuxController < ApplicationController
     end
 
     def render_serialized_json (values)
-        # [NOTE][DRY] This method is repeated across other API controllers
         render json: AuxDataSerializer.new(values).serialized_json
     end
 
