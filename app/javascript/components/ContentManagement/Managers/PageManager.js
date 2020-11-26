@@ -6,7 +6,7 @@ class PageManager extends React.Component {
     constructor () {
         super();
         this.state = {
-            selectedPage: 0
+            selectedPage: 1
         }
     }
 

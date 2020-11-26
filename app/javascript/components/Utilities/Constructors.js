@@ -26,6 +26,11 @@ export function RecipeFormSectionState (id, localId, ordered_photo_ids, recipeId
     this.text_content = text_content   
 }
 
+export function PhotoGalleryPageFormPhotoInfo (localId, photoId) {
+    this.localId = localId;
+    this.photoId = photoId;
+}
+
 export function TextSectionWithId (localId, textContent) {
     this.localId = localId;
     this.textContent = textContent;
