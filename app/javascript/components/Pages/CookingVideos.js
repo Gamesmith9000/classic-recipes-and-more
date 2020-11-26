@@ -19,7 +19,6 @@ class CookingVideos extends React.Component {
         }
         axios.get('/api/v1/youtube_video_data.json', options)
         .then(res => {
-            console.log(res.data);
             this.setState({videoData: res.data});
         })
         .catch(err => {
@@ -29,14 +28,9 @@ class CookingVideos extends React.Component {
     }
 
     mapVideos = (videoDataArray) => {
-        const mappedVideos = videoDataArray.map( (item, index) => {
-            return(
-                // [NOTE][OPTIMIZE] Verify proper key optimization
-                <EmbeddedYoutubeVideo key={`ytvid:${item.id}`} youtubeVideoId={item.id} />
-            );
+        return videoDataArray.map((item) => {
+            return <EmbeddedYoutubeVideo key={item.id} youtubeVideoId={item.id} />;
         });
-        
-        return mappedVideos;
     }
 
     render() {

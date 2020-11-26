@@ -1,15 +1,8 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
-    before_action :authenticate_admin!, only: :update
-
+    before_action :authenticate_admin!, except: [:show, :youtube_video_data]
+    
     # General API methods
-
-    def current_admin
-        respond_to do |format|
-            format.html { html_disallowed_response }
-            format.json { render json: current_admin }
-        end
-    end
     
     def youtube_video_data
         respond_to do |format|
@@ -43,8 +36,10 @@ class Api::V1::AuxController < ApplicationController
     #   [DESIGN] Creation and deletion must be done via console
 
     def show
-        aux_data = AuxData.first
-        render_serialized_json(aux_data)
+        respond_to do |format|
+            format.html { html_disallowed_response }
+            format.json { render_serialized_json(AuxData.first) }
+        end
     end
 
     def update
@@ -53,7 +48,7 @@ class Api::V1::AuxController < ApplicationController
         if aux_data.update(aux_data_params)
             render_serialized_json(aux_data)   
         else
-            render json: {error: aux_data.errors.messages}, status: 422
+            render json: { error: aux_data.errors.messages }, status: 422
         end
     end
 
@@ -65,6 +60,7 @@ class Api::V1::AuxController < ApplicationController
 
     def html_disallowed_response
         # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
+        # [NOTE][DRY] This method is repeated across other API controllers
         redirect_back(fallback_location: root_path)
     end
 

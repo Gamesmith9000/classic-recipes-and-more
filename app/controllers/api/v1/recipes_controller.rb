@@ -2,18 +2,25 @@ module Api
     module V1
         class RecipesController < ApplicationController
             protect_from_forgery with: :null_session
-            before_action :authenticate_admin!, only: [:create, :update, :destroy]
+            before_action :authenticate_admin!, except: [:index, :show]
 
             def index
-                recipes = Recipe.all
-                render_serialized_json(recipes)
+                respond_to do |format|
+                    format.html { html_disallowed_response }
+                    format.json { render_serialized_json(Recipe.all) }
+                end
             end
 
             def show
-                recipe = Recipe.find_by_id(params[:id])
-                options = {}
-                options[:include] = [:sections]
-                render json: RecipeSerializer.new(recipe, options).serialized_json
+                respond_to do |format|
+                    format.html { html_disallowed_response }
+                    format.json {
+                        recipe = Recipe.find_by_id(params[:id])
+                        options = {}
+                        options[:include] = [:sections]
+                        render json: RecipeSerializer.new(recipe, options).serialized_json
+                    }
+                end
             end
 
             def create
@@ -95,6 +102,11 @@ module Api
             end
 
             private
+
+            def html_disallowed_response
+                # [NOTE][DRY] This is a direct copy of method code from aux_controller
+                redirect_back(fallback_location: root_path)
+            end
 
             def recipe_params
                 params.require(:recipe).permit(
