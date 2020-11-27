@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import SectionSelector from '../SectionSelector';
+import SectionPicker from '../Pickers/SectionPicker';
 import { ContentSectionsInfo } from '../../Utilities/ComponentHelpers';
 
 class ContentMasterManager extends React.Component {
@@ -32,8 +32,8 @@ class ContentMasterManager extends React.Component {
     render() {
         return (
             <div className="content-management">
-                <h1>Content Management Dashboard</h1>
-                <SectionSelector 
+                <h1>Manage Content</h1>
+                <SectionPicker 
                     changeContentSection={this.changeContentSection}
                     closeContentSection={this.closeContentSection}      
                     contentSectionOpen={this.state.contentSectionOpen}
