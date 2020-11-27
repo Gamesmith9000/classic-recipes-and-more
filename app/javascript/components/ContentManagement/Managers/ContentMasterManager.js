@@ -16,7 +16,7 @@ class ContentMasterManager extends React.Component {
         if(!ContentSectionsInfo.isValidSectionId(newSectionId)) { return; } 
 
         this.setState({
-            contentSectionOpen: newSectionId !== this.state.selectedContentSection ? true : !this.state.contentSectionOpen,
+            contentSectionOpen: true,
             selectedContentSection: newSectionId
         });
     }
@@ -24,10 +24,6 @@ class ContentMasterManager extends React.Component {
     closeContentSection = () => {
         this.setState({ contentSectionOpen: false });
     }
-
-    openContentSection = () => {
-        this.setState({ contentSectionOpen: true });
-    } 
 
     render() {
         return (
@@ -37,7 +33,6 @@ class ContentMasterManager extends React.Component {
                     changeContentSection={this.changeContentSection}
                     closeContentSection={this.closeContentSection}      
                     contentSectionOpen={this.state.contentSectionOpen}
-                    openContentSection={this.openContentSection}      
                     selectedContentSection={this.state.selectedContentSection}
                 />
                 <hr />
