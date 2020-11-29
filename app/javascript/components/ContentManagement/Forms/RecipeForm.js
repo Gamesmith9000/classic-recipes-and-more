@@ -278,8 +278,6 @@ class RecipeForm extends React.Component {
         });
     }
 
-
-
     onDragEnd = (result) => {
         if(!result.destination) { return; }
 
