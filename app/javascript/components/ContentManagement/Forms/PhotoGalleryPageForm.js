@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
+import * as qs from 'qs'
 import { EmptyEntryDisplay } from './Subcomponents'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { ExportedPhotoPickerState, PhotoGalleryPageFormPhotoInfo } from '../../Utilities/Constructors'
@@ -118,10 +119,12 @@ class PhotoGalleryPageForm extends React.Component {
 
         const targetIds = targetData.map((value) => { return value.photoId; })
 
-        console.log('Backend calls not yet set up. Exiting');
-        return;
+        let config = {
+            params: { photos: { ids: targetIds } },
+            paramsSerializer: (params) => { return qs.stringify(params); }
+        }
 
-        axios.get('/api/v1/photos/s.json', { params: { photos: { id_list: targetIds } } })
+        axios.get('/api/v1/photos/multi.json', config)
         .then(res => {
             console.log(res);
 

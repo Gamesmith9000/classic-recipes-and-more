@@ -2,7 +2,7 @@ module Api
     module V1
         class PhotosController < ApplicationController
             protect_from_forgery with: :null_session
-            before_action :authenticate_admin!, except: [:index, :show]
+            before_action :authenticate_admin!, except: [:index, :show, :show_multi]
 
             def index
                 respond_to do |format|
@@ -19,6 +19,20 @@ module Api
                         render_serialized_json(photo)
                     }
                 end
+            end
+
+            def show_multi
+                respond_to do |format|
+                    format.html { html_disallowed_response }
+                    format.json {
+                        if multi_photos_params[:ids]
+                            photos = Photo.find(multi_photos_params[:ids].values)
+                        else
+                            photos = Photo.all
+                        end
+                        render_serialized_json(photos)
+                    }
+                end                
             end
 
             def create
@@ -56,6 +70,10 @@ module Api
             def html_disallowed_response
                 # [NOTE][DRY] This is a direct copy of method code from aux_controller
                 redirect_back(fallback_location: root_path)
+            end
+
+            def multi_photos_params
+                params.require(:photos).permit(:ids => {})
             end
 
             def photo_params
