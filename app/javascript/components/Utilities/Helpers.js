@@ -1,5 +1,10 @@
 import axios from 'axios'
 
+function backendConstantsPhotoVersion (maxWidth, maxHeight) {
+    this.maxWidth = maxWidth;
+    this.maxHeight = maxHeight;
+}
+
 export const BackendConstants = {
     /*  [NOTE] This object holds the hard coded references to certain rails values. This allows other
          JS objects to utilize the values, while only requiring updates in a single location            */
@@ -34,10 +39,14 @@ export const BackendConstants = {
                     minimum: 2
                 }
             }
-        },
-
-        photoUploader: {
-            versions: ['large', 'medium', 'small', 'thumb']
+        }
+    },
+    photoUploader: {
+        versions: {
+            'thumb': new backendConstantsPhotoVersion(100, 100),
+            'small': new backendConstantsPhotoVersion(256, 256),
+            'medium': new backendConstantsPhotoVersion(512, 512),
+            'large': new backendConstantsPhotoVersion(1024, 1024)
         }
     }
 }

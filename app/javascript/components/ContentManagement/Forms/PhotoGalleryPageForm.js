@@ -4,7 +4,7 @@ import * as qs from 'qs'
 import { EmptyEntryDisplay } from './Subcomponents'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { ExportedPhotoPickerState, PhotoGalleryPageFormPhotoInfo } from '../../Utilities/Constructors'
-import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoGalleryPageForm extends React.Component {
     constructor() {
@@ -68,6 +68,7 @@ class PhotoGalleryPageForm extends React.Component {
 
     mapPhotoIdInputs = (orderedPhotoIdDataList) => {
         const nullValuePlaceholder = '...';
+        const uploaderVersionData = BackendConstants.photoUploader.versions[this.props.imageDisplaySize];
 
         return orderedPhotoIdDataList.map((element, index) => {
             if(isValuelessFalsey(element.photoId)) { console.log('Display (and submission) must be able to compensate for entries without photos.'); }
@@ -80,7 +81,7 @@ class PhotoGalleryPageForm extends React.Component {
                     <br />
                     <label>ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</label>
                     <br />
-                    { this.renderPhotoControl() }
+                    { this.renderPhotoControl(element, uploaderVersionData) }
                     { this.state.orderedPhotoIdData.length > 1 &&
                         <button 
                             className="delete-item" 
@@ -94,8 +95,23 @@ class PhotoGalleryPageForm extends React.Component {
         });
     }
 
-    renderPhotoControl = () => {
+    renderPhotoControl = (photoIdData, photoUploaderVersionData) => {
+        if(!photoIdData || !this.props.imageDisplaySize || !photoUploaderVersionData) { return; }
 
+        const hasPhotoId = isValuelessFalsey(photoIdData.photoId) === false;
+        const divClass = `chosen-photo${hasPhotoId === false ? " placeholder" : ""}`;
+        const divStyle = {
+            height: photoUploaderVersionData.maxHeight,
+            width: photoUploaderVersionData.maxWidth
+        }
+
+        return (
+            <div className={divClass} style={divStyle}>
+                { hasPhotoId === true &&
+                    <img src={this.state.orderedPreviewUrls[this.getIndexFromState(photoIdData.localId)]} />
+                }
+            </div>
+        );
     }
 
     updatePreviewUrls = () => {
@@ -128,7 +144,9 @@ class PhotoGalleryPageForm extends React.Component {
         .then(res => {
             console.log(res);
 
+            const orderedUrls = res.data.data.map((element) => { return element.attributes.file[this.props.imageDisplaySize]?.url; });
             this.setState({
+                orderedPreviewUrls: orderedUrls,
                 orderedPreviewUrlsNeedUpdate: false
             });
         })

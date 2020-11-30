@@ -6,7 +6,7 @@ class PageManager extends React.Component {
     constructor () {
         super();
         this.state = {
-            selectedPage: 0
+            selectedPage: 1
         }
     }
 
@@ -35,7 +35,7 @@ class PageManager extends React.Component {
                 renderedItem = <AboutPageForm />;
                 break;
             case 1:
-                renderedItem = <PhotoGalleryPageForm />
+                renderedItem = <PhotoGalleryPageForm imageDisplaySize="small"/>
                 break;
 
         }
