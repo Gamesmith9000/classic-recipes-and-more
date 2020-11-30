@@ -175,11 +175,7 @@ class RecipeForm extends React.Component {
         const newId = this.state.photoPicker.selectedPhotoId;
         const newUrl = this.state.photoPicker.selectedPhotoUrl;
         
-        let photoPickerState = this.state.photoPicker;
-        photoPickerState.isOpen = false;
-        photoPickerState.selectedPhotoId = null;
-        photoPickerState.selectedPhotoUrl = null;
-
+        let photoPickerState = new ExportedPhotoPickerState(false, null, null, this.state.photoPicker.locationId);
         let currentState = this.state.current;
         currentState.previewPhotoId = newId;
 
