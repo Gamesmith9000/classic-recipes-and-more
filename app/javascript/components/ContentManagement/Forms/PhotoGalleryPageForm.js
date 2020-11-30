@@ -42,10 +42,14 @@ class PhotoGalleryPageForm extends React.Component {
         });
     }
 
-    handleDeletePhotoIdData = (event, sectionIndex) => {
+    handleDeletePhotoIdData = (event, sectionIndex, skipConfirmation = false) => {
         event.preventDefault();
 
-        if(window.confirm("Are you sure you want to remove this photo association?") === true) {
+        const confirmedClose = skipConfirmation === false 
+        ? (window.confirm("Are you sure you want to remove this photo association?") === true)
+        : true;
+
+        if(confirmedClose === true) {
             let updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
             updatedPhotoIdData.splice(sectionIndex, 1);
 
@@ -64,6 +68,14 @@ class PhotoGalleryPageForm extends React.Component {
         console.log('Except when all entries are blank, then page will ask you if you are okay clearing entire list to have no entries');
         console.log('Form submit placeholder');
         // photo_page_ordered_ids
+    }
+
+    handleTogglePhotoPickerOpenState = (event) => {
+        event.preventDefault();
+
+        let photoPickerState = this.state.photoPicker;
+        photoPickerState.isOpen = !photoPickerState.isOpen;
+        this.setState({ photoPicker: photoPickerState });
     }
 
     mapPhotoIdInputs = (orderedPhotoIdDataList) => {
@@ -85,7 +97,7 @@ class PhotoGalleryPageForm extends React.Component {
                     { this.state.orderedPhotoIdData.length > 1 &&
                         <button 
                             className="delete-item" 
-                            onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex)}
+                            onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
                         >
                             Remove
                         </button>
@@ -106,19 +118,22 @@ class PhotoGalleryPageForm extends React.Component {
         }
 
         return (
-            <div className={divClass} style={divStyle}>
-                { hasPhotoId === true &&
-                    <img src={this.state.orderedPreviewUrls[this.getIndexFromState(photoIdData.localId)]} />
-                }
-            </div>
+            <Fragment>
+                <div className={divClass} style={divStyle}>
+                    { hasPhotoId === true
+                        ? <img src={this.state.orderedPreviewUrls[this.getIndexFromState(photoIdData.localId)]} />
+                        : '(No photo chosen)'
+                    }
+                </div>
+                <button onClick={this.handleTogglePhotoPickerOpenState}>
+                    { hasPhotoId === true ? 'Change' : 'Select' }
+                </button>
+            </Fragment>
         );
     }
 
     updatePreviewUrls = () => {
-        console.log("Send axios request to get specified photoIds. This will return an ordered array. Update state with these. Consider the case of an invalid id sent.");
-
         const { orderedPhotoIdData, orderedPreviewUrls, orderedPreviewUrlsNeedUpdate } = this.state;
-
         if(orderedPreviewUrlsNeedUpdate !== true) { return; }
 
         let targetData = [];
@@ -134,7 +149,6 @@ class PhotoGalleryPageForm extends React.Component {
         }
 
         const targetIds = targetData.map((value) => { return value.photoId; })
-
         let config = {
             params: { photos: { ids: targetIds } },
             paramsSerializer: (params) => { return qs.stringify(params); }
@@ -142,8 +156,6 @@ class PhotoGalleryPageForm extends React.Component {
 
         axios.get('/api/v1/photos/multi.json', config)
         .then(res => {
-            console.log(res);
-
             const orderedUrls = res.data.data.map((element) => { return element.attributes.file[this.props.imageDisplaySize]?.url; });
             this.setState({
                 orderedPreviewUrls: orderedUrls,
@@ -199,10 +211,11 @@ class PhotoGalleryPageForm extends React.Component {
                     <h3>Ordered Photos</h3>
                     { hasOrderedPhotoIdState === true && this.state.photoPicker.isOpen === false &&
                         <Fragment>
-                            { this.mapPhotoIdInputs(this.state.orderedPhotoIdData) }                        
+                            { this.mapPhotoIdInputs(this.state.orderedPhotoIdData) }
+                            <br /> 
                             <button onClick={this.handleAddPhotoIdData}>+</button>
                             <br/>
-                            <button disabled={!hasUnsavedChanges} type="submit">Update</button>
+                            <button disabled={hasUnsavedChanges === false} type="submit">Update</button>
                             <UnsavedChangesDisplay hasUnsavedChanges={hasUnsavedChanges} />
                         </Fragment>
                     }

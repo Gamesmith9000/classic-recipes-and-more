@@ -327,8 +327,9 @@ class RecipeForm extends React.Component {
 
     renderPreviewPhotoControl = () => {
         const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
+        const hasPreviewPhotoId = isValuelessFalsey(previewPhotoId) === false;
 
-        if(previewPhotoId && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
+        if(hasPreviewPhotoId === true && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
 
         return(
             <div className="preview-photo">
@@ -346,13 +347,13 @@ class RecipeForm extends React.Component {
                         />
                     :
                         <Fragment>
-                            { previewPhotoId
+                            { hasPreviewPhotoId === true
                                 ? <img src={this.state.previewPhotoUrl} />
                                 : '(No photo chosen)'
                             }
                             <br />
                             <button onClick={this.handleTogglePhotoPickerOpenState}>
-                                { previewPhotoId ? 'Change' : 'Select' }
+                                { hasPreviewPhotoId === true ? 'Change' : 'Select' }
                             </button>
                             { previewPhotoId &&
                                 <button onClick={this.handleClearPreviewPhoto}>
