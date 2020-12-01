@@ -1,6 +1,6 @@
 import React from 'react'
 
-class RecipePhotos extends React.Component {
+class PhotoGallery extends React.Component {
     constructor () {
         super();
         this.state = {
@@ -14,11 +14,11 @@ class RecipePhotos extends React.Component {
 
     render() {
         return (
-            <div className="recipe-photos">
-                <p>[RecipePhotos Component]</p>
+            <div className="photo-gallery">
+                <p>[PhotoGallery Component]</p>
             </div>
         )
     }
 }
 
-export default RecipePhotos
+export default PhotoGallery

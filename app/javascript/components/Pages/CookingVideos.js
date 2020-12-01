@@ -12,8 +12,6 @@ class CookingVideos extends React.Component {
     }
 
     componentDidMount () {
-        setAxiosCsrfToken();
-
         const options = {
             max: 5
         }

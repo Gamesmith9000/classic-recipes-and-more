@@ -78,13 +78,18 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
         margin-bottom: 5px;
 
         .chosen-photo {
-            border: 1px solid black;
+            // border: 1px solid black;
 
             &.placeholder {
-                background-image: linear-gradient(grey, darkgrey, grey, darkgrey);
+                background-image: linear-gradient(grey, darkgrey, grey, darkgrey, grey);
             }
 
         }
+    }
+
+    ul.photo-id-editor {
+        display: flex;
+        list-style-type: none;
     }
 }
 

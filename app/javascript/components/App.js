@@ -4,9 +4,9 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import About from './Pages/About'
 import Cookbook from './Pages/Cookbook'
 import CookingVideos from './Pages/CookingVideos'
+import FeaturedRecipes from './Pages/FeaturedRecipes'
 import Home from './Pages/Home'
-import RecipePhotos from './Pages/RecipePhotos'
-import SeasonalRecipes from './Pages/SeasonalRecipes'
+import PhotoGallery from './Pages/PhotoGallery'
 import Shop from './Pages/Shop'
 
 
@@ -43,17 +43,17 @@ function App(props) {
 
     return (            
         <Fragment>
-            {redirectOnSignIn()}
+            { redirectOnSignIn() }
             <Switch>
                 <Route exact path="/" component={Home} />
                 <Route exact path="/about" component={About} />
                 <Route exact path="/cookbook" component={Cookbook} />
                 <Route exact path="/cooking-videos" component={CookingVideos} />
-                <Route exact path="/recipe-photos" component={RecipePhotos} />
+                <Route exact path="/featured-recipes" component={FeaturedRecipes} />
+                <Route exact path="/photo-gallery" component={PhotoGallery} />
                 <Route exact path="/shop" component={Shop} />
-                <Route exact path="/seasonal" component={SeasonalRecipes} />
-
-                {renderProtectedRoute("/content", ContentMasterManager)}
+                
+                { renderProtectedRoute("/content", ContentMasterManager) }
             </Switch>
         </Fragment>
     );
