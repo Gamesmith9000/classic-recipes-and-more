@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 import * as qs from 'qs'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 import { EmptyEntryDisplay } from './Subcomponents'
 import PhotoPicker from '../Pickers/PhotoPicker'
@@ -70,9 +71,12 @@ class PhotoGalleryPageForm extends React.Component {
 
     handleFormSubmit = (event) => {
         event.preventDefault();
-        console.log('Except when all entries are blank, then page will ask you if you are okay clearing entire list to have no entries');
-        console.log('Form submit placeholder');
-        // photo_page_ordered_ids
+        setAxiosCsrfToken();
+
+        const outgoingPhotoIdData = this.state.orderedPhotoIdData.map((element) => { return element.photoId; });
+        axios.patch('/api/v1/aux/main.json', { aux_data: { photo_page_ordered_ids: outgoingPhotoIdData } })
+        .then(res => this.setState({ priorOrderedPhotoIdData: this.state.orderedPhotoIdData.slice() }))
+        .catch(err => console.log(err));
     }
 
     handlePhotoIdDataChange = (event) => {
@@ -129,22 +133,44 @@ class PhotoGalleryPageForm extends React.Component {
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
             
             return (
-                <li className="ordered-photo-edits" key={element.localId}>
-                    <label>Photo {arrayIndex + 1}/{orderedPhotoIdDataList.length}</label>
-                    <br />
-                    <label>ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</label>
-                    <br />
-                    { this.renderPhotoControl(element, uploaderVersionData) }
-                    { this.state.orderedPhotoIdData.length > 1 &&
-                        <button 
-                            className="delete-item" 
-                            onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
-                        >
-                            Remove
-                        </button>
-                    }
-                </li>
+                <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
+                    { (provided) => (
+                        <li {...provided.dragHandleProps} {...provided.draggableProps} className="ordered-photo-edits" ref={provided.innerRef}>
+                            <label>Photo {arrayIndex + 1}/{orderedPhotoIdDataList.length}</label>
+                            <br />
+                            <label>ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</label>
+                            <br />
+                            { this.renderPhotoControl(element, uploaderVersionData) }
+                            { this.state.orderedPhotoIdData.length > 1 &&
+                                <button 
+                                    className="delete-item" 
+                                    onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
+                                >
+                                    Remove
+                                </button>
+                            }
+                        </li>
+                    )}
+                </Draggable>
             );
+        });
+    }
+
+    onDragEnd = (result) => {
+        if(!result.destination) { return; }
+
+        let newOrderedPhotoIdData = this.state.orderedPhotoIdData.slice();
+        let newOrderedPreviewUrls = this.state.orderedPreviewUrls.slice();
+
+        const movedIdData = newOrderedPhotoIdData.splice(result.source.index, 1)[0];
+        const movedUrlData = newOrderedPreviewUrls.splice(result.source.index, 1)[0];
+
+        newOrderedPhotoIdData.splice(result.destination.index, 0, movedIdData);
+        newOrderedPreviewUrls.splice(result.destination.index, 0, movedUrlData);
+
+        this.setState({ 
+            orderedPhotoIdData: newOrderedPhotoIdData,
+            orderedPreviewUrls: newOrderedPreviewUrls 
         });
     }
 
@@ -216,9 +242,16 @@ class PhotoGalleryPageForm extends React.Component {
         .catch(err => console.log(err));
     }
 
+    updateStateOfPhotoPicker = (newValue, propertyName) => {
+        let newPhotoPickerState = this.state.photoPicker;
+        newPhotoPickerState[propertyName] = newValue;
+        this.setState({ photoPicker: newPhotoPickerState });
+    }
+
     componentDidMount () {
         console.log('When there are blank entries, have a display message at bottom and disable submit button');
         console.log('When there are duplicate entries, have a display message at bottom and disable submit button');
+        console.log('Except when all entries are blank, then page will ask you if you are okay clearing entire list to have no entries');
 
         axios.get('/api/v1/aux/main.json')
         .then(res => {
@@ -249,12 +282,6 @@ class PhotoGalleryPageForm extends React.Component {
         .catch(err => console.log(err));
     }
 
-    updateStateOfPhotoPicker = (newValue, propertyName) => {
-        let newPhotoPickerState = this.state.photoPicker;
-        newPhotoPickerState[propertyName] = newValue;
-        this.setState({ photoPicker: newPhotoPickerState });
-    }
-
     render() {
         const hasOrderedPhotoIdState = Boolean(this.state.orderedPhotoIdData);
         const hasUnsavedChanges = (hasOrderedPhotoIdState === true && !objectsHaveMatchingValues(this.state.orderedPhotoIdData, this.state.priorOrderedPhotoIdData));
@@ -266,23 +293,36 @@ class PhotoGalleryPageForm extends React.Component {
                 <h2>Editing "Photo Gallery" Page</h2>
                 <form className="photo-gallery-page-form" onSubmit={this.handleFormSubmit}>
                     <h3>Ordered Photos</h3>
-                    { hasOrderedPhotoIdState === true && this.state.photoPicker.isOpen === false &&
+                    { hasOrderedPhotoIdState === true && 
                         <Fragment>
-                            { this.mapPhotoIdInputs(this.state.orderedPhotoIdData) }
-                            <br /> 
-                            <button onClick={this.handleAddPhotoIdData}>+</button>
-                            <br/>
-                            <button disabled={hasUnsavedChanges === false} type="submit">Update</button>
-                            <UnsavedChangesDisplay hasUnsavedChanges={hasUnsavedChanges} />
+                            { this.state.photoPicker.isOpen === false
+                            ?
+                                <Fragment>
+                                    <DragDropContext onDragEnd={this.onDragEnd}>
+                                        <Droppable droppableId="photo-id-editor">
+                                            { (provided) => (
+                                                <ul {...provided.droppableProps} className="photo-id-editor" ref={provided.innerRef}>
+                                                    { this.mapPhotoIdInputs(this.state.orderedPhotoIdData) }
+                                                    { provided.placeholder }
+                                                </ul>
+                                            )}
+                                        </Droppable>
+                                    </DragDropContext>
+                                    <br /> 
+                                    <button onClick={this.handleAddPhotoIdData}>+</button>
+                                    <br/>
+                                    <button disabled={hasUnsavedChanges === false} type="submit">Update</button>
+                                    <UnsavedChangesDisplay hasUnsavedChanges={hasUnsavedChanges} />
+                                </Fragment>
+                            :
+                                <PhotoPicker 
+                                    changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
+                                    selectedPhotoId={this.state.photoPicker.selectedPhotoId}
+                                    handleCancelForExport={this.handlePhotoPickerClose}
+                                    handleUsePhotoForExport={this.handlePhotoIdDataChange}
+                                />
+                            }
                         </Fragment>
-                    }
-                    { hasOrderedPhotoIdState === true && this.state.photoPicker.isOpen === true &&
-                        <PhotoPicker 
-                            changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
-                            selectedPhotoId={this.state.photoPicker.selectedPhotoId}
-                            handleCancelForExport={this.handlePhotoPickerClose}
-                            handleUsePhotoForExport={this.handlePhotoIdDataChange}
-                        />
                     }
                 </form>
             </div>
