@@ -23,6 +23,18 @@ module Api
                 end
             end
 
+            def show_featured
+                respond_to do |format|
+                    format.html { html_disallowed_response }
+                    format.json {
+                        recipes = Recipe.where(featured: true)
+                        options = {}
+                        options[:include] = [:sections]
+                        render json: RecipeSerializer.new(recipes, options).serialized_json
+                    }
+                end
+            end
+
             def create
                 recipe = Recipe.new(recipe_params)
 

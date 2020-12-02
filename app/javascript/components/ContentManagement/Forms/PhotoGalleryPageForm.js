@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
-import * as qs from 'qs'
+import qs from 'qs'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 import { EmptyEntryDisplay } from './Subcomponents'

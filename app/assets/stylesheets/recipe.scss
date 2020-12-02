@@ -9,3 +9,13 @@
         }
     }
 }
+
+.featured-recipes {
+    li.recipe-preview {
+        border: black 1px solid;
+        margin-bottom: 10px;
+    }
+    ul.featured-list {
+        list-style-type: none;
+    }
+}

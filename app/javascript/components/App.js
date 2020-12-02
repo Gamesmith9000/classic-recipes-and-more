@@ -49,7 +49,12 @@ function App(props) {
                 <Route exact path="/about" component={About} />
                 <Route exact path="/cookbook" component={Cookbook} />
                 <Route exact path="/cooking-videos" component={CookingVideos} />
-                <Route exact path="/featured-recipes" component={FeaturedRecipes} />
+                <Route 
+                    exact path="/featured-recipes"
+                    render={(props) => (
+                        <FeaturedRecipes {...props} previewPhotoVersion="small" />
+                    )}
+                />
                 <Route exact path="/photo-gallery" component={PhotoGallery} />
                 <Route exact path="/shop" component={Shop} />
                 

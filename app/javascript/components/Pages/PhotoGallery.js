@@ -9,7 +9,13 @@ class PhotoGallery extends React.Component {
     }
 
     componentDidMount () {
+        // api/v1/photos/multi
 
+        // axios.get()
+        // .then(res => {
+        //     console.log(res);
+        // })
+        // .catch(err => console.log(err))
     }
 
     render() {
