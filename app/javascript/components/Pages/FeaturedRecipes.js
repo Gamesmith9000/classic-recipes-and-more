@@ -7,8 +7,8 @@ class FeaturedRecipes extends React.Component {
     constructor () {
         super();
         this.state = {
-            recipes: null,
-            photoData: null
+            photoData: null,
+            recipes: null
         };
     }
 
@@ -32,14 +32,11 @@ class FeaturedRecipes extends React.Component {
         if(index === -1) { return; }
         const url = this.state.photoData[index].photoUrl;
 
-        console.log(url);
-
         return <img src={url} />;
-
     }
 
     componentDidMount () {
-        axios.get('api/v1/recipes/featured')
+        axios.get('api/v1/recipes/featured.json')
         .then(res => {
             const { data, included } = res.data;
 

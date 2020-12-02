@@ -2,7 +2,7 @@ module Api
     module V1
         class RecipesController < ApplicationController
             protect_from_forgery with: :null_session
-            before_action :authenticate_admin!, except: [:index, :show]
+            before_action :authenticate_admin!, except: [:index, :show, :show_featured]
 
             def index
                 respond_to do |format|
