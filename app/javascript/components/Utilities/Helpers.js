@@ -42,11 +42,23 @@ export const BackendConstants = {
         }
     },
     photoUploader: {
+        defaultVersion : new backendConstantsPhotoVersion(1024, 1024),
         versions: {
             'thumb': new backendConstantsPhotoVersion(100, 100),
             'small': new backendConstantsPhotoVersion(256, 256),
-            'medium': new backendConstantsPhotoVersion(512, 512),
-            'large': new backendConstantsPhotoVersion(1024, 1024)
+            'medium': new backendConstantsPhotoVersion(512, 512)
+        },
+        isValidVersionName: function(versionName){
+            return (isValuelessFalsey(versionName) === false && this.versions.hasOwnProperty(versionName));
+        },
+        getUrlForVersion: function (photoFileProperty, versionName){
+            if(!photoFileProperty) { return; }
+            const validName = this.isValidVersionName(versionName) === true;
+            return validName === true ? photoFileProperty[versionName]?.url : photoFileProperty.url;
+        },
+        getVersionData: function (versionName){
+            const validName = this.isValidVersionName(versionName) === true;
+            return validName === true ? this.versions[versionName] : this.defaultVersion;
         }
     }
 }

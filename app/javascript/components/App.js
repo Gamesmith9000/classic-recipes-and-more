@@ -52,7 +52,7 @@ function App(props) {
                 <Route 
                     exact path="/featured-recipes"
                     render={(props) => (
-                        <FeaturedRecipes {...props} previewPhotoVersion="small" />
+                        <FeaturedRecipes {...props} displayPhotoVersion="medium" previewPhotoVersion="small" />
                     )}
                 />
                 <Route exact path="/photo-gallery" component={PhotoGallery} />

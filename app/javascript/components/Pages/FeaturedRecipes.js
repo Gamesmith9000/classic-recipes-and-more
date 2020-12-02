@@ -3,6 +3,10 @@ import axios from 'axios'
 import qs from 'qs'
 import { BackendConstants, isValuelessFalsey } from '../Utilities/Helpers'
 
+//[NOTE][REFACTOR] This component gets all the photo urls for a photo. This needs to hang on to the size needed for the size shown in recipe display
+//      Props example for this component:           displayPhotoVersion="medium" previewPhotoVersion="small"
+//      - displayPhotoVersion prop will be passed into the individual recipe display component
+
 class FeaturedRecipes extends React.Component {
     constructor () {
         super();
@@ -71,13 +75,13 @@ class FeaturedRecipes extends React.Component {
 
                 const photoData = res.data.data.map((element, index) => {
                     const photoId = targetRecipeIds[index];
-                    const photoUrl = element.attributes.file[this.props.previewPhotoVersion].url;
+                    const photoUrl = BackendConstants.photoUploader.getUrlForVersion(element.attributes.file, this.props.previewPhotoVersion);                    
                     return { photoId, photoUrl };
                 });
 
                 this.setState({
-                    recipes: recipesData,
-                    photoData: photoData
+                    photoData: photoData,
+                    recipes: recipesData
                 });
             })
             .catch(err => {
