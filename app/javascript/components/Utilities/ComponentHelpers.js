@@ -13,10 +13,11 @@ export const ContentSectionsInfo = {
         }
         else { return true; }
     },
+    // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
     sections: [
-        {component: <PageManager/>, name: 'Pages' },
-        {component: <RecipeManager/>, name: 'Recipes' },
-        {component: <PhotoManager/>, name: 'Photos' }
+        { name: 'Pages',    renderComponent: function (props) { return <PageManager {...props} /> } },
+        { name: 'Recipes',  renderComponent: function (props) { return <RecipeManager {...props} /> } },
+        { name: 'Photos',   renderComponent: function (props) { return <PhotoManager {...props} /> } }
     ]
 }
 
