@@ -55,7 +55,11 @@ function App(props) {
                         <FeaturedRecipes {...props} displayPhotoVersion="medium" previewPhotoVersion="small" />
                     )}
                 />
-                <Route exact path="/photo-gallery" component={PhotoGallery} />
+                <Route exact path="/photo-gallery"
+                    render={(props) => (
+                        <PhotoGallery {...props} photoVersion="medium" />
+                    )}
+                />
                 <Route exact path="/shop" component={Shop} />
                 
                 { renderProtectedRoute("/content", ContentMasterManager) }

@@ -37,7 +37,9 @@ class ContentMasterManager extends React.Component {
                 />
                 <hr />
                 { this.state.contentSectionOpen === true &&
-                    <Fragment>{ContentSectionsInfo.sections[this.state.selectedContentSection].component}</Fragment>
+                    <Fragment>
+                        { ContentSectionsInfo.sections[this.state.selectedContentSection].renderComponent({ photoPickerPhotoVersion: "thumb" }) }
+                    </Fragment>
                 }
             </div>
         )
