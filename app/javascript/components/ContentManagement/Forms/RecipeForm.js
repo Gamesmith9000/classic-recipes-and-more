@@ -31,8 +31,7 @@ class RecipeForm extends React.Component {
     attemptPreviewImageUrlFetch = () => {
         axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}`)
         .then(res => {
-            //[NOTE][HARD-CODED] Image preview size is hard coded and the same across recipes
-            const url = res.data?.data?.attributes?.file?.small?.url;
+            const url = BackendConstants.photoUploader.getUrlForVersion(res.data.data.attributes.file, this.props.previewPhotoVersion);
             this.setState({ previewPhotoUrl: url });
         })
         .catch(err => console.log(err));
@@ -337,9 +336,10 @@ class RecipeForm extends React.Component {
                         <PhotoPicker 
                             changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
                             changeSelectedPhotoUrl={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoUrl')}
-                            selectedPhotoId={selectedPhotoId}
+                            exportedPhotoUrlVersion={this.props.previewPhotoVersion}
                             handleCancelForExport={this.handleTogglePhotoPickerOpenState}
                             handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
+                            selectedPhotoId={selectedPhotoId}
                             photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                         />
                     :
@@ -406,7 +406,7 @@ class RecipeForm extends React.Component {
     }
 
     render() {
-        const allowSubmit = (this.state.existingRecipe === false || !objectsHaveMatchingValues(this.state.current, this.state.prior));
+        const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
 
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>

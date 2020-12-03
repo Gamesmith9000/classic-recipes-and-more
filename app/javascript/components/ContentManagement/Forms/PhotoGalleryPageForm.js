@@ -125,7 +125,7 @@ class PhotoGalleryPageForm extends React.Component {
 
     mapPhotoIdInputs = (orderedPhotoIdDataList) => {
         const nullValuePlaceholder = '...';
-        const uploaderVersionData = BackendConstants.photoUploader.versions[this.props.imageDisplaySize];
+        const uploaderVersionData = BackendConstants.photoUploader.getVersionData(this.props.imageDisplaySize);
 
         return orderedPhotoIdDataList.map((element, index) => {
             if(isValuelessFalsey(element.photoId)) { console.log('Display (and submission) must be able to compensate for entries without photos.'); }
@@ -226,7 +226,9 @@ class PhotoGalleryPageForm extends React.Component {
         .then(res => {
             // [NOTE] This currently assumes that 'targetData' and res.data.data are the same length
 
-            const resData = res.data.data.map((element) => { return element.attributes.file[this.props.imageDisplaySize]?.url; });
+            const resData = res.data.data.map((element) => { 
+                return BackendConstants.photoUploader.getUrlForVersion(element.attributes.file, this.props.imageDisplaySize);
+            });
             let orderedUrls = orderedPreviewUrls.slice();
 
             for(let i = 0; i < orderedPhotoIdData.length; i++) {
@@ -285,7 +287,6 @@ class PhotoGalleryPageForm extends React.Component {
     render() {
         const hasOrderedPhotoIdState = Boolean(this.state.orderedPhotoIdData);
         const hasUnsavedChanges = (hasOrderedPhotoIdState === true && !objectsHaveMatchingValues(this.state.orderedPhotoIdData, this.state.priorOrderedPhotoIdData));
-
         if(this.state.orderedPreviewUrlsNeedUpdate === true) { this.updatePreviewUrls(); }
 
         return (
@@ -320,6 +321,7 @@ class PhotoGalleryPageForm extends React.Component {
                                     selectedPhotoId={this.state.photoPicker.selectedPhotoId}
                                     handleCancelForExport={this.handlePhotoPickerClose}
                                     handleUsePhotoForExport={this.handlePhotoIdDataChange}
+                                    photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                                 />
                             }
                         </Fragment>

@@ -6,14 +6,10 @@ import { BackendConstants } from '../../Utilities/Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {
-    // [NOTE][DRY] This logic was ported from RecipePicker component. Attempt to find a more DRY implementation
-
     // [NOTE][OPTIMIZE] Important: This component has no caching for api calls. This is a crucial place for optimization.
     //                   this might even require the helper of higher up components & their state
 
     // [NOTE] Important: tag filtering has not yet been implemented
-
-    // [NOTE][DRY] Consider making Picker sorters into their own standalone components (which could work alongside )
 
     constructor () {
         super();
@@ -37,12 +33,8 @@ class PhotoPicker extends React.Component {
         event.preventDefault();
         this.props.changeSelectedPhotoId(parseInt(photoId));
         if(this.props.changeSelectedPhotoUrl) {
-            //[NOTE][HARD-CODED] Image preview size is hard coded
-            const photoUrl = this.state.photoData.find(
-                function(element) {
-                    return parseInt(element.id) === parseInt(photoId);
-                }
-            )?.attributes?.file?.small?.url;
+            const entry = this.state.photoData.find(element => parseInt(element.id) === parseInt(photoId));
+            photoUrl = entry ? BackendConstants.photoUploader.getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) : null;
             this.props.changeSelectedPhotoUrl(photoUrl);
         }
     }
@@ -71,24 +63,28 @@ class PhotoPicker extends React.Component {
 
     mapPhotoPreviews = (photoDataList) => {
         if(!photoDataList || !this.state.sorting) return;
+        
+        const photoUploaderVersionData = BackendConstants.photoUploader.getVersionData(this.props.photoPickerPhotoVersion);
+        const divStyle = { minHeight: photoUploaderVersionData.maxHeight }
 
-        const useForExport = Boolean(this.props.handleUsePhotoForExport);
         const { byId, fieldIndex, validFields} = this.state.sorting;
-
         const sortedPhotoDataList = sortByAttributeNameOrId(photoDataList, validFields, fieldIndex, byId);
+
         const mappedPhotoPreview = sortedPhotoDataList.map((item, index) => {
             const isSelected = (this.props.selectedPhotoId && this.props.selectedPhotoId === parseInt(item.id));
+            const photoUrl = BackendConstants.photoUploader.getUrlForVersion(item.attributes.file, this.props.photoPickerPhotoVersion);
+
             const commonItems = (
                 <Fragment>
                     <div className="id-column">ID: {item.id}</div>
-                    <img src={item.attributes.file.thumb.url} />
+                    <img src={photoUrl} /> 
                     <div>Title: {item.attributes.title}</div>
                     <div>Tag: {item.attributes.tag}</div>
                 </Fragment>
             );
             if(isSelected === true) {
                 return (
-                <li className="photo-preview selected" key={item.id} >
+                <li className="photo-preview selected" key={item.id} style={divStyle} >
                     <div className='selected-preview-item-buttons'>
                         { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
                             <Fragment>
@@ -119,6 +115,7 @@ class PhotoPicker extends React.Component {
                     className="photo-preview" 
                     key={item.id}
                     onClick={(event) => this.handlePhotoPreviewSelect(event, item.id)}
+                    style={divStyle}
                 >
                     { commonItems }
                 </li>
@@ -126,7 +123,7 @@ class PhotoPicker extends React.Component {
         });
 
         return (
-            <ul className="photo-previews-list">{mappedPhotoPreview}</ul>
+            <ul className="photo-previews-list">{ mappedPhotoPreview }</ul>
         );
     }
 
@@ -185,7 +182,7 @@ class PhotoPicker extends React.Component {
                         }
                     </Fragment>
                 }
-                {(!this.state.photoData || this.state.photoData.length === 0)
+                { (!this.state.photoData || this.state.photoData.length === 0)
                     ? 
                         <EmptyPickerEntriesDisplay entryTypeName='photo' />
                     :

@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import qs from 'qs'
+import { BackendConstants } from  '../Utilities/Helpers'
 
 class PhotoGallery extends React.Component {
     constructor () {
@@ -8,11 +9,10 @@ class PhotoGallery extends React.Component {
         this.state = { orderedPhotoData: null };
     }
 
-    // [NOTE][HARD-CODED] The photo version's value is hard coded into this component
-
-    mappedPhotos = (photoVersion) => {
+    mappedPhotos = () => {
+        const { photoVersion } = this.props;
         return this.state.orderedPhotoData.map((element) => {
-            const url = element.file[photoVersion]?.url;
+            const url = BackendConstants.photoUploader.getUrlForVersion(element.file, photoVersion);
             if(!url) { return; }
             
             return (
@@ -61,7 +61,7 @@ class PhotoGallery extends React.Component {
             <div className="photo-gallery">
                 <h1>Photo Gallery</h1>
                 { this.state.orderedPhotoData &&
-                    <ul className="photos-list">{ this.mappedPhotos('medium') }</ul>
+                    <ul className="photos-list">{ this.mappedPhotos() }</ul>
                 }
             </div>
         )
