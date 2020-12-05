@@ -49,8 +49,7 @@ function App(props) {
                 <Route exact path="/about" component={About} />
                 <Route exact path="/cookbook" component={Cookbook} />
                 <Route exact path="/cooking-videos" component={CookingVideos} />
-                <Route 
-                    exact path="/featured-recipes"
+                <Route exact path="/featured-recipes/:id?"
                     render={(props) => (
                         <FeaturedRecipes {...props} displayPhotoVersion="medium" previewPhotoVersion="small" />
                     )}

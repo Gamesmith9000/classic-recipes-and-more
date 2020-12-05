@@ -40,7 +40,7 @@ class FeaturedRecipes extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('api/v1/recipes/featured.json')
+        axios.get('/api/v1/recipes/featured.json')
         .then(res => {
             const { data, included } = res.data;
 
