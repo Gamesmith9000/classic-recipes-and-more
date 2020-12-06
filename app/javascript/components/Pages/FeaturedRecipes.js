@@ -1,7 +1,9 @@
-import React, { isValidElement } from 'react'
+import React, { Fragment } from 'react'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 import qs from 'qs'
 import { BackendConstants, isValuelessFalsey } from '../Utilities/Helpers'
+import RecipeDisplay from './Displays/RecipeDisplay';
 
 //[NOTE][REFACTOR] This component gets all the photo urls for a photo. This needs to hang on to the size needed for the size shown in recipe display
 //      Props example for this component:           displayPhotoVersion="medium" previewPhotoVersion="small"
@@ -12,7 +14,7 @@ class FeaturedRecipes extends React.Component {
         super();
         this.state = {
             photoData: null,
-            recipes: null
+            recipes: null,
         };
     }
 
@@ -92,12 +94,30 @@ class FeaturedRecipes extends React.Component {
     }
 
     render() {
+        const idParam = parseInt(this.props.match?.params?.id);
+        const hasFocusedRecipeId = isValuelessFalsey(idParam) === false && isNaN(idParam) === false;
+        const displayedRecipeIndex = this.state.recipes?.findIndex(element => element.id === idParam);
+        const hasValidFocusIndex = displayedRecipeIndex > -1;       
+
         return (
             <div className="featured-recipes">
+
+                <Link to={{ pathname: "/featured-recipes/48", state: { fromListPage: true } }}>
+                    Recipe - Id: 48
+                </Link>
+
                 <h1>Featured Recipes</h1>
-                { this.state.recipes &&
-                    <ul className="featured-list">{ this.mappedRecipePreviews() }</ul>
+                { hasValidFocusIndex === false || hasFocusedRecipeId === false
+                ?
+                    <Fragment>
+                        { this.state.recipes &&
+                            <ul className="featured-list">{ this.mappedRecipePreviews() }</ul>
+                        }
+                    </Fragment>
+                :
+                    <RecipeDisplay {...this.state.recipes[displayedRecipeIndex]} />
                 }
+                
             </div>
         )
     }
