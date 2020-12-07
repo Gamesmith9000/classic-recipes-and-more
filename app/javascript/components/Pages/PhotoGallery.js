@@ -36,9 +36,12 @@ class PhotoGallery extends React.Component {
 
     componentDidMount () {
         axios.get('api/v1/aux/main.json')
-        .then(res => {         
+        .then(res => {
+            const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
+            if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) { return; }
+            
             let config = {
-                params: { photos: { ids: res.data.data.attributes.photo_page_ordered_ids } },
+                params: { photos: { ids: photoPageOrderedIds } },
                 paramsSerializer: (params) => { return qs.stringify(params); }
             }
 

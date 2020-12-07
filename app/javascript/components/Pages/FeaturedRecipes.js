@@ -66,29 +66,36 @@ class FeaturedRecipes extends React.Component {
                 targetRecipeIds.splice(index, 1);
             }
 
-            let config = {
-                params: { photos: { ids: targetRecipeIds } },
-                paramsSerializer: (params) => { return qs.stringify(params); }
+            // If targetRecipeIds is empty, don't send request to get photos
+            
+            let photoData = null;
+
+            if(targetRecipeIds.length > 0) {
+                let config = {
+                    params: { photos: { ids: targetRecipeIds } },
+                    paramsSerializer: (params) => { return qs.stringify(params); }
+                }
+
+                axios.get('/api/v1/photos/multi.json', config)
+                .then(res => {
+                    // [NOTE] 'ids' param length and return length are expected to be the same length. No special checks are done
+
+                    photoData = res.data.data.map((element, index) => {
+                        const photoId = targetRecipeIds[index];
+                        const photoUrl = BackendConstants.photoUploader.getUrlForVersion(element.attributes.file, this.props.previewPhotoVersion);                    
+                        return { photoId, photoUrl };
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
             }
 
-            axios.get('/api/v1/photos/multi.json', config)
-            .then(res => {
-                // [NOTE] 'ids' param length and return length are expected to be the same length. No special checks are done
-
-                const photoData = res.data.data.map((element, index) => {
-                    const photoId = targetRecipeIds[index];
-                    const photoUrl = BackendConstants.photoUploader.getUrlForVersion(element.attributes.file, this.props.previewPhotoVersion);                    
-                    return { photoId, photoUrl };
-                });
-
-                this.setState({
-                    photoData: photoData,
-                    recipes: recipesData
-                });
-            })
-            .catch(err => {
-                console.log(err);
+            this.setState({
+                photoData: photoData,
+                recipes: recipesData
             });
+
         })
         .catch(err => console.log(err))
     }
@@ -102,6 +109,10 @@ class FeaturedRecipes extends React.Component {
         return (
             <div className="featured-recipes">
 
+                <Link to={{ pathname: "/featured-recipes/2", state: { fromListPage: true } }}>
+                    Recipe - Id: 2
+                </Link>
+                <br />
                 <Link to={{ pathname: "/featured-recipes/48", state: { fromListPage: true } }}>
                     Recipe - Id: 48
                 </Link>
