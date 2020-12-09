@@ -30,3 +30,4 @@ export function renderIndexToDom (allowAccessToContentPages) {
     });
 }
 
+export default renderIndexToDom

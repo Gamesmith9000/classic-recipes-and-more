@@ -31,8 +31,10 @@ class FeaturedRecipes extends React.Component {
     }
 
     renderPreviewPhoto(recipeData) {
+        if(!recipeData || recipeData.length < 1 || !this.state.photoData) { return; }
+
         const photoId = recipeData?.preview_photo_id;
-        if(isValuelessFalsey(photoId) === true){ return; }
+        if(isValuelessFalsey(photoId) === true) { return; }
 
         const index = this.state.photoData.findIndex((element) => element.photoId === photoId);
         if(index === -1) { return; }
@@ -48,7 +50,7 @@ class FeaturedRecipes extends React.Component {
 
             // Map recipe and section data into a more friendly format
 
-            const recipesData = data.map((element, index) => {
+            const recipesData = data.map((element) => {
                 const attributes = element.attributes;
                 const id = parseInt(element.id);
                 const sections = element.relationships.sections.data.map((sectionElement) => {

@@ -1,3 +1,3 @@
-import { renderIndexToDom } from './indexRendering'
+import renderIndexToDom from './renderIndexToDom'
 
 renderIndexToDom(false);
