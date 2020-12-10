@@ -17,6 +17,7 @@
       <%# Flash variables %>
       <%# for use in React and Devise's non-React rendered views %>
 
+      const userDisplay = "<%= current_admin == nil ? nil : current_admin.email %>";
       const hasSignedInFlashMessage = <%= notice == successful_sign_in_message %>;
       const flashMessages = {
         alert: (<%= alert.nil? %> === true) ? null : "<%= alert %>",

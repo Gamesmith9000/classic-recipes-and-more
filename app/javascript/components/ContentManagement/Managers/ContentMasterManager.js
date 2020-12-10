@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import SectionPicker from '../Pickers/SectionPicker';
+import { AdminUserDisplay } from './Subcomponents'
 import { ContentSectionsInfo } from '../../Utilities/ComponentHelpers';
 
 class ContentMasterManager extends React.Component {
@@ -29,6 +30,7 @@ class ContentMasterManager extends React.Component {
         return (
             <div className="content-management">
                 <h1>Manage Content</h1>
+                <AdminUserDisplay displayName={userDisplay} />
                 <SectionPicker 
                     changeContentSection={this.changeContentSection}
                     closeContentSection={this.closeContentSection}      
