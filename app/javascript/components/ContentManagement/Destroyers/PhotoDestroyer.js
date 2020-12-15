@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
+import { VersionedPhoto } from '../../Utilities/ComponentHelpers';
 import { setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoDestroyer extends React.Component {
@@ -31,10 +32,6 @@ class PhotoDestroyer extends React.Component {
     }
 
     render() {
-        const previewUrl = this.props.previewPhotoSize ? 
-            this.state.photoData?.attributes.file[`${this.props.previewPhotoSize}`].url : 
-            this.state.photoData?.attributes.file.url;
-
         return (
             <div className="photo-destroyer">
                 {this.state.photoData &&
@@ -42,7 +39,10 @@ class PhotoDestroyer extends React.Component {
                         <h3>You are about to delete a photo:</h3>
                         <p>ID: {this.props.photoId}</p>
                         <p>Image:</p>
-                        <img src={previewUrl}/>
+                        <VersionedPhoto 
+                            photoFileData={this.state.photoData?.attributes?.file}
+                            photoVersionName={this.props.previewPhotoSize}
+                        />
                         <br />
                         <p>Title: {this.state.photoData.attributes.title}</p>
                         <p>Tag: {this.state.photoData.attributes.tag}</p>

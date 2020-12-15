@@ -43,6 +43,7 @@ class FeaturedRecipes extends React.Component {
         return <VersionedPhoto 
             photoFileData={this.state.photoData[index].file}
             photoVersionName={this.props.previewPhotoVersion}
+            renderNullWithoutUrl={true}
         />;
     }
 

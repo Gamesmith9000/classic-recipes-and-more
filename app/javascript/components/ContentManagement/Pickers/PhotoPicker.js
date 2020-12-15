@@ -1,8 +1,8 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 
-import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
-import { BackendConstants } from '../../Utilities/Helpers'
+import { EmptyPickerEntriesDisplay, VersionedPhoto} from '../../Utilities/ComponentHelpers'
+import { BackendConstants, isValuelessFalsey } from '../../Utilities/Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {
@@ -64,27 +64,26 @@ class PhotoPicker extends React.Component {
     mapPhotoPreviews = (photoDataList) => {
         if(!photoDataList || !this.state.sorting) return;
         
-        const photoUploaderVersionData = BackendConstants.photoUploader.getVersionData(this.props.photoPickerPhotoVersion);
-        const divStyle = { minHeight: photoUploaderVersionData.maxHeight }
-
         const { byId, fieldIndex, validFields} = this.state.sorting;
         const sortedPhotoDataList = sortByAttributeNameOrId(photoDataList, validFields, fieldIndex, byId);
 
         const mappedPhotoPreview = sortedPhotoDataList.map((item, index) => {
-            const isSelected = (this.props.selectedPhotoId && this.props.selectedPhotoId === parseInt(item.id));
-            const photoUrl = BackendConstants.photoUploader.getUrlForVersion(item.attributes.file, this.props.photoPickerPhotoVersion);
+            const isSelected = (isValuelessFalsey(this.props.selectedPhotoId) === false && this.props.selectedPhotoId === parseInt(item.id));
 
             const commonItems = (
                 <Fragment>
                     <div className="id-column">ID: {item.id}</div>
-                    <img src={photoUrl} /> 
+                    <VersionedPhoto 
+                        photoFileData={item.attributes.file}
+                        photoVersionName={this.props.photoPickerPhotoVersion}
+                    />
                     <div>Title: {item.attributes.title}</div>
                     <div>Tag: {item.attributes.tag}</div>
                 </Fragment>
             );
             if(isSelected === true) {
                 return (
-                <li className="photo-preview selected" key={item.id} style={divStyle} >
+                <li className="photo-preview selected" key={item.id} >
                     <div className='selected-preview-item-buttons'>
                         { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
                             <Fragment>
@@ -115,7 +114,6 @@ class PhotoPicker extends React.Component {
                     className="photo-preview" 
                     key={item.id}
                     onClick={(event) => this.handlePhotoPreviewSelect(event, item.id)}
-                    style={divStyle}
                 >
                     { commonItems }
                 </li>

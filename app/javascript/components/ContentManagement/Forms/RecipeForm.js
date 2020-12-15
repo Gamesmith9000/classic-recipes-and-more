@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 import { ExportedPhotoPickerState, RecipeFormRecipeState, RecipeFormSectionState, TextSectionWithId } from '../../Utilities/Constructors'
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
+import { UnsavedChangesDisplay, ValidationErrorDisplay, VersionedPhoto } from '../../Utilities/ComponentHelpers'
 import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapRecipeSectionsData } from '../../Utilities/ResponseDataHelpers'
 
@@ -344,10 +344,11 @@ class RecipeForm extends React.Component {
                         />
                     :
                         <Fragment>
-                            { hasPreviewPhotoId === true
-                                ? <img src={this.state.previewPhotoUrl} />
-                                : '(No photo chosen)'
-                            }
+                            <VersionedPhoto
+                                photoFileData={this.state.previewPhotoUrl}
+                                photoVersionName={this.props.previewPhotoVersion}
+                                textDisplayForNoPhoto="(No photo chosen)"
+                            />
                             <br />
                             <button onClick={this.handleTogglePhotoPickerOpenState}>
                                 { hasPreviewPhotoId === true ? 'Change' : 'Select' }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React from 'react'
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
+import { UnsavedChangesDisplay, ValidationErrorDisplay, VersionedPhoto } from '../../Utilities/ComponentHelpers'
 import { setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoEditForm extends React.Component {
@@ -80,7 +80,10 @@ class PhotoEditForm extends React.Component {
                     <label>
                         Image:
                         <br />
-                        <img src={this.state.previewUrl} />
+                        <VersionedPhoto
+                            photoFileData={this.state.previewUrl}
+                            photoVersionName={this.props.previewPhotoSize}
+                        />
                     </label>
                     <br />
                     <label>
