@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import qs from 'qs'
 import { BackendConstants } from  '../Utilities/Helpers'
+import { VersionedPhoto } from '../Utilities/ComponentHelpers';
 
 class PhotoGallery extends React.Component {
     constructor () {
@@ -12,26 +13,16 @@ class PhotoGallery extends React.Component {
     mappedPhotos = () => {
         const { photoVersion } = this.props;
         return this.state.orderedPhotoData.map((element) => {
-            const url = BackendConstants.photoUploader.getUrlForVersion(element.file, photoVersion);
-            if(!url) { return; }
-            
             return (
-                <li className="photo" key={element.id}>
-                    <img src={url} />
-                </li>
+                <VersionedPhoto 
+                    key={element.id}
+                    photoFileData={element.file}
+                    photoVersionName={photoVersion}
+                    renderNullWithoutUrl={true}
+                    targetClassName="photo"
+                />
             );
         });
-    }
-
-    renderPreviewPhoto(recipeData) {
-        const photoId = recipeData?.preview_photo_id;
-        if(isValuelessFalsey(photoId) === true){ return; }
-
-        const index = this.state.photoData.findIndex((element) => element.photoId === photoId);
-        if(index === -1) { return; }
-        const url = this.state.photoData[index].photoUrl;
-
-        return <img src={url} />;
     }
 
     componentDidMount () {

@@ -6,7 +6,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { EmptyEntryDisplay } from './Subcomponents'
 import PhotoPicker from '../Pickers/PhotoPicker'
 
-import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
+import { UnsavedChangesDisplay, VersionedPhoto } from '../../Utilities/ComponentHelpers'
 import { ExportedPhotoPickerState, PhotoGalleryPageFormPhotoInfo } from '../../Utilities/Constructors'
 import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
@@ -125,7 +125,6 @@ class PhotoGalleryPageForm extends React.Component {
 
     mapPhotoIdInputs = (orderedPhotoIdDataList) => {
         const nullValuePlaceholder = '...';
-        const uploaderVersionData = BackendConstants.photoUploader.getVersionData(this.props.imageDisplaySize);
 
         return orderedPhotoIdDataList.map((element, index) => {
             if(isValuelessFalsey(element.photoId)) { console.log('Display (and submission) must be able to compensate for entries without photos.'); }
@@ -140,7 +139,7 @@ class PhotoGalleryPageForm extends React.Component {
                             <br />
                             <label>ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</label>
                             <br />
-                            { this.renderPhotoControl(element, uploaderVersionData) }
+                            { this.renderPhotoControl(element, this.props.imageDisplaySize) }
                             { this.state.orderedPhotoIdData.length > 1 &&
                                 <button 
                                     className="delete-item" 
@@ -174,25 +173,22 @@ class PhotoGalleryPageForm extends React.Component {
         });
     }
 
-    renderPhotoControl = (photoIdData, photoUploaderVersionData) => {
-        if(!photoIdData || !this.props.imageDisplaySize || !photoUploaderVersionData) { return; }
+    renderPhotoControl = (photoIdData, photoUploaderVersionName) => {
+        if(!photoIdData || !this.props.imageDisplaySize) { return; }
 
         const hasPhotoId = isValuelessFalsey(photoIdData.photoId) === false;
         const localId = photoIdData.localId;
-        const divClass = `chosen-photo${hasPhotoId === false ? " placeholder" : ""}`;
-        const divStyle = {
-            height: photoUploaderVersionData.maxHeight,
-            width: photoUploaderVersionData.maxWidth
-        }
+
+        const photo = <VersionedPhoto 
+            photoFileData={this.state.orderedPreviewUrls[this.getIndexFromState(localId)]}
+            photoVersionName={photoUploaderVersionName}
+            targetClassName={`chosen-photo${hasPhotoId === false ? " placeholder" : ""}`}
+            textDisplayForNoPhoto="(No photo chosen)"
+        />;
 
         return (
             <Fragment>
-                <div className={divClass} style={divStyle}>
-                    { hasPhotoId === true
-                        ? <img src={this.state.orderedPreviewUrls[this.getIndexFromState(localId)]} />
-                        : '(No photo chosen)'
-                    }
-                </div>
+                {photo}
                 <button onClick={(event) => this.handlePhotoPickerOpen(event, localId)}>
                     { hasPhotoId === true ? 'Change' : 'Select' }
                 </button>
