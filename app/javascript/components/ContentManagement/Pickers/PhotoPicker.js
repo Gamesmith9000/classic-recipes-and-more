@@ -34,7 +34,7 @@ class PhotoPicker extends React.Component {
         this.props.changeSelectedPhotoId(parseInt(photoId));
         if(this.props.changeSelectedPhotoUrl) {
             const entry = this.state.photoData.find(element => parseInt(element.id) === parseInt(photoId));
-            photoUrl = entry ? BackendConstants.photoUploader.getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) : null;
+            const photoUrl = entry ? BackendConstants.photoUploader.getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) : null;
             this.props.changeSelectedPhotoUrl(photoUrl);
         }
     }

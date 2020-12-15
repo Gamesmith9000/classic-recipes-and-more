@@ -65,12 +65,15 @@ class FeaturedRecipes extends React.Component {
                 return { ...attributes, id, sections };
             });
 
-            let targetRecipeIds = recipesData.map((element) => { return element.preview_photo_id; });
+            // map preview photo ids and filter out any null/undefined values
 
-            while(targetRecipeIds.some((element) => isValuelessFalsey(element) === true)) {
-                const index = targetRecipeIds.findIndex((element) => isValuelessFalsey(element) === true);
-                targetRecipeIds.splice(index, 1);
-            }
+            const mappedRecipeIds = recipesData.map((element) => { return element.preview_photo_id; }).filter(
+                element => isValuelessFalsey(element) === false
+            );
+
+            // remove duplicates
+
+            const targetRecipeIds = [...new Set(mappedRecipeIds)];
 
             // If targetRecipeIds is empty, don't send request to get photos
             
@@ -115,7 +118,19 @@ class FeaturedRecipes extends React.Component {
         const displayedRecipeIndex = this.state.recipes?.findIndex(element => element.id === idParam);
         const hasValidFocusIndex = displayedRecipeIndex > -1; 
         
-        if(hasFocusedRecipeId !== hasValidFocusIndex) { return <Redirect to="/featured-recipes" />; }
+        if(this.state.recipes && hasFocusedRecipeId !== hasValidFocusIndex) { return <Redirect to="/featured-recipes" />; }
+
+        const recipeDisplayAdditionalProps = { photoVersion: this.props.displayPhotoVersion };
+
+        if(hasValidFocusIndex === true && hasFocusedRecipeId === true) {
+            const previewPhotoId = this.state.recipes[displayedRecipeIndex].preview_photo_id;
+            if(isValuelessFalsey(previewPhotoId) === false) {
+                const index = this.state.photoData.findIndex(element => element.id === previewPhotoId);
+                if(index > -1) { 
+                    recipeDisplayAdditionalProps.previewPhotoUrl = BackendConstants.photoUploader.getUrlForVersion(this.state.photoData[index].file, this.props.displayPhotoVersion);
+                }
+            }
+        }
 
         return (
             <div className="featured-recipes">
@@ -137,7 +152,7 @@ class FeaturedRecipes extends React.Component {
                         }
                     </Fragment>
                 :
-                    <RecipeDisplay {...this.state.recipes[displayedRecipeIndex]} />
+                    <RecipeDisplay {...this.state.recipes[displayedRecipeIndex]} {...recipeDisplayAdditionalProps} />
                 }
                 
             </div>
