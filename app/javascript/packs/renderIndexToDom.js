@@ -16,12 +16,18 @@ export function renderIndexToDom (allowAccessToContentPages) {
     document.addEventListener('DOMContentLoaded', () => {
         ReactDOM.render(
             <BrowserRouter>
-            <Navbar />
+            <Navbar 
+                disableLinks={true}
+            />
             <FlashMessagesDisplay />
             <Route 
                 path="/" 
                 render={(props) => (
-                    <App {...props} giveContentPageAccess={allowAccessToContentPages} />
+                    <App 
+                        {...props} 
+                        giveContentPageAccess={allowAccessToContentPages} 
+                        placeholderPageDisplay={true}
+                    />
                 )}
             />
             </BrowserRouter>,

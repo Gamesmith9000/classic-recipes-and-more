@@ -9,10 +9,11 @@ import Home from './Pages/Home'
 import PhotoGallery from './Pages/PhotoGallery'
 import Shop from './Pages/Shop'
 
+import ComingSoon from './Pages/ComingSoon'
 
 import ContentMasterManager from './ContentManagement/Managers/ContentMasterManager'
 
-function App(props) {
+function App (props) {
     const redirectOnSignIn = () => {
         if(props?.giveContentPageAccess === true && hasSignedInFlashMessage === true) {
             return <Redirect to ="/content" />
@@ -39,6 +40,18 @@ function App(props) {
                 path={'/content'} 
             />
         ;
+    }
+
+    if(props.placeholderPageDisplay === true){
+        return(
+            <Fragment>
+                { redirectOnSignIn() }
+                <Switch>
+                    <Route exact path="/" component={ComingSoon} />
+                    { renderProtectedRoute("/content", ContentMasterManager) }
+                </Switch>
+            </Fragment>
+        );
     }
 
     return (            
