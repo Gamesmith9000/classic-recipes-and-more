@@ -3,7 +3,7 @@ import React from 'react'
 function ComingSoon (props) {
     return (
         <div className="coming-soon">
-            <p>[ComingSoon Component]</p>
+            <h1>Coming Soon!</h1>
         </div>
     )
 }
