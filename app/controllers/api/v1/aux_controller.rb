@@ -52,6 +52,19 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
+    def remove_photo_id_instances
+        return if photo_id_removal_params.has_key?(:id) == false
+
+        idParam = photo_id_removal_params[:id]
+        q = "'" + idParam.to_s  + "' = ANY (photo_page_ordered_ids)"
+        instances = AuxData.where(q)
+
+        instances.each do |i|
+            updatedArray = i.photo_page_ordered_ids.select {|p| p != idParam}
+            i.update(photo_page_ordered_ids: updatedArray)
+        end
+    end
+
     private
 
     def aux_data_params
@@ -62,6 +75,10 @@ class Api::V1::AuxController < ApplicationController
         # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
         # [NOTE][DRY] This method is repeated across other API controllers
         redirect_back(fallback_location: root_path)
+    end
+
+    def photo_id_removal_params
+        params.require(:photo).permit(:id)
     end
 
     def render_serialized_json (values)

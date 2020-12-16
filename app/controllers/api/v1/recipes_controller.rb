@@ -113,11 +113,34 @@ module Api
                 end
             end
 
+            def remove_photo_id_instances
+                return if photo_id_removal_params.has_key?(:id) == false
+
+                idParam = photo_id_removal_params[:id]
+                instances = Recipe.where(preview_photo_id: idParam)
+        
+                instances.each do |i|
+                    i.update(preview_photo_id: nil)
+                end
+
+                q = "'" + idParam.to_s  + "' = ANY (ordered_photo_ids)"
+                instances = Section.where(q)
+        
+                instances.each do |i|
+                    updatedArray = i.ordered_photo_ids.select {|p| p != idParam}
+                    i.update(ordered_photo_ids: updatedArray)
+                end
+            end
+
             private
 
             def html_disallowed_response
                 # [NOTE][DRY] This is a direct copy of method code from aux_controller
                 redirect_back(fallback_location: root_path)
+            end
+
+            def photo_id_removal_params
+                params.require(:photo).permit(:id)
             end
 
             def recipe_params

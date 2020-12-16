@@ -14,11 +14,21 @@ class PhotoDestroyer extends React.Component {
     handleDestroyPhotoButtonInput = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
+        const photoId = this.props.photoId;
 
-        axios.delete(`/api/v1/photos/${this.props.photoId}`)
+        axios.delete(`/api/v1/photos/${photoId}`)
         .then(res => {
-            window.alert(`Photo deleted (ID:${this.props.photoId})`)
-            this.props.handleClose();
+            const removePhotoIdParams = { photo: { id: photoId } };
+
+            axios.all([
+                axios.patch('/api/v1/aux/remove_photo_id_instances.json', removePhotoIdParams),
+                axios.patch('/api/v1/recipes/remove_photo_id_instances.json', removePhotoIdParams)
+            ])
+            .then(res => {
+                window.alert(`Photo deleted (ID:${this.props.photoId})`)
+                this.props.handleClose();
+            })
+            .catch(err => console.log(err));
         })
         .catch(err => console.log(err));
     }
