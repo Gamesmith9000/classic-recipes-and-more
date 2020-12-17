@@ -6,9 +6,6 @@ import PhotoUploadForm from '../Forms/PhotoUploadForm';
 import PhotoPicker from '../Pickers/PhotoPicker'
 
 class PhotoManager extends React.Component {
-
-    // [NOTE] Next step: Refactor this with dynamic handlers (open/close handlers, at least)
-
     constructor () {
         super();
         this.state = {
