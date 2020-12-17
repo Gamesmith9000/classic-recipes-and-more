@@ -1,17 +1,18 @@
 import { RecipeFormSectionState } from './Constructors'
+import { isValuelessFalsey } from './Helpers';
 
 function getProperDataForAttributes (res) {
     // Find the location of the proper model data from Axios response, utilizing fast_jsonapi's formatting
     // Requires at least one item in response
 
     let targetData;
-    let invalidResData = !res ? true : false;
+    let invalidResData = isValuelessFalsey(res);
     
-    if(res[0]?.hasOwnProperty('attributes') && invalidResData === false) {
+    if(invalidResData === false && res[0]?.hasOwnProperty('attributes')) {
         // has res[0].attributes
         targetData = res[0];
     }
-    else if(res.hasOwnProperty('data') && invalidResData === false) {
+    else if(invalidResData === false && res.hasOwnProperty('data')) {
         // has res.data
 
         if(res.data.hasOwnProperty('data')) {
