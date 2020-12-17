@@ -114,7 +114,7 @@ class FeaturedRecipes extends React.Component {
 
     render() {
         const idParam = parseInt(this.props.match?.params?.id);
-        const hasFocusedRecipeId = isValuelessFalsey(idParam) === false && isNaN(idParam) === false;
+        const hasFocusedRecipeId = isValuelessFalsey(idParam, false) === false;
         const displayedRecipeIndex = this.state.recipes?.findIndex(element => element.id === idParam);
         const hasValidFocusIndex = displayedRecipeIndex > -1; 
         

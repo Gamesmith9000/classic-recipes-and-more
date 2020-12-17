@@ -82,11 +82,15 @@ export function bumpArrayElement (array, index, direction) {
     }
 }
 
-export function isValuelessFalsey (value) {
-    if(value === null || value === undefined || Number.isNaN(value) === true) {
-        return true;
-    }
-    else { return false; }
+export function existsInLocalStorage (keyName) {
+    const storedValue = localStorage.getItem(keyName);
+    return isValuelessFalsey(storedValue) === false;
+}
+
+export function isValuelessFalsey (value, nanIsValidValue = false) {
+    if(value === null || value === undefined) { return true; }
+    if(Number.isNaN(value) && nanIsValidValue === true) { return true; }    
+    return false;
 }
 
 export function isNonNullNonArrayObject (targetObject) {
