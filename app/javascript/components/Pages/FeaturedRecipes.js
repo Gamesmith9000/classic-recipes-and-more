@@ -23,7 +23,8 @@ class FeaturedRecipes extends React.Component {
         return this.state.recipes.map((element) => {
             return (
                 <li className="recipe-preview" key={element.id}>
-                    <h2>{element.title}</h2>
+                    {/* <h2>{element.title}</h2> */}
+                    <h2><Link to={`/featured-recipes/${element.id}`}>{element.title}</Link></h2>
                     { this.renderPreviewPhoto(element) }
                     <p>{element.description}</p>
                 </li>
@@ -118,7 +119,7 @@ class FeaturedRecipes extends React.Component {
         const displayedRecipeIndex = this.state.recipes?.findIndex(element => element.id === idParam);
         const hasValidFocusIndex = displayedRecipeIndex > -1; 
         
-        if(this.state.recipes && hasFocusedRecipeId !== hasValidFocusIndex) { return <Redirect to="/featured-recipes" />; }
+        if(this.state.recipes && isNaN(idParam) === false && hasFocusedRecipeId !== hasValidFocusIndex) { return <Redirect to="/featured-recipes" />; }
 
         const recipeDisplayAdditionalProps = { photoVersion: this.props.displayPhotoVersion };
 
@@ -134,25 +135,19 @@ class FeaturedRecipes extends React.Component {
 
         return (
             <div className="featured-recipes">
-
-                <Link to={{ pathname: "/featured-recipes/2", state: { fromListPage: true } }}>
-                    Recipe - Id: 2
-                </Link>
-                <br />
-                <Link to={{ pathname: "/featured-recipes/48", state: { fromListPage: true } }}>
-                    Recipe - Id: 48
-                </Link>
-
-                <h1>Featured Recipes</h1>
                 { hasValidFocusIndex === false || hasFocusedRecipeId === false
                 ?
                     <Fragment>
+                        <h1>Featured Recipes</h1>
                         { this.state.recipes &&
                             <ul className="featured-list">{ this.mappedRecipePreviews() }</ul>
                         }
                     </Fragment>
                 :
-                    <RecipeDisplay {...this.state.recipes[displayedRecipeIndex]} {...recipeDisplayAdditionalProps} />
+                    <Fragment>
+                        <Link to="/featured-recipes/"> Back to Featured Recipes </Link>
+                        <RecipeDisplay {...this.state.recipes[displayedRecipeIndex]} {...recipeDisplayAdditionalProps} />
+                    </Fragment>
                 }
                 
             </div>
