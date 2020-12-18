@@ -107,13 +107,13 @@ export function VersionedPhoto (props) {
     if(targetClassName) { additionalProps.className = targetClassName; }
 
     if(noFileData === true) {
-        if(renderNullWithoutUrl === true) { return; }
+        if(renderNullWithoutUrl === true) { return null; }
         return <div {...additionalProps}>{textDisplayForNoPhoto}</div>
     }
     else {
         const usingString = typeof(photoFileData) === 'string';
         const url = usingString === true ? photoFileData : BackendConstants.photoUploader.getUrlForVersion(photoFileData, photoVersionName);
-        if(renderNullWithoutUrl === true && !url) { return; }
+        if(renderNullWithoutUrl === true && !url) { return null; }
         return <img src={url} {...additionalProps} />;
     }
 }

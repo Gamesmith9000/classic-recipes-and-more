@@ -1,9 +1,9 @@
 import React from 'react'
-import { isValuelessFalsey } from '../../Utilities/Helpers'
+import { VersionedPhoto } from '../../Utilities/ComponentHelpers'
 
 
 function RecipeDisplay (props) {
-    const { description, featured, ingredients, previewPhotoUrl, sections, title } = props;
+    const { description, featured, ingredients, photoVersion, previewPhotoUrl, sections, title } = props;
 
     const displayPermitted = featured === true ? true : (props.allowUnfeatured && props.allowUnfeatured === true);
     if(displayPermitted === false) { return; }
@@ -19,7 +19,7 @@ function RecipeDisplay (props) {
     }
 
     const mappedSections = () => {
-        if(!sections) { return; }
+        if(!sections) { return null; }
 
         const mapped = sections.map((element, index) => {
             // [NOTE] Since photos cannot yet be added by admin to recipe sections, they are not mapped here
@@ -32,9 +32,11 @@ function RecipeDisplay (props) {
     return (
         <div className="recipe-display">
             <h1>{title}</h1>
-            { isValuelessFalsey(previewPhotoUrl) === false &&
-                <img src={previewPhotoUrl} />
-            }
+            <VersionedPhoto  
+                photoFileData={previewPhotoUrl}
+                photoVersionName={photoVersion}
+                renderNullWithoutUrl={true}
+            />
             <p>{description}</p>
             <h2>Ingredients</h2>
             { mappedIngredients() }
