@@ -29,7 +29,7 @@ class RecipeForm extends React.Component {
     }
 
     attemptPreviewImageUrlFetch = () => {
-        axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}`)
+        axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}.json`)
         .then(res => {
             const url = BackendConstants.photoUploader.getUrlForVersion(res.data.data.attributes.file, this.props.previewPhotoVersion);
             this.setState({ previewPhotoUrl: url });
@@ -373,7 +373,7 @@ class RecipeForm extends React.Component {
 
     componentDidMount () {
         if(this.props.recipeId) {
-            axios.get(`/api/v1/recipes/${this.props.recipeId}`)
+            axios.get(`/api/v1/recipes/${this.props.recipeId}.json`)
             .then(res => {
                 const attributes = res.data.data.attributes;
                 let ingredientsLength;

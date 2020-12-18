@@ -23,7 +23,7 @@ class PhotoEditForm extends React.Component {
         setAxiosCsrfToken();
         const { tag, title } = this.state;
 
-        axios.patch(`/api/v1/photos/${this.props.photoId}`, { tag, title })
+        axios.patch(`/api/v1/photos/${this.props.photoId}.json`, { tag, title })
         .then( res => { this.handleFormSubmitResponse(res); })
         .catch(err => { this.handleFormSubmitResponse(err); });
     }
@@ -54,7 +54,7 @@ class PhotoEditForm extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/v1/photos/${this.props.photoId}`)
+        axios.get(`/api/v1/photos/${this.props.photoId}.json`)
         .then(res => {
             const { tag, title } = res.data.data.attributes;
             const previewUrl = this.props.previewPhotoSize ? res.data.data.attributes.file[`${this.props.previewPhotoSize}`].url: res.data.data.attributes.file.url;

@@ -153,7 +153,6 @@ class PhotoPicker extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/photos.json')
         .then(res => {
-            console.log(res);
             let sortingState = this.state.sorting;
             sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)
             this.setState({ 

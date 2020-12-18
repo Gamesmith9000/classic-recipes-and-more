@@ -16,7 +16,7 @@ class PhotoDestroyer extends React.Component {
         setAxiosCsrfToken();
         const photoId = this.props.photoId;
 
-        axios.delete(`/api/v1/photos/${photoId}`)
+        axios.delete(`/api/v1/photos/${photoId}.json`)
         .then(res => {
             const removePhotoIdParams = { photo: { id: photoId } };
 
@@ -34,7 +34,7 @@ class PhotoDestroyer extends React.Component {
     }
 
     componentDidMount () {
-        axios.get(`/api/v1/photos/${this.props.photoId}`)
+        axios.get(`/api/v1/photos/${this.props.photoId}.json`)
         .then(res => {
             this.setState({ photoData: res.data.data });
         })

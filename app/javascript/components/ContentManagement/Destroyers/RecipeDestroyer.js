@@ -15,7 +15,7 @@ class RecipeDestroyer extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        axios.delete(`/api/v1/recipes/${this.props.recipeId}`)
+        axios.delete(`/api/v1/recipes/${this.props.recipeId}.json`)
         .then(res => {
             window.alert(`Recipe deleted (ID:${this.props.recipeId})`)
             this.props.handleClose();
@@ -24,7 +24,7 @@ class RecipeDestroyer extends React.Component {
     }
 
     componentDidMount () {
-        axios.get(`/api/v1/recipes/${this.props.recipeId}`)
+        axios.get(`/api/v1/recipes/${this.props.recipeId}.json`)
         .then(res => {
             this.setState({
                 recipeData: res.data.data

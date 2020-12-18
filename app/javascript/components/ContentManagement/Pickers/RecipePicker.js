@@ -119,7 +119,7 @@ class RecipePicker extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('/api/v1/recipes')
+        axios.get('/api/v1/recipes.json')
         .then(res => {
             let sortingState = this.state.sorting;
             sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)
