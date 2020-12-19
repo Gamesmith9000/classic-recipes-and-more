@@ -2,9 +2,10 @@ import React, { Fragment } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
 import qs from 'qs'
+
+import VersionedPhoto from '../Misc/VersionedPhoto'
 import { BackendConstants, isValuelessFalsey } from '../Utilities/Helpers'
 import RecipeDisplay from './Displays/RecipeDisplay';
-import { VersionedPhoto } from '../Utilities/ComponentHelpers'
 
 //[NOTE][REFACTOR] This component gets all the photo urls for a photo. This needs to hang on to the size needed for the size shown in recipe display
 //      Props example for this component:           displayPhotoVersion="medium" previewPhotoVersion="small"

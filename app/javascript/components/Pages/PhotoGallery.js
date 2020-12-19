@@ -1,8 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 import qs from 'qs'
-import { BackendConstants } from  '../Utilities/Helpers'
-import { VersionedPhoto } from '../Utilities/ComponentHelpers';
+
+import VersionedPhoto from '../Misc/VersionedPhoto'
 
 class PhotoGallery extends React.Component {
     constructor () {

@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react'
 import axios from 'axios'
 import { setAxiosCsrfToken } from '../../Utilities/Helpers';
 
-export function AdminUserDisplay (props) {
+function AdminUserDisplay (props) {
     const [loggingOut, setLoggingOut] = useState(false);
 
     const handleLogout = (event) => {
@@ -34,3 +34,5 @@ export function AdminUserDisplay (props) {
         </Fragment>
     );
 }
+
+export default AdminUserDisplay;

@@ -6,7 +6,8 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { EmptyEntryDisplay } from './Subcomponents'
 import PhotoPicker from '../Pickers/PhotoPicker'
 
-import { UnsavedChangesDisplay, VersionedPhoto } from '../../Utilities/ComponentHelpers'
+import VersionedPhoto from '../../Misc/VersionedPhoto'
+import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { ExportedPhotoPickerState, PhotoGalleryPageFormPhotoInfo } from '../../Utilities/Constructors'
 import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 

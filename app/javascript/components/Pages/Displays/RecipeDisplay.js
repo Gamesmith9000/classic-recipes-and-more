@@ -1,6 +1,5 @@
 import React from 'react'
-import { VersionedPhoto } from '../../Utilities/ComponentHelpers'
-
+import VersionedPhoto from '../../Misc/VersionedPhoto'
 
 function RecipeDisplay (props) {
     const { description, featured, ingredients, photoVersion, previewPhotoUrl, sections, title } = props;

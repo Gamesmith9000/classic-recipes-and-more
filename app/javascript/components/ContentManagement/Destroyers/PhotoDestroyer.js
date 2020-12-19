@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
-import { VersionedPhoto } from '../../Utilities/ComponentHelpers';
+import VersionedPhoto from '../../Misc/VersionedPhoto'
 import { setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoDestroyer extends React.Component {

@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 
-import { EmptyPickerEntriesDisplay, VersionedPhoto} from '../../Utilities/ComponentHelpers'
+import VersionedPhoto from '../../Misc/VersionedPhoto'
+import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import { BackendConstants, isValuelessFalsey } from '../../Utilities/Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 

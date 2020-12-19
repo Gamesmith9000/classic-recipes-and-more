@@ -2,8 +2,9 @@ import axios from 'axios'
 import React, { Fragment } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
+import VersionedPhoto from '../../Misc/VersionedPhoto'
 import { ExportedPhotoPickerState, RecipeFormRecipeState, RecipeFormSectionState, TextSectionWithId } from '../../Utilities/Constructors'
-import { UnsavedChangesDisplay, ValidationErrorDisplay, VersionedPhoto } from '../../Utilities/ComponentHelpers'
+import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
 import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapRecipeSectionsData } from '../../Utilities/ResponseDataHelpers'
 
