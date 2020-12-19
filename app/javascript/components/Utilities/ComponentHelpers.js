@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-import { BackendConstants, validationErrorsToString } from './Helpers'
+import { validationErrorsToString } from './Helpers'
 import PageManager from '../ContentManagement/Managers/PageManager'
 import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
@@ -90,3 +90,4 @@ export function ValidationErrorDisplay (props) {
             <Fragment/>
     );
 }
+

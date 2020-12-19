@@ -4,7 +4,8 @@ import axios from 'axios'
 import qs from 'qs'
 
 import VersionedPhoto from '../Misc/VersionedPhoto'
-import { BackendConstants, isValuelessFalsey } from '../Utilities/Helpers'
+import BackendConstants from '../Utilities/BackendConstants'
+import { isValuelessFalsey } from '../Utilities/Helpers'
 import RecipeDisplay from './Displays/RecipeDisplay';
 
 //[NOTE][REFACTOR] This component gets all the photo urls for a photo. This needs to hang on to the size needed for the size shown in recipe display

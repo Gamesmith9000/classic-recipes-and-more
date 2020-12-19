@@ -3,7 +3,8 @@ import React, { Fragment } from 'react'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
-import { BackendConstants, isValuelessFalsey } from '../../Utilities/Helpers'
+import BackendConstants from '../../Utilities/BackendConstants'
+import { isValuelessFalsey } from '../../Utilities/Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 
 class PhotoPicker extends React.Component {

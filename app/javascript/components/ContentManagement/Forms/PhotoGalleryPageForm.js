@@ -9,7 +9,8 @@ import PhotoPicker from '../Pickers/PhotoPicker'
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { ExportedPhotoPickerState, PhotoGalleryPageFormPhotoInfo } from '../../Utilities/Constructors'
-import { BackendConstants, isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import BackendConstants from '../../Utilities/BackendConstants'
+import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 
 class PhotoGalleryPageForm extends React.Component {

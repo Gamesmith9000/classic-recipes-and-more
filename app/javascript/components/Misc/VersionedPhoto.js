@@ -1,5 +1,5 @@
 import React from 'react'
-import { BackendConstants } from '../Utilities/Helpers'
+import BackendConstants from '../Utilities/BackendConstants'
 
 export function VersionedPhoto (props) {
     const { additionalStyles, photoFileData, photoVersionName, renderNullWithoutUrl, targetClassName, textDisplayForNoPhoto } = props;
