@@ -34,6 +34,7 @@ gem 'devise'
 gem 'fast_jsonapi'
 gem 'figaro'
 gem 'mini_magick'
+gem 'paypal-checkout-sdk'
 gem 'yt', '~> 0.32.0'
 
 group :development, :test do

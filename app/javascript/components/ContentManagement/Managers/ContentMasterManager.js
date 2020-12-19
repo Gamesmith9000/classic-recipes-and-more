@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react'
+import AdminUserDisplay from '../Misc/AdminUserDisplay'
 import SectionPicker from '../Pickers/SectionPicker';
-import { AdminUserDisplay } from './Subcomponents'
 import { ContentSectionsInfo } from '../../Utilities/ComponentHelpers';
-import { existsInLocalStorage, isValuelessFalsey, objectsHaveMatchingValues } from '../../Utilities/Helpers';
+import { existsInLocalStorage, objectsHaveMatchingValues } from '../../Utilities/Helpers';
 
 class ContentMasterManager extends React.Component {
     constructor () {
         super();
         this.state = ({
             componentHasMounted: false,
-            contentSectionOpen: true,
+            contentSectionOpen: false,
             selectedContentSection: 0
         });
     }

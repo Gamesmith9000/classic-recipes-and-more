@@ -4,6 +4,7 @@ import { BackendConstants, validationErrorsToString } from './Helpers'
 import PageManager from '../ContentManagement/Managers/PageManager'
 import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
+import ShopManager from '../ContentManagement/Managers/ShopManager'
 
 
 export const ContentSectionsInfo = {
@@ -17,7 +18,8 @@ export const ContentSectionsInfo = {
     sections: [
         { name: 'Pages',    renderComponent: function (props) { return <PageManager {...props} /> } },
         { name: 'Recipes',  renderComponent: function (props) { return <RecipeManager {...props} /> } },
-        { name: 'Photos',   renderComponent: function (props) { return <PhotoManager {...props} /> } }
+        { name: 'Photos',   renderComponent: function (props) { return <PhotoManager {...props} /> } },
+        { name: 'Shop',     renderComponent: function (props) { return <ShopManager {...props} /> } }
     ]
 }
 

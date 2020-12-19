@@ -13,6 +13,12 @@
   </head>
 
   <body>
+    <%# Source: https://developer.paypal.com/docs/checkout/integrate/ %>
+    <%# [NOTE] Instructions to say to use sandbox client id (which was done) %>
+    <%# [NOTE] Disabled paypal credit (to get rid of 'pay later' button) %>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=<%= ENV['PAYPAL_CLIENT_ID']%>&disable-funding=credit"></script>
+
     <script>
       <%# Flash variables %>
       <%# for use in React and Devise's non-React rendered views %>
