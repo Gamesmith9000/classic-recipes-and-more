@@ -7,7 +7,7 @@ export function VersionedPhoto (props) {
     // As an alternative, photoFileData prop can be passed the url string directly
 
     const noFileData = (!photoFileData);
-    const uploaderVersionData = BackendConstants.photoUploader.getVersionData(photoVersionName);
+    const uploaderVersionData = BackendConstants.uploaders.photo.getVersionData(photoVersionName);
 
     const mainStyles = {
         height: uploaderVersionData.maxHeight,
@@ -24,7 +24,7 @@ export function VersionedPhoto (props) {
     }
     else {
         const usingString = typeof(photoFileData) === 'string';
-        const url = usingString === true ? photoFileData : BackendConstants.photoUploader.getUrlForVersion(photoFileData, photoVersionName);
+        const url = usingString === true ? photoFileData : BackendConstants.uploaders.photo.getUrlForVersion(photoFileData, photoVersionName);
         if(renderNullWithoutUrl === true && !url) { return null; }
         return <img src={url} {...additionalProps} />;
     }
