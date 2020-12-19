@@ -37,6 +37,21 @@ const BackendConstants = {
                     minimum: 2
                 }
             }
+        },
+        productPhoto: {
+            defaults: {
+                tag: 'DEFAULT'
+            },
+            validations: {
+                tag: {
+                    maximum: 40,
+                    minimum: 1
+                },
+                title: {
+                    maximum: 25,
+                    minimum: 2
+                }
+            }
         }
     },
     uploaders: {
