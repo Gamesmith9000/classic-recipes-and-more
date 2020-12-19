@@ -225,7 +225,7 @@ class PhotoGalleryPageForm extends React.Component {
             // [NOTE] This currently assumes that 'targetData' and res.data.data are the same length
 
             const resData = res.data.data.map((element) => { 
-                return BackendConstants.uploaders.photo.getUrlForVersion(element.attributes.file, this.props.imageDisplaySize);
+                return BackendConstants.uploaders.safelyGetUploader('photo').getUrlForVersion(element.attributes.file, this.props.imageDisplaySize);
             });
             let orderedUrls = orderedPreviewUrls.slice();
 

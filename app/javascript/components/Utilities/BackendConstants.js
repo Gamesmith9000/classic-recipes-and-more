@@ -1,3 +1,5 @@
+import { isValuelessFalsey } from './Helpers'
+
 function backendConstantsPhotoVersion (maxWidth, maxHeight) {
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
@@ -55,6 +57,7 @@ const BackendConstants = {
         }
     },
     uploaders: {
+        fallbackUploader: 'photo',
         photo: {
             defaultVersion : new backendConstantsPhotoVersion(768, 768),
             versions: {
@@ -94,6 +97,14 @@ const BackendConstants = {
                 const validName = this.isValidVersionName(versionName) === true;
                 return validName === true ? this.versions[versionName] : this.defaultVersion;
             }
+        },
+        safelyGetUploader: function (uploaderNamePrefix) {
+            if(this.hasOwnProperty(uploaderNamePrefix) === true) {
+                if(uploaderNamePrefix !== 'fallbackUploader' && uploaderNamePrefix !== 'safelyGetUploader') {
+                    return this[uploaderNamePrefix];
+                }
+            }
+            return this[fallbackUploader];
         }
     }
 }

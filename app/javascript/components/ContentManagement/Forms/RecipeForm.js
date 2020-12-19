@@ -33,7 +33,7 @@ class RecipeForm extends React.Component {
     attemptPreviewImageUrlFetch = () => {
         axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}.json`)
         .then(res => {
-            const url = BackendConstants.uploaders.photo.getUrlForVersion(res.data.data.attributes.file, this.props.previewPhotoVersion);
+            const url = BackendConstants.uploaders.safelyGetUploader('photo').getUrlForVersion(res.data.data.attributes.file, this.props.previewPhotoVersion);
             this.setState({ previewPhotoUrl: url });
         })
         .catch(err => console.log(err));

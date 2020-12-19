@@ -130,7 +130,7 @@ class FeaturedRecipes extends React.Component {
             if(isValuelessFalsey(previewPhotoId) === false) {
                 const index = this.state.photoData.findIndex(element => element.id === previewPhotoId);
                 if(index > -1) { 
-                    recipeDisplayAdditionalProps.previewPhotoUrl = BackendConstants.uploaders.photo.getUrlForVersion(this.state.photoData[index].file, this.props.displayPhotoVersion);
+                    recipeDisplayAdditionalProps.previewPhotoUrl = BackendConstants.uploaders.safelyGetUploader('photo').getUrlForVersion(this.state.photoData[index].file, this.props.displayPhotoVersion);
                 }
             }
         }
