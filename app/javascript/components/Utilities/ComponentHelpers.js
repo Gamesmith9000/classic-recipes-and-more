@@ -16,10 +16,11 @@ export const ContentSectionsInfo = {
     },
     // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
     sections: [
-        { name: 'Pages',    renderComponent: function (props) { return <PageManager {...props} /> } },
-        { name: 'Recipes',  renderComponent: function (props) { return <RecipeManager {...props} /> } },
-        { name: 'Photos',   renderComponent: function (props) { return <PhotoManager {...props} /> } },
-        { name: 'Shop',     renderComponent: function (props) { return <ShopManager {...props} /> } }
+        { name: 'Pages',            renderComponent: function (props) { return <PageManager   {...props} /> } },
+        { name: 'Recipes',          renderComponent: function (props) { return <RecipeManager {...props} /> } },
+        { name: 'Photos',           renderComponent: function (props) { return <PhotoManager  {...props} uploaderNamePrefix ="photo" /> } },
+        { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager  {...props} uploaderNamePrefix ="productPhoto" /> } },
+        { name: 'Shop',             renderComponent: function (props) { return <ShopManager   {...props} /> } }
     ]
 }
 

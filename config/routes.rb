@@ -14,6 +14,9 @@ Rails.application.routes.draw do
       get 'photos/multi', :to => 'photos#show_multi'
       resources :photos, only: [:index, :show, :create, :update, :destroy]
 
+      get 'product_photos/multi', :to => 'product_photos#show_multi'
+      resources :product_photos, only: [:index, :show, :create, :update, :destroy]
+
       get 'recipes/featured', :to => 'recipes#show_featured'
       patch 'recipes/remove_photo_id_instances', :to => 'recipes#remove_photo_id_instances'
       resources :recipes, only: [:index, :show, :create, :update, :destroy]
