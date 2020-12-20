@@ -16,8 +16,8 @@ class PhotoGallery extends React.Component {
             return (
                 <VersionedPhoto 
                     key={element.id}
-                    photoFileData={element.file}
-                    photoVersionName={photoVersion}
+                    uploadedFileData={element.file}
+                    uploadedFileVersionName={photoVersion}
                     renderNullWithoutUrl={true}
                     targetClassName="photo"
                 />

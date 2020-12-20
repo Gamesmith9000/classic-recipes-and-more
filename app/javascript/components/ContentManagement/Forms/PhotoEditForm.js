@@ -82,8 +82,8 @@ class PhotoEditForm extends React.Component {
                         Image:
                         <br />
                         <VersionedPhoto
-                            photoFileData={this.state.previewUrl}
-                            photoVersionName={this.props.previewPhotoSize}
+                            uploadedFileData={this.state.previewUrl}
+                            uploadedFileVersionNameuploadedFileVersionName={this.props.previewPhotoSize}
                         />
                     </label>
                     <br />

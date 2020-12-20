@@ -93,6 +93,7 @@ class PhotoManager extends React.Component {
                         handleModifyPhotoButtonInput={this.handleModifyPhotoButtonInput}
                         photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                         selectedPhotoId={this.state.selectedPhotoId}
+                        uploaderNamePrefix={'photo'}
                     />
                 }
                 {this.state.photoUploadFormIsOpen === true &&

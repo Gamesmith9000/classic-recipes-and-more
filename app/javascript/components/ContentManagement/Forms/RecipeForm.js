@@ -343,12 +343,13 @@ class RecipeForm extends React.Component {
                             handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
                             selectedPhotoId={selectedPhotoId}
                             photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
+                            uploaderNamePrefix={'photo'}
                         />
                     :
                         <Fragment>
                             <VersionedPhoto
-                                photoFileData={this.state.previewPhotoUrl}
-                                photoVersionName={this.props.previewPhotoVersion}
+                                uploadedFileData={this.state.previewPhotoUrl}
+                                uploadedFileVersionName={this.props.previewPhotoVersion}
                                 textDisplayForNoPhoto="(No photo chosen)"
                             />
                             <br />

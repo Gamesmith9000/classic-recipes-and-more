@@ -182,8 +182,8 @@ class PhotoGalleryPageForm extends React.Component {
         const localId = photoIdData.localId;
 
         const photo = <VersionedPhoto 
-            photoFileData={this.state.orderedPreviewUrls[this.getIndexFromState(localId)]}
-            photoVersionName={photoUploaderVersionName}
+            uploadedFileData={this.state.orderedPreviewUrls[this.getIndexFromState(localId)]}
+            uploadedFileVersionName={photoUploaderVersionName}
             targetClassName={`chosen-photo${hasPhotoId === false ? " placeholder" : ""}`}
             textDisplayForNoPhoto="(No photo chosen)"
         />;
@@ -320,6 +320,7 @@ class PhotoGalleryPageForm extends React.Component {
                                     handleCancelForExport={this.handlePhotoPickerClose}
                                     handleUsePhotoForExport={this.handlePhotoIdDataChange}
                                     photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
+                                    uploaderNamePrefix={'photo'}
                                 />
                             }
                         </Fragment>

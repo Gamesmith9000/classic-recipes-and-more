@@ -32,8 +32,8 @@ function RecipeDisplay (props) {
         <div className="recipe-display">
             <h1>{title}</h1>
             <VersionedPhoto  
-                photoFileData={previewPhotoUrl}
-                photoVersionName={photoVersion}
+                uploadedFileData={previewPhotoUrl}
+                uploadedFileVersionName={photoVersion}
                 renderNullWithoutUrl={true}
             />
             <p>{description}</p>

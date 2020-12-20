@@ -44,8 +44,8 @@ class FeaturedRecipes extends React.Component {
         if(index === -1) { return; }
 
         return <VersionedPhoto 
-            photoFileData={this.state.photoData[index].file}
-            photoVersionName={this.props.previewPhotoVersion}
+            uploadedFileData={this.state.photoData[index].file}
+            uploadedFileVersionName={this.props.previewPhotoVersion}
             renderNullWithoutUrl={true}
         />;
     }

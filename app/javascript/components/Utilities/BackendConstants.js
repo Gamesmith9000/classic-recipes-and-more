@@ -60,11 +60,6 @@ const BackendConstants = {
         fallbackUploader: 'photo',
         photo: {
             defaultVersion : new backendConstantsPhotoVersion(768, 768),
-            versions: {
-                'thumb': new backendConstantsPhotoVersion(128, 128),
-                'small': new backendConstantsPhotoVersion(256, 256),
-                'medium': new backendConstantsPhotoVersion(512, 512)
-            },
             isValidVersionName: function(versionName){
                 return (isValuelessFalsey(versionName) === false && this.versions.hasOwnProperty(versionName));
             },
@@ -76,15 +71,16 @@ const BackendConstants = {
             getVersionData: function (versionName){
                 const validName = this.isValidVersionName(versionName) === true;
                 return validName === true ? this.versions[versionName] : this.defaultVersion;
+            },
+            nameInPath: 'photo',
+            versions: {
+                'thumb': new backendConstantsPhotoVersion(128, 128),
+                'small': new backendConstantsPhotoVersion(256, 256),
+                'medium': new backendConstantsPhotoVersion(512, 512)
             }
         },
         productPhoto: {
             defaultVersion : new backendConstantsPhotoVersion(768, 768),
-            versions: {
-                'thumb': new backendConstantsPhotoVersion(128, 128),
-                'small': new backendConstantsPhotoVersion(256, 256),
-                'medium': new backendConstantsPhotoVersion(512, 512)
-            },
             isValidVersionName: function(versionName){
                 return (isValuelessFalsey(versionName) === false && this.versions.hasOwnProperty(versionName));
             },
@@ -96,6 +92,12 @@ const BackendConstants = {
             getVersionData: function (versionName){
                 const validName = this.isValidVersionName(versionName) === true;
                 return validName === true ? this.versions[versionName] : this.defaultVersion;
+            },
+            nameInPath: 'product_photo',
+            versions: {
+                'thumb': new backendConstantsPhotoVersion(128, 128),
+                'small': new backendConstantsPhotoVersion(256, 256),
+                'medium': new backendConstantsPhotoVersion(512, 512)
             }
         },
         safelyGetUploader: function (uploaderNamePrefix) {
@@ -104,7 +106,8 @@ const BackendConstants = {
                     return this[uploaderNamePrefix];
                 }
             }
-            return this[fallbackUploader];
+            console.warn('No uploader with the specified name was found. The fallback uploader info will be returned.');
+            return this[this.fallbackUploader];
         }
     }
 }

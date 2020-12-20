@@ -36,7 +36,7 @@ class PhotoPicker extends React.Component {
         this.props.changeSelectedPhotoId(parseInt(photoId));
         if(this.props.changeSelectedPhotoUrl) {
             const entry = this.state.photoData.find(element => parseInt(element.id) === parseInt(photoId));
-            const photoUrl = entry ? BackendConstants.uploaders.safelyGetUploader('photo').getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) : null;
+            const photoUrl = entry ? BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) : null;
             this.props.changeSelectedPhotoUrl(photoUrl);
         }
     }
@@ -76,8 +76,9 @@ class PhotoPicker extends React.Component {
                 <Fragment>
                     <div className="id-column">ID: {item.id}</div>
                     <VersionedPhoto 
-                        photoFileData={item.attributes.file}
-                        photoVersionName={this.props.photoPickerPhotoVersion}
+                        uploadedFileData={item.attributes.file}
+                        uploadedFileVersionName={this.props.photoPickerPhotoVersion}
+                        uploaderNamePrefix={this.props.uploaderNamePrefix}
                     />
                     <div>Title: {item.attributes.title}</div>
                     <div>Tag: {item.attributes.tag}</div>
@@ -153,7 +154,9 @@ class PhotoPicker extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('/api/v1/photos.json')
+        const nameInPath = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).nameInPath;
+        
+        axios.get(`/api/v1/${nameInPath}s.json`)
         .then(res => {
             let sortingState = this.state.sorting;
             sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)

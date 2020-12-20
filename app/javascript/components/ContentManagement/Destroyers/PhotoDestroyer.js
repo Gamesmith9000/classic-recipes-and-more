@@ -50,8 +50,8 @@ class PhotoDestroyer extends React.Component {
                         <p>ID: {this.props.photoId}</p>
                         <p>Image:</p>
                         <VersionedPhoto 
-                            photoFileData={this.state.photoData?.attributes?.file}
-                            photoVersionName={this.props.previewPhotoSize}
+                            uploadedFileData={this.state.photoData?.attributes?.file}
+                            uploadedFileVersionName={this.props.previewPhotoSize}
                         />
                         <br />
                         <p>Title: {this.state.photoData.attributes.title}</p>
