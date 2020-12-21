@@ -72,7 +72,7 @@ const BackendConstants = {
                 const validName = this.isValidVersionName(versionName) === true;
                 return validName === true ? this.versions[versionName] : this.defaultVersion;
             },
-            nameInPath: 'photo',
+            railsResourceName: 'photo',
             versions: {
                 'thumb': new backendConstantsPhotoVersion(128, 128),
                 'small': new backendConstantsPhotoVersion(256, 256),
@@ -93,7 +93,7 @@ const BackendConstants = {
                 const validName = this.isValidVersionName(versionName) === true;
                 return validName === true ? this.versions[versionName] : this.defaultVersion;
             },
-            nameInPath: 'product_photo',
+            railsResourceName: 'product_photo',
             versions: {
                 'thumb': new backendConstantsPhotoVersion(128, 128),
                 'small': new backendConstantsPhotoVersion(256, 256),

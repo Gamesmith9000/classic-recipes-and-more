@@ -154,16 +154,18 @@ class PhotoPicker extends React.Component {
     }
 
     componentDidMount () {
-        const nameInPath = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).nameInPath;
-        
-        axios.get(`/api/v1/${nameInPath}s.json`)
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+
+        axios.get(`/api/v1/${resourceName}s.json`)
         .then(res => {
-            let sortingState = this.state.sorting;
-            sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)
-            this.setState({ 
-                photoData: res.data.data,
-                sorting: sortingState
-            });
+            if(res.data.data.length > 0) {
+                let sortingState = this.state.sorting;
+                sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields)
+                this.setState({ 
+                    photoData: res.data.data,
+                    sorting: sortingState
+                });
+            }
         })
         .catch(err => console.log(err));
     }

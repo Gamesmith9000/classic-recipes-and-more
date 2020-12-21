@@ -1,9 +1,13 @@
 import React, { Fragment } from 'react'
+import * as changeCase from 'change-case';
+import BackendConstants from '../../Utilities/BackendConstants';
+import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 import PhotoDestroyer from '../Destroyers/PhotoDestroyer';
 import PhotoEditForm from '../Forms/PhotoEditForm';
 import PhotoUploadForm from '../Forms/PhotoUploadForm';
 import PhotoPicker from '../Pickers/PhotoPicker'
+import { camelCase, capitalCase, paramCase } from 'change-case';
 
 class PhotoManager extends React.Component {
     constructor () {
@@ -47,7 +51,7 @@ class PhotoManager extends React.Component {
     };
 
     changeSelectedPhotoId = (newId) => {
-        if(newId && !Number.isInteger(newId)) { return; }
+        if(isValuelessFalsey(newId, false) === false && Number.isInteger(newId) === true) { return; }
         this.setState({ selectedPhotoId: newId });
     }
 
@@ -63,20 +67,23 @@ class PhotoManager extends React.Component {
 
     handleDeletePhotoButtonInput = (event) => {
         event.preventDefault();
-        if(!this.state.selectedPhotoId) { return; }
+        if(isValuelessFalsey(this.state.selectedPhotoId, false) === true) { return; }
         this.closeAllExcept('photoDestroyerIsOpen');
     }
 
     handleModifyPhotoButtonInput = (event) => {
         event.preventDefault();
-        if(!this.state.selectedPhotoId) { return; }
+        if(isValuelessFalsey(this.state.selectedPhotoId, false) === true) { return; }
         this.closeAllExcept('photoEditFormIsOpen');
     }
 
     render() {
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+        const managerName = resourceName + '_manager';
+
         return (
-            <div className="photo-manager">
-                <h1>Photo Manager</h1>
+            <div className={ paramCase(managerName) }>
+                <h1>{ capitalCase(managerName) }</h1>
                 {this.state.photoUploadFormIsOpen === false && this.state.photoDestroyerIsOpen === false && this.state.photoEditFormIsOpen === false &&
                     <Fragment>
                         <button onClick={this.handleAddPhotoButtonInput}>
@@ -93,7 +100,7 @@ class PhotoManager extends React.Component {
                         handleModifyPhotoButtonInput={this.handleModifyPhotoButtonInput}
                         photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                         selectedPhotoId={this.state.selectedPhotoId}
-                        uploaderNamePrefix={'photo'}
+                        uploaderNamePrefix={camelCase(resourceName)}
                     />
                 }
                 {this.state.photoUploadFormIsOpen === true &&
