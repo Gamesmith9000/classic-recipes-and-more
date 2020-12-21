@@ -48,7 +48,7 @@ export function EmptyPickerEntriesDisplay (props) {
     const itemName = itemNameIsValid === true ? entryTypeName : entrie;
     return (
         <p className='no-entries'>
-            { sentenceCase(`No ${itemName}s have been added yet.`) }
+            { sentenceCase(`No ${itemName}s have been added yet`) + '.' }
         </p>
     );
 }
