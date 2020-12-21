@@ -34,10 +34,12 @@ class PhotoPicker extends React.Component {
 
     handlePhotoPreviewSelect = (event, photoId) => {
         event.preventDefault();
-        this.props.changeSelectedPhotoId(parseInt(photoId));
+        const parsedId = parseInt(photoId);
+        
+        this.props.changeSelectedPhotoId(isValuelessFalsey(photoId, false) === false ? parsedId: null);
         if(this.props.changeSelectedPhotoUrl) {
             const entry = this.state.photoData.find(element => parseInt(element.id) === parseInt(photoId));
-            const photoUrl = entry 
+            const photoUrl = isValuelessFalsey(entry) === false 
                 ? BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) 
                 : null
             ;
