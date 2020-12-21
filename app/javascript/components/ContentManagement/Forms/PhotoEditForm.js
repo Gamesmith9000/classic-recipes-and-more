@@ -1,7 +1,9 @@
 import axios from 'axios'
+import { capitalCase, paramCase } from 'change-case'
 import React from 'react'
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
+import BackendConstants from '../../Utilities/BackendConstants'
 import { setAxiosCsrfToken } from '../../Utilities/Helpers'
 
 class PhotoEditForm extends React.Component {
@@ -23,14 +25,17 @@ class PhotoEditForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
         const { tag, title } = this.state;
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
 
-        axios.patch(`/api/v1/photos/${this.props.photoId}.json`, { tag, title })
+        axios.patch(`/api/v1/${resourceName}s/${this.props.photoId}.json`, { tag, title })
         .then( res => { this.handleFormSubmitResponse(res); })
         .catch(err => { this.handleFormSubmitResponse(err); });
     }
 
-    handleFormSubmitResponse = (res) =>{
-        if(res?.status === 200 && res.data && res.data.data?.type === "photo") {
+    handleFormSubmitResponse = (res) => {
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+        
+        if(res?.status === 200 && res.data && res.data.data?.type === resourceName) {
             this.setState({
                 errors: null,
                 priorPhotoState: {
@@ -55,7 +60,9 @@ class PhotoEditForm extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/v1/photos/${this.props.photoId}.json`)
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+
+        axios.get(`/api/v1/${resourceName}s/${this.props.photoId}.json`)
         .then(res => {
             const { tag, title } = res.data.data.attributes;
             const previewUrl = this.props.previewPhotoSize ? res.data.data.attributes.file[`${this.props.previewPhotoSize}`].url: res.data.data.attributes.file.url;
@@ -73,10 +80,13 @@ class PhotoEditForm extends React.Component {
     }
 
     render() {
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+        const displayName = capitalCase(resourceName);
+
         return (
-            <div className="photo-editor">
+            <div className={`${paramCase(resourceName)}-editor`}>
                 <form>
-                    <h2>Edit Photo Details</h2>
+                    <h2>{`Edit ${displayName} Details`}</h2>
                     <p>ID: {this.props.photoId}</p>
                     <label>
                         Image:
@@ -84,6 +94,7 @@ class PhotoEditForm extends React.Component {
                         <VersionedPhoto
                             uploadedFileData={this.state.previewUrl}
                             uploadedFileVersionNameuploadedFileVersionName={this.props.previewPhotoSize}
+                            uploaderNamePrefix={this.props.uploaderNamePrefix}
                         />
                     </label>
                     <br />

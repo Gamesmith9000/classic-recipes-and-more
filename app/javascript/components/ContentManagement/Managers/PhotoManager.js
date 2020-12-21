@@ -50,7 +50,7 @@ class PhotoManager extends React.Component {
     };
 
     changeSelectedPhotoId = (newId) => {
-        if(isValuelessFalsey(newId, false) === false && Number.isInteger(newId) === true) { return; }
+        if(isValuelessFalsey(newId, false) === true || Number.isInteger(newId) === false) { return; }
         this.setState({ selectedPhotoId: newId });
     }
 

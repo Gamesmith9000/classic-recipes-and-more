@@ -2,6 +2,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 
 .content-management {
     li.photo-preview,
+    li.product-photo-preview,
     li.recipe-preview {
         border: 1px solid;
         display: grid;
@@ -25,11 +26,11 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
         }
     }
 
-    ul.photo-previews-list, ul.recipe-previews-list {
+    ul.photo-previews-list, ul.product-photo-previews-list, ul.recipe-previews-list {
         list-style-type: none;
     }
 
-    ul.photo-previews-list {
+    ul.photo-previews-list, ul.product-photo-previews-list {
         display: flex;
         flex-wrap: wrap;
         max-width: 100%;
@@ -44,7 +45,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
         display: flex;
     }
 
-    .photo-picker, .recipe-picker {
+    .photo-picker, .product-photo-picker, .recipe-picker {
         .sorting-controls {
             display: flex;
         }
@@ -101,13 +102,13 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     }
 }
 
-.photo-picker {
-    .photo-preview {
-        img {
-            object-fit: contain;
-        }
-    }
-}
+// .photo-picker {
+//     .photo-preview {
+//         img {
+//             object-fit: contain;
+//         }
+//     }
+// }
 
 .selected-preview-item-buttons {
     display: grid;
