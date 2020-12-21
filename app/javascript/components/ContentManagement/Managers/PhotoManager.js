@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import * as changeCase from 'change-case';
 import BackendConstants from '../../Utilities/BackendConstants';
 import { isValuelessFalsey } from '../../Utilities/Helpers';
 

@@ -6,6 +6,7 @@ import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey } from '../../Utilities/Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
+import { capitalCase, paramCase } from 'change-case'
 
 class PhotoPicker extends React.Component {
     // [NOTE][OPTIMIZE] Important: This component has no caching for api calls. This is a crucial place for optimization.
@@ -36,7 +37,10 @@ class PhotoPicker extends React.Component {
         this.props.changeSelectedPhotoId(parseInt(photoId));
         if(this.props.changeSelectedPhotoUrl) {
             const entry = this.state.photoData.find(element => parseInt(element.id) === parseInt(photoId));
-            const photoUrl = entry ? BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) : null;
+            const photoUrl = entry 
+                ? BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).getUrlForVersion(entry.attributes?.file, this.props.exportedPhotoUrlVersion) 
+                : null
+            ;
             this.props.changeSelectedPhotoUrl(photoUrl);
         }
     }
@@ -64,10 +68,11 @@ class PhotoPicker extends React.Component {
     }
 
     mapPhotoPreviews = (photoDataList) => {
-        if(!photoDataList || !this.state.sorting) return;
+        if(!photoDataList || !this.state.sorting) { return null; }
         
         const { byId, fieldIndex, validFields} = this.state.sorting;
         const sortedPhotoDataList = sortByAttributeNameOrId(photoDataList, validFields, fieldIndex, byId);
+        const formattedName = paramCase(this.props.uploaderNamePrefix);
 
         const mappedPhotoPreview = sortedPhotoDataList.map((item, index) => {
             const isSelected = (isValuelessFalsey(this.props.selectedPhotoId) === false && this.props.selectedPhotoId === parseInt(item.id));
@@ -86,7 +91,7 @@ class PhotoPicker extends React.Component {
             );
             if(isSelected === true) {
                 return (
-                <li className="photo-preview selected" key={item.id} >
+                <li className={`${formattedName}-preview selected`} key={item.id} >
                     <div className='selected-preview-item-buttons'>
                         { this.props.handleModifyPhotoButtonInput && this.props.handleDeletePhotoButtonInput && 
                             <Fragment>
@@ -114,7 +119,7 @@ class PhotoPicker extends React.Component {
 
             return (
                 <li 
-                    className="photo-preview" 
+                    className={`${formattedName}-preview`} 
                     key={item.id}
                     onClick={(event) => this.handlePhotoPreviewSelect(event, item.id)}
                 >
@@ -124,26 +129,24 @@ class PhotoPicker extends React.Component {
         });
 
         return (
-            <ul className="photo-previews-list">{ mappedPhotoPreview }</ul>
+            <ul className={`${formattedName}-previews-list`}>{ mappedPhotoPreview }</ul>
         );
     }
 
     mapSortSelectAttributeOptions = () => {
         return this.state.sorting?.validFields?.map((item) => {
-            return (
-                <option key={item} value={item}>
-                    { item.charAt(0).toUpperCase() + item.slice(1) }
-                </option>
-            );
+            return <option key={item} value={item}>{ capitalCase(item) }</option>;
         }); 
     }
 
     renderSortSelect = () => {
+        const id = paramCase(this.props.uploaderNamePrefix);
+
         return (
             <Fragment>
-                <label htmlFor="photo-sort-select">Sort By: </label>
+                <label htmlFor={id}>Sort By: </label>
                 <select 
-                    id="photo-sort-select"
+                    id={id}
                     onChange={this.handleSortSelectInputChange} 
                 >
                     <option value="id">ID</option>
@@ -171,11 +174,14 @@ class PhotoPicker extends React.Component {
     }
 
     render() {
+        const resourceName = this.props.uploaderNamePrefix;
+        const targetClassName = paramCase(resourceName + '_picker');
+        const displayName = capitalCase(resourceName);
         return (
-            <div className="photo-picker">
+            <div className={targetClassName}>
                 { this.props.handleUsePhotoForExport &&
                     <Fragment>
-                        <h3>Select a Photo:</h3>
+                        <h3>{`Select a ${displayName}:`}</h3>
                         { this.props.handleCancelForExport &&
                             <Fragment>
                                 <button onClick={this.props.handleCancelForExport}>
@@ -189,7 +195,7 @@ class PhotoPicker extends React.Component {
                 }
                 { (!this.state.photoData || this.state.photoData.length === 0)
                     ? 
-                        <EmptyPickerEntriesDisplay entryTypeName='photo' />
+                        <EmptyPickerEntriesDisplay entryTypeName={resourceName} />
                     :
                         <Fragment>
                             { this.renderSortSelect() }

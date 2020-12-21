@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
+import { sentenceCase } from 'change-case'
 
-import { validationErrorsToString } from './Helpers'
+import { isValuelessFalsey, validationErrorsToString } from './Helpers'
 import PageManager from '../ContentManagement/Managers/PageManager'
 import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
@@ -42,11 +43,12 @@ export function EmbeddedYoutubeVideo (props) {
 }
 
 export function EmptyPickerEntriesDisplay (props) {
-    const itemNameIsValid = Boolean(props?.entryTypeName);
-    const itemName = itemNameIsValid === true ? String(props?.entryTypeName).toLowerCase() : entrie;
+    const { entryTypeName } = props;
+    const itemNameIsValid = isValuelessFalsey(entryTypeName) === false && typeof entryTypeName === 'string';
+    const itemName = itemNameIsValid === true ? entryTypeName : entrie;
     return (
         <p className='no-entries'>
-            { `No ${itemName}s have been added yet.` }
+            { sentenceCase(`No ${itemName}s have been added yet.`) }
         </p>
     );
 }
