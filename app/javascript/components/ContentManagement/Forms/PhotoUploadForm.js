@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React from 'react'
+import { capitalCase, paramCase } from 'change-case';
 import { ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { setAxiosCsrfToken } from '../../Utilities/Helpers'
@@ -19,23 +20,23 @@ class PhotoUploadForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        let formData = new FormData();
-        formData.append('photo[file]', this.state.file);
-        formData.append('photo[tag]', this.state.tag);
-        formData.append('photo[title]', this.state.title);
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
 
-        axios.post('api/v1/photos', formData)
+        let formData = new FormData();
+        formData.append(`${resourceName}[file]`, this.state.file);
+        formData.append(`${resourceName}[tag]`, this.state.tag);
+        formData.append(`${resourceName}[title]`, this.state.title);
+
+        axios.post(`api/v1/${resourceName}s`, formData)
         .then(res => { this.handleFormSubmitResponse(res); })
         .catch(err => { this.handleFormSubmitResponse(err); })
     }
 
     handleFormSubmitResponse = (res) => {
-        if(res?.status === 200 && res.data && res.data.data?.type === "photo") {
-            this.props.handleClose();
-        }
-        else if (res?.response?.status === 422) {
-            this.setState({ errors: res.response.data.error });
-        }
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+
+        if(res?.status === 200 && res.data && res.data.data?.type === resourceName) { this.props.handleClose(); }
+        else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
     }
 
     onFileInputChange = (event) => {
@@ -51,13 +52,15 @@ class PhotoUploadForm extends React.Component {
     }
 
     render() {
-        const errors = this.state.errors;
+        const resourceName = BackendConstants.uploaders.safelyGetUploader(this.props.uploaderNamePrefix).railsResourceName;
+        const displayName = capitalCase(resourceName);
+
         return (
-            <div className="photo-uploader">
+            <div className={`"${paramCase(resourceName)}-uploader"`}>
                 <form>
-                    <h2>Upload Photo</h2>
+                    <h2>{`Upload ${displayName}`}</h2>
                     <label>
-                        Photo
+                        {`${displayName}`}
                         <input type="file" onChange={this.onFileInputChange} />
                         <ValidationErrorDisplay 
                             errorsObject = {this.state.errors}

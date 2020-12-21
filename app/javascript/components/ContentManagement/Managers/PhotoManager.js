@@ -103,13 +103,17 @@ class PhotoManager extends React.Component {
                     />
                 }
                 {this.state.photoUploadFormIsOpen === true &&
-                    <PhotoUploadForm handleClose={this.handleCloseSubcomponents} />
+                    <PhotoUploadForm 
+                        handleClose={this.handleCloseSubcomponents} 
+                        uploaderNamePrefix={camelCase(resourceName)}
+                    />
                 }
                 {this.state.photoEditFormIsOpen === true &&
                     <PhotoEditForm 
                         handleClose={this.handleCloseSubcomponents}
                         photoId={this.state.selectedPhotoId}
                         previewPhotoSize="medium"
+                        uploaderNamePrefix={camelCase(resourceName)}
                     />
                 }
                 {this.state.photoDestroyerIsOpen === true &&
@@ -117,6 +121,7 @@ class PhotoManager extends React.Component {
                         handleClose={this.handleCloseSubcomponents}
                         photoId={this.state.selectedPhotoId}
                         previewPhotoSize="medium"
+                        uploaderNamePrefix={camelCase(resourceName)}
                     />
                 }
             </div>
