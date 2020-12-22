@@ -19,8 +19,10 @@ export function bumpArrayElement (array, index, direction) {
     }
 }
 
-export function existsInLocalStorage (keyName) {
+export function existsInLocalStorage (keyName, allowEmptyStringValues = false) {
     const storedValue = localStorage.getItem(keyName);
+
+    if(allowEmptyStringValues === false && storedValue === "") { return false; }
     return isValuelessFalsey(storedValue) === false;
 }
 
