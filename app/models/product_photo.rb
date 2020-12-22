@@ -1,4 +1,6 @@
 class ProductPhoto < ApplicationRecord
+    belongs_to :product
+
     validates :file, presence: true
     validates :tag, presence: true
     validates :title, presence: true

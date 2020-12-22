@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-    has_many :product_photos
+    has_one :product_photo
 
     validates :price, :title, presence: true
     validates :stock, :total_sold, numericality: { only_integer: true}
