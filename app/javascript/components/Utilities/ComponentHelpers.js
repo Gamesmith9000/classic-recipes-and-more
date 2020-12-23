@@ -21,7 +21,7 @@ export const ContentSectionsInfo = {
         { name: 'Recipes',          renderComponent: function (props) { return <RecipeManager   {...props} /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Shop',             renderComponent: function (props) { return <ProductManager  {...props} /> } }
+        { name: 'Products',         renderComponent: function (props) { return <ProductManager  {...props} /> } }
     ]
 }
 

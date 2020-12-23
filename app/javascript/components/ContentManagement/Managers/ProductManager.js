@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import Picker from '../Pickers/Picker'
 
 class ProductManager extends React.Component {
     constructor () {
@@ -7,17 +8,10 @@ class ProductManager extends React.Component {
         // this.state = ({});
     }
 
-    componentDidMount () {
-        axios.get('api/v1/products.json')
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => console.log(err))
-    }
-
     render() {     
         return (
-            <div className="shop-manager">
+            <div className="product-manager">
+                <Picker itemName="product" />
             </div>
         )
     }
