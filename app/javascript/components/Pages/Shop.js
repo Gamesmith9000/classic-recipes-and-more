@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import { existsInLocalStorage } from '../Utilities/Helpers';
 
 class Shop extends React.Component {
@@ -8,6 +9,10 @@ class Shop extends React.Component {
             cartItems: [],
             componentHasMounted: false
         }
+    }
+
+    mappedProducts = () => {
+
     }
 
     updateCartInLocalStorage = (cartItemsState) => {
@@ -20,6 +25,12 @@ class Shop extends React.Component {
             this.setState({ cartItems });
         }
         paypal.Buttons().render('#paypal-button-container');
+        
+        axios.get('api/v1/products.json')
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => console.log(err))
     }
 
     render() {
