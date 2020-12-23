@@ -1,13 +1,18 @@
 import React from 'react'
+import axios from 'axios'
 
-class ShopManager extends React.Component {
+class ProductManager extends React.Component {
     constructor () {
         super();
         // this.state = ({});
     }
 
     componentDidMount () {
-
+        axios.get('api/v1/products.json')
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => console.log(err))
     }
 
     render() {     
@@ -18,4 +23,4 @@ class ShopManager extends React.Component {
     }
 }
 
-export default ShopManager
+export default ProductManager

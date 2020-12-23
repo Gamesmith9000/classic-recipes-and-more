@@ -5,7 +5,7 @@ import { isValuelessFalsey, validationErrorsToString } from './Helpers'
 import PageManager from '../ContentManagement/Managers/PageManager'
 import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
-import ShopManager from '../ContentManagement/Managers/ShopManager'
+import ProductManager from '../ContentManagement/Managers/ProductManager'
 
 
 export const ContentSectionsInfo = {
@@ -17,11 +17,11 @@ export const ContentSectionsInfo = {
     },
     // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
     sections: [
-        { name: 'Pages',            renderComponent: function (props) { return <PageManager   {...props} /> } },
-        { name: 'Recipes',          renderComponent: function (props) { return <RecipeManager {...props} /> } },
-        { name: 'Photos',           renderComponent: function (props) { return <PhotoManager  {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
-        { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager  {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Shop',             renderComponent: function (props) { return <ShopManager   {...props} /> } }
+        { name: 'Pages',            renderComponent: function (props) { return <PageManager     {...props} /> } },
+        { name: 'Recipes',          renderComponent: function (props) { return <RecipeManager   {...props} /> } },
+        { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
+        { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
+        { name: 'Shop',             renderComponent: function (props) { return <ProductManager  {...props} /> } }
     ]
 }
 
