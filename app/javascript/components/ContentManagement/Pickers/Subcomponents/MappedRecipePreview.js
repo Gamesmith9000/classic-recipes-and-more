@@ -2,9 +2,9 @@ import React, { Fragment } from 'react'
 import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
 export function MappedRecipePreview(props) {
-    const { itemData, onPreviewSelect, selectedItemId } = props;
-
-    // props are not null checked
+    // [NOTE] There is currently not error checking for all props
+    
+    const { itemData, onDeleteButtonPress, onEditButtonPress, onPreviewSelect, selectedItemId } = props;
 
     const isSelected = (isValuelessFalsey(selectedItemId) === false && selectedItemId === parseInt(itemData.id));
     const commonItems = (
@@ -19,10 +19,10 @@ export function MappedRecipePreview(props) {
         return (
         <li className="recipe-preview selected" key={itemData.id} >
             <div className='selected-preview-item-buttons'>
-                <button onClick={props.handleModifyRecipeButtonInput}>
+                <button onClick={onEditButtonPress}>
                     Modify
                 </button>
-                <button onClick={props.handleDeleteRecipeButtonInput}>
+                <button onClick={onDeleteButtonPress}>
                     Delete
                 </button>
                 <button onClick={(event) => onPreviewSelect(event, null)}>

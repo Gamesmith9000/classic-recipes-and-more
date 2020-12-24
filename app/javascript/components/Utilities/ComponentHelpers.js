@@ -5,13 +5,14 @@ import { isValuelessFalsey, validationErrorsToString } from './Helpers'
 import PageManager from '../ContentManagement/Managers/PageManager'
 import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
-import ProductManager from '../ContentManagement/Managers/ProductManager'
+import ResourceManager from '../ContentManagement/Managers/ResourceManager'
 
 import MappedRecipePreview from '../ContentManagement/Pickers/Subcomponents/MappedRecipePreview'
+import ProductManager from '../ContentManagement/Managers/ProductManager'
 
 export const ContentSectionsInfo = {
     isValidSectionId: function (newSectionIdentifier) {
-        if(!Number.isInteger(newSectionIdentifier) || newSectionIdentifier < 0 || newSectionIdentifier > this.sections.length -1) {
+        if(Number.isInteger(newSectionIdentifier) === false || newSectionIdentifier < 0 || newSectionIdentifier > this.sections.length -1) {
             return false
         }
         else { return true; }
@@ -19,10 +20,19 @@ export const ContentSectionsInfo = {
     // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
     sections: [
         { name: 'Pages',            renderComponent: function (props) { return <PageManager     {...props} /> } },
-        { name: 'Recipes',          renderComponent: function (props) { return <RecipeManager   {...props} /> } },
+        { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager {...props} 
+            itemName="recipe"
+            key="recipe"
+            mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } 
+            nonSortByFields={['ingredients', 'preview_photo_id']}
+        /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Products',         renderComponent: function (props) { return <ProductManager  {...props} mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } /> } }
+        { name: 'Products',         renderComponent: function (props) { return <ResourceManager {...props} 
+            itemName="product"
+            key="product"
+            // mappedItemPreviewComponent=
+        /> } }
     ]
 }
 

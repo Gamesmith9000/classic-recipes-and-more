@@ -2,7 +2,7 @@ import React from 'react'
 import { paramCase, capitalCase } from 'change-case';
 
 function PickerSortSelect(props) {
-    // Currently no error checking
+    // [NOTE] There is currently not error checking for all props
 
     const { itemName, onSortingStateChange, sortingState } = props;
     const itemId = `${paramCase(itemName)}-sort-select`

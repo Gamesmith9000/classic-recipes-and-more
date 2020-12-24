@@ -6,18 +6,6 @@ import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 
 class Picker extends React.Component {
-
-    // To add: Storing of sorting data in localStorage
-    //  - Do not store the 'validFields' or ignoredFields though, as this is problematic
-    //  - Do store 'byId'(bool), 'fieldIndex'(int), as well as a string for fieldName 
-    //      - string is to verify verify that index still matches up to proper spot
-    //          - Otherwise, 
-    //  ~ Helpers needs to have methods to help pack and unpack localStorage (similar to approach in other components)
-    //      - In the unpack method, maybe even have an option to return null if the item doesn't exist in localStorage
-    //      - Maybe even a non-rendered component (if that is a thing). Maybe a custom hook?
-    //  - Will also have make separate function to pass into onSortingStateChange, as the localStorage will need to be updated just before state
-    //  - Instead of checking if component mounted, could check if itemData is null (only happens if unmounted or errors during mounting)
-
     constructor () {
         super();
         this.state = {
@@ -36,7 +24,7 @@ class Picker extends React.Component {
     }
 
     mapItemPreviews = (itemDataList, singleItemClassName) => {
-        const { additionalMappedItemPreviewProps, mappedItemPreviewComponent, selectedItemId } = this.props;
+        const { additionalMappedItemPreviewProps, mappedItemPreviewComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
         if(!itemDataList || !mappedItemPreviewComponent ) { return null; }
 
         const { byId, fieldIndex, validFields } = this.state.sorting;
@@ -48,6 +36,8 @@ class Picker extends React.Component {
                 itemData: item,
                 key: item.id,
                 mappedIndex: index,
+                onDeleteButtonPress: onDeleteButtonPress,
+                onEditButtonPress: onEditButtonPress,
                 onPreviewSelect: this.handlePreviewSelect,
                 selectedItemId: selectedItemId
             };
@@ -62,7 +52,6 @@ class Picker extends React.Component {
         );
     }
 
-    // To do: Add any localStorage implementation here (see top notes)
     componentDidMount () {
         const { alternateGetUri, itemName, nonSortByFields } = this.props;
         const resource = alternateGetUri ? alternateGetUri : snakeCase(itemName + 's');
@@ -84,26 +73,26 @@ class Picker extends React.Component {
     }
 
     render() {
-        const { itemName } = this.props;
-        const itemClassName = `${paramCase(itemName)}-picker`;
+        const { itemName, subcomponentKey } = this.props;
+        const pickerClassName = `${paramCase(itemName)}-picker`;
 
         // Before the component mounts, itemData is null. Afterward, it will be an array (even if empty)
         return (
-            <div className={itemClassName}>
+            <div className={pickerClassName}>
                 { this.state.itemData &&
                     <Fragment>
                         { this.state.itemData.length === 0  
                             ? 
-                                <EmptyPickerEntriesDisplay entryTypeName={itemName} />
+                                <EmptyPickerEntriesDisplay entryTypeName={itemName} key={subcomponentKey} />
                             : 
                                 <Fragment>
                                     <PickerSortSelect 
                                         itemName={itemName}
-                                        key={itemName}
+                                        key={subcomponentKey}
                                         onSortingStateChange={(newSortingState) => this.setState({ sorting: newSortingState})}
                                         sortingState={this.state.sorting}
                                     />
-                                    { this.mapItemPreviews(this.state.itemData, itemClassName) }
+                                    { this.mapItemPreviews(this.state.itemData, paramCase(itemName)) }
                                 </Fragment>
                         }
                     </Fragment>
