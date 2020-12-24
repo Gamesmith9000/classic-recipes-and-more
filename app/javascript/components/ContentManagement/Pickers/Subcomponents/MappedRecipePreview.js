@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
 export function MappedRecipePreview(props) {
-    const { itemData, selectedItemId } = props;
+    const { itemData, onPreviewSelect, selectedItemId } = props;
 
     // props are not null checked
 
@@ -25,7 +25,7 @@ export function MappedRecipePreview(props) {
                 <button onClick={props.handleDeleteRecipeButtonInput}>
                     Delete
                 </button>
-                <button onClick={(event) => handlePreviewSelect(event, null)}>
+                <button onClick={(event) => onPreviewSelect(event, null)}>
                     Cancel
                 </button>
             </div>
@@ -38,7 +38,7 @@ export function MappedRecipePreview(props) {
         <li 
             className="recipe-preview" 
             key={itemData.id}
-            onClick={(event) => this.handlePreviewSelect(event, itemData.id)}
+            onClick={(event) => onPreviewSelect(event, itemData.id)}
         >
             { commonItems }
         </li>

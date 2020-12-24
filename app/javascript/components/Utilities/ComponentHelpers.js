@@ -7,6 +7,7 @@ import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
 import ProductManager from '../ContentManagement/Managers/ProductManager'
 
+import MappedRecipePreview from '../ContentManagement/Pickers/Subcomponents/MappedRecipePreview'
 
 export const ContentSectionsInfo = {
     isValidSectionId: function (newSectionIdentifier) {
@@ -21,7 +22,7 @@ export const ContentSectionsInfo = {
         { name: 'Recipes',          renderComponent: function (props) { return <RecipeManager   {...props} /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Products',         renderComponent: function (props) { return <ProductManager  {...props} /> } }
+        { name: 'Products',         renderComponent: function (props) { return <ProductManager  {...props} mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } /> } }
     ]
 }
 

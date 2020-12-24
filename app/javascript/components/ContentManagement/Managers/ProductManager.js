@@ -1,17 +1,42 @@
 import React from 'react'
-import axios from 'axios'
 import Picker from '../Pickers/Picker'
 
 class ProductManager extends React.Component {
     constructor () {
         super();
-        // this.state = ({});
+        this.state = ({
+            // destroyerIsOpen: false,
+            // productFormIsOpen: false, // 
+            // pickerIsOpen: true,
+            selectedItemId: null
+        });
     }
 
-    render() {     
+    changeSelectedItemId = (newId) => {
+        this.setState({ selectedItemId: isNan(newId) === true ? null : newId }); 
+    }
+
+    // Note: Making a modular managar would involve moving the 
+
+    render() {  
         return (
             <div className="product-manager">
-                <Picker itemName="product" />
+                NOTE: This temporarily passes in values like it's for recipes
+                <Picker 
+                    // itemName="product" 
+
+                    itemName="recipe" 
+                    mappedItemPreviewComponent={this.props.mappedItemPreviewComponent}
+                    nonSortByFields={['ingredients', 'preview_photo_id']}
+                    onSelectedItemIdChange={(newId) => this.changeSelectedItemId}
+                    key="product"
+                    selectedItemId={this.state.selectedItemId}
+
+                    // missing items from original RecipePicker:
+                    //      handleDeleteRecipeButtonInput
+                    //      handleModifyRecipeButtonInput
+                    //
+                />
             </div>
         )
     }

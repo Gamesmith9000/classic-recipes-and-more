@@ -25,7 +25,6 @@ class Picker extends React.Component {
             sorting: {
                 byId: true,
                 fieldIndex: 0,
-                ignoredFields: [],
                 validFields: []
             }
         }
@@ -33,79 +32,48 @@ class Picker extends React.Component {
 
     handlePreviewSelect = (event, itemId) => {
         event.preventDefault();
-        this.props.changeSelectedItemId(parseInt(itemId));
+        this.props.onSelectedItemIdChange(parseInt(itemId));
     }
 
-    mapItemPreviews = (itemDataList) => {
-        this.mapRecipePreviews(itemDataList);
-    }
+    mapItemPreviews = (itemDataList, singleItemClassName) => {
+        const { additionalMappedItemPreviewProps, mappedItemPreviewComponent, selectedItemId } = this.props;
+        if(!itemDataList || !mappedItemPreviewComponent ) { return null; }
 
-    // Rebuild this method. It will accept a prop of the lowest mapped function (which will likely be used with custom subcomponents for each implementation)
-    mapRecipePreviews = (recipeDataList) => {
-        if(!recipeDataList) return;
+        const { byId, fieldIndex, validFields } = this.state.sorting;
+        const sortedItemDataList = sortByAttributeNameOrId(itemDataList, validFields, fieldIndex, byId);
 
-        const { byId, fieldIndex, validFields} = this.state.sorting;
-        const sortedRecipeDataList = sortByAttributeNameOrId(recipeDataList, validFields, fieldIndex, byId);
+        const mappedPreviews = sortedItemDataList.map((item, index) => { 
+            const mappedItemProps = {
+                ...additionalMappedItemPreviewProps, 
+                itemData: item,
+                key: item.id,
+                mappedIndex: index,
+                onPreviewSelect: this.handlePreviewSelect,
+                selectedItemId: selectedItemId
+            };
 
-        const mappedRecipePreview = sortedRecipeDataList.map((item, index) => {
-            const isSelected = (this.props.selectedRecipeId && this.props.selectedRecipeId === parseInt(item.id));
-            const commonItems = (
-                <Fragment>
-                    <div className="id-column">ID: {item.id}</div>
-                    <div>Title: {item.attributes.title}</div>
-                    <div>Description: {item.attributes.description}</div>
-                    <div>Featured: {item.attributes.featured === true ? '☑': '☐'}</div>
-                </Fragment>
-            );
-            if(isSelected === true) {
-                return (
-                <li className="recipe-preview selected" key={item.id} >
-                    <div className='selected-preview-item-buttons'>
-                        <button onClick={this.props.handleModifyRecipeButtonInput}>
-                            Modify
-                        </button>
-                        <button onClick={this.props.handleDeleteRecipeButtonInput}>
-                            Delete
-                        </button>
-                        <button onClick={(event) => this.handlePreviewSelect(event, null)}>
-                            Cancel
-                        </button>
-                    </div>
-                    { commonItems }
-                </li>
-                );
-            }
-
-            return (
-                <li 
-                    className="recipe-preview" 
-                    key={item.id}
-                    onClick={(event) => this.handlePreviewSelect(event, item.id)}
-                >
-                    { commonItems }
-                </li>
-            );
+            return mappedItemPreviewComponent(mappedItemProps)
         });
 
         return (
-            <ul className="recipe-previews-list">{mappedRecipePreview}</ul>
+            <ul className={`${singleItemClassName}-previews-list`}>
+                { mappedPreviews }
+            </ul>
         );
     }
 
-    // TO DO (componentDidMount)
-    //  - Phase out recipeData
-    //  - Initialize fields that will be ignored as sorting fields
-    //  - Phase in new routes approach (and possibly optional field for differing resource name)
-    //  - Later, add any localStorage implementation (see top notes)
-    
+    // To do: Add any localStorage implementation here (see top notes)
     componentDidMount () {
-        const { itemName, nonSortByFields } = this.props;
+        const { alternateGetUri, itemName, nonSortByFields } = this.props;
+        const resource = alternateGetUri ? alternateGetUri : snakeCase(itemName + 's');
 
-        axios.get('/api/v1/recipes.json')
+        axios.get(`/api/v1/${resource}.json`)
         .then(res => {
-            // let to const?
-            let sortingState = this.state.sorting;
-            sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, sortingState.ignoredFields);
+            const validIgnoreProps = (nonSortByFields && Array.isArray(nonSortByFields) === true);
+            const ignoredSortingFields = validIgnoreProps === true ? nonSortByFields : [];
+
+            const sortingState = this.state.sorting;
+            sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields);
 
             this.setState({
                 itemData: res.data.data,
@@ -115,7 +83,6 @@ class Picker extends React.Component {
         .catch(err => console.log(err));
     }
 
-    // To do: 
     render() {
         const { itemName } = this.props;
         const itemClassName = `${paramCase(itemName)}-picker`;
@@ -136,7 +103,7 @@ class Picker extends React.Component {
                                         onSortingStateChange={(newSortingState) => this.setState({ sorting: newSortingState})}
                                         sortingState={this.state.sorting}
                                     />
-                                    { this.mapItemPreviews(this.state.itemData) }
+                                    { this.mapItemPreviews(this.state.itemData, itemClassName) }
                                 </Fragment>
                         }
                     </Fragment>
