@@ -13,7 +13,7 @@ class ProductManager extends React.Component {
     }
 
     changeSelectedItemId = (newId) => {
-        this.setState({ selectedItemId: isNan(newId) === true ? null : newId }); 
+        this.setState({ selectedItemId: isNaN(newId) === true ? null : newId }); 
     }
 
     // Note: Making a modular managar would involve moving the 
@@ -28,7 +28,7 @@ class ProductManager extends React.Component {
                     itemName="recipe" 
                     mappedItemPreviewComponent={this.props.mappedItemPreviewComponent}
                     nonSortByFields={['ingredients', 'preview_photo_id']}
-                    onSelectedItemIdChange={(newId) => this.changeSelectedItemId}
+                    onSelectedItemIdChange={this.changeSelectedItemId}
                     key="product"
                     selectedItemId={this.state.selectedItemId}
 
