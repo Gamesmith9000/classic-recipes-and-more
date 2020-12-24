@@ -2,24 +2,22 @@ import React from 'react'
 import { paramCase, capitalCase } from 'change-case';
 
 function PickerSortSelect(props) {
-    const { itemName, onSortingStateChange, sortingState } = props;
-
     // Currently no error checking
 
+    const { itemName, onSortingStateChange, sortingState } = props;
     const itemId = `${paramCase(itemName)}-sort-select`
 
     const handleInputChange = (event) => {
         event.preventDefault();
 
         const newValue = event.target.value;
-        let newSortingState = sortingState;
-
+        const newSortingState = sortingState;
         newSortingState.byId = newValue === 'id';
 
         if(newSortingState.byId === false && sortingState.validFields.includes(newValue)) {
             newSortingState.fieldIndex = sortingState.validFields.indexOf(newValue);
         }
-
+        
         onSortingStateChange(newSortingState);
     }
 
