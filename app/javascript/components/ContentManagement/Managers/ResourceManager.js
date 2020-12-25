@@ -1,39 +1,38 @@
 import React from 'react'
 import { paramCase } from 'change-case'
 import Picker from '../Pickers/Picker'
+import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 class ResourceManager extends React.Component {
     constructor () {
         super();
-        this.state = ({
-            destroyerIsOpen: false,
-            upsertFormIsOpen: false,
-            pickerIsOpen: true,
-            selectedItemId: null
-        });
-    }
-
-    closeAllExceptPicker = (newId = this.state.selectedPhotoId) => {
-        this.setState({
-            destroyerIsOpen: false,
-            upsertFormIsOpen: false,
-            pickerIsOpen: true,
-            selectedItemId: isNaN(newId) === true ? null : newId
-        });
+        this.state = ({ ...FormsOpenedState.default  });
     }
 
     handleDeleteButtonPress = (event) => {
         event.preventDefault();
+        this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.destroyer(), true);
     }
 
     handleEditButtonPress = (event) => {
         event.preventDefault();
+        this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), true);
     }
 
-    handleSelectedItemIdChange = (newId) => {
-        this.setState({ selectedItemId: isNaN(newId) === true ? null : newId }); 
+    idFormatValidAfterParse = (idValue) => {            
+        console.log('This function needs to relocated into FormsOpenedState');
+
+        const parsedIdValue = parseInt(idValue);
+        return (isValuelessFalsey(parsedIdValue) === false && Number.isInteger(parsedIdValue) === true);
     }
-    
+
+    updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false) => {
+        const updatedState = { ...newState };
+        if(doNotChangeSelectedItemId === true) { updatedState.selectedItemId = this.state.selectedItemId }
+        else if(isNaN(updatedState.selectedItemId) === true) { updatedState.selectedItemId = null; }
+        this.setState({ ...updatedState });
+    }
+
     render() { 
         const { additionalMappedItemPreviewProps, alternateGetUri, alternateSubcomponentKey, itemName, mappedItemPreviewComponent, nonSortByFields } = this.props;  // match exactly with picker
         const keyProp = alternateSubcomponentKey ? alternateSubcomponentKey : itemName;
@@ -51,9 +50,9 @@ class ResourceManager extends React.Component {
                         nonSortByFields={nonSortByFields}
                         onDeleteButtonPress={this.handleDeleteButtonPress}
                         onEditButtonPress={this.handleEditButtonPress}
-                        onSelectedItemIdChange={this.handleSelectedItemIdChange}
+                        onSelectedItemIdChange={(itemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(itemId))}
                         selectedItemId={this.state.selectedItemId}
-                        subcomponentKey={keyProp}                       
+                        subcomponentKey={keyProp}
                     />
                 }
             </div>
@@ -62,3 +61,42 @@ class ResourceManager extends React.Component {
 }
 
 export default ResourceManager
+
+const FormsOpenedState = {
+    allInactiveExcept: {
+        destroyer: function (selectedItemId) { return FormsOpenedState.inactive.except('destroyerIsOpen', selectedItemId) },
+        picker: function (selectedItemId) { return FormsOpenedState.inactive.except('pickerIsOpen', selectedItemId) },
+        upsertForm: function (selectedItemId) { return FormsOpenedState.inactive.except('upsertFormIsOpen', selectedItemId) }
+    },
+    default: {
+        destroyerIsOpen: false,
+        pickerIsOpen: true,
+        selectedItemId: null,
+        upsertFormIsOpen: false
+    },
+    // this item not generally intended to used outside of FormsOpenedState:
+    inactive: {
+        except: function (propertyName, selectedItemId = null) {
+            console.log('Id needs validation/correction before being assigned');
+            const openState = { ...FormsOpenedState.inactive.withId(selectedItemId)};
+            if(openState.hasOwnProperty(propertyName) === true) { openState[propertyName] = true; }
+            else { 
+                const validProperties = Object.keys(FormsOpenedState.inactive.value).join(', ');
+                console.warn(`Invalid property name: ${propertyName}. Valid options are: ${validProperties}.`) 
+            }
+            return openState;
+        },
+        value: {
+            destroyerIsOpen: false,
+            pickerIsOpen: false,
+            selectedItemId: null,
+            upsertFormIsOpen: false
+        },
+        withId: function (selectedItemId) {
+            console.log('Id needs validation/correction before being assigned');
+            const openState = { ...FormsOpenedState.inactive.value};
+            openState.selectedItemId = selectedItemId;
+            return openState;
+        }
+    }
+}

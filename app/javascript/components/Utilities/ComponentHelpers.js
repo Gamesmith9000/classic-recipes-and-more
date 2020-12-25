@@ -8,7 +8,6 @@ import RecipeManager from '../ContentManagement/Managers/RecipeManager'
 import ResourceManager from '../ContentManagement/Managers/ResourceManager'
 
 import MappedRecipePreview from '../ContentManagement/Pickers/Subcomponents/MappedRecipePreview'
-import ProductManager from '../ContentManagement/Managers/ProductManager'
 
 export const ContentSectionsInfo = {
     isValidSectionId: function (newSectionIdentifier) {
@@ -21,6 +20,8 @@ export const ContentSectionsInfo = {
     sections: [
         { name: 'Pages',            renderComponent: function (props) { return <PageManager     {...props} /> } },
         { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager {...props} 
+            // additionalMappedItemPreviewProps
+            // alternateGetUri
             itemName="recipe"
             key="recipe"
             mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } 
@@ -29,6 +30,8 @@ export const ContentSectionsInfo = {
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
         { name: 'Products',         renderComponent: function (props) { return <ResourceManager {...props} 
+            // additionalMappedItemPreviewProps
+            // alternateGetUri
             itemName="product"
             key="product"
             // mappedItemPreviewComponent=
