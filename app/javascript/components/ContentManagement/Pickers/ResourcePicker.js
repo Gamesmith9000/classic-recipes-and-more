@@ -53,10 +53,10 @@ class ResourcePicker extends React.Component {
     }
 
     componentDidMount () {
-        const { alternateGetUri, itemName, nonSortByFields } = this.props;
-        const resource = alternateGetUri ? alternateGetUri : snakeCase(itemName + 's');
+        const { alternateIndexUrl, itemName, nonSortByFields } = this.props;
+        const indexUrl = alternateIndexUrl ? alternateIndexUrl : `/api/v1/${snakeCase(itemName + 's')}.json`
 
-        axios.get(`/api/v1/${resource}.json`)
+        axios.get(indexUrl)
         .then(res => {
             const validIgnoreProps = (nonSortByFields && Array.isArray(nonSortByFields) === true);
             const ignoredSortingFields = validIgnoreProps === true ? nonSortByFields : [];

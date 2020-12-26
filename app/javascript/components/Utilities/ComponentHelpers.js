@@ -6,8 +6,10 @@ import PageManager from '../ContentManagement/Managers/PageManager'
 import PhotoManager from '../ContentManagement/Managers/PhotoManager'
 import RecipeManager from '../ContentManagement/Managers/RecipeManager'
 import ResourceManager from '../ContentManagement/Managers/ResourceManager'
+import ResourceDestroyer from '../ContentManagement/Destroyers/ResourceDestroyer'
 
 import MappedRecipePreview from '../ContentManagement/Pickers/Subcomponents/MappedRecipePreview'
+import RecipeDestroyerUi from '../ContentManagement/Destroyers/Subcomponents/RecipeDestroyerUi'
 
 export const ContentSectionsInfo = {
     isValidSectionId: function (newSectionIdentifier) {
@@ -19,9 +21,12 @@ export const ContentSectionsInfo = {
     // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
     sections: [
         { name: 'Pages',            renderComponent: function (props) { return <PageManager     {...props} /> } },
-        { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager {...props} 
+        { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager 
+            {...props} 
             // additionalMappedItemPreviewProps
-            // alternateGetUri
+            // alternateDeleteUrl
+            // alternateIndexUrl
+            destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
             key="recipe"
             mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } 
@@ -29,12 +34,10 @@ export const ContentSectionsInfo = {
         /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Products',         renderComponent: function (props) { return <ResourceManager {...props} 
-            // additionalMappedItemPreviewProps
-            // alternateGetUri
+        { name: 'Products',         renderComponent: function (props) { return <ResourceManager 
+            {...props} 
             itemName="product"
             key="product"
-            // mappedItemPreviewComponent=
         /> } }
     ]
 }

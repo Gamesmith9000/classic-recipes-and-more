@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { paramCase } from 'change-case'
 import ResourcePicker from '../Pickers/ResourcePicker'
 import { isValuelessFalsey } from '../../Utilities/Helpers';
+import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
 
 class ResourceManager extends React.Component {
     constructor () {
@@ -27,26 +28,45 @@ class ResourceManager extends React.Component {
     }
 
     render() { 
-        const { additionalMappedItemPreviewProps, alternateGetUri, alternateSubcomponentKey, itemName, mappedItemPreviewComponent, nonSortByFields } = this.props;
-        const keyProp = alternateSubcomponentKey ? alternateSubcomponentKey : itemName;
+        const { itemName, alternateSubcomponentKey } = this.props;
+        const { alternateCreateUrl, alternateDeleteUrl, alternateIndexUrl, alternateShowUrl, alternateUpdateUrl } = this.props;
+        const { destroyerUiComponent, mappedItemPreviewComponent } = this.props;
+        const { additionalMappedItemPreviewProps, nonSortByFields} = this.props;
+
+        const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
         const managerClassName = `${paramCase(itemName)}-manager`;
+        const sharedProps = { itemName, selectedItemId: this.state.selectedItemId, subcomponentKey: keyProp }
 
         return (
             <div className={managerClassName}>
+                {this.state.destroyerIsOpen === false && this.state.upsertFormIsOpen === false &&
+                    <Fragment />
+                }
+                {this.state.destroyerIsOpen === true &&
+                    <ResourceDestroyer 
+                        {...sharedProps}
+                        alternateDeleteUrl={alternateDeleteUrl}
+                        alternateShowUrl={alternateShowUrl}
+                        destroyerUiComponent={destroyerUiComponent}
+                        key={`${keyProp}-destroyer`}
+                        onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
+                    />
+                }
                 {this.state.pickerIsOpen === true &&
                     <ResourcePicker 
+                        {...sharedProps}
                         additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
-                        alternateGetUri={alternateGetUri}
-                        itemName={itemName}
-                        key={keyProp}
+                        alternateIndexUrl={alternateIndexUrl}
+                        key={`${keyProp}-picker`}
                         mappedItemPreviewComponent={mappedItemPreviewComponent}
                         nonSortByFields={nonSortByFields}
                         onDeleteButtonPress={this.handleDeleteButtonPress}
                         onEditButtonPress={this.handleEditButtonPress}
                         onSelectedItemIdChange={(itemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(itemId))}
-                        selectedItemId={this.state.selectedItemId}
-                        subcomponentKey={keyProp}
                     />
+                }
+                {this.state.upsertFormIsOpen === true &&
+                    <Fragment />
                 }
             </div>
         )
