@@ -34,7 +34,6 @@ class ResourcePicker extends React.Component {
             const mappedItemProps = {
                 ...additionalMappedItemPreviewProps, 
                 itemData: item,
-                key: item.id,
                 mappedIndex: index,
                 onDeleteButtonPress: onDeleteButtonPress,
                 onEditButtonPress: onEditButtonPress,

@@ -20,6 +20,12 @@ class ResourceManager extends React.Component {
         this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), true);
     }
 
+    renderUpsertForm = (additionalProps) => {
+        const { alternateShowUrl, alternateUpdateUrl, upsertFormComponent } = this.props;
+        const upsertProps = {...additionalProps, alternateShowUrl, alternateUpdateUrl };
+        return <Fragment>{upsertFormComponent(upsertProps)}</Fragment>
+    }
+
     updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false) => {
         const updatedState = { ...newState };
         if(doNotChangeSelectedItemId === true) { updatedState.selectedItemId = this.state.selectedItemId }
@@ -68,7 +74,7 @@ class ResourceManager extends React.Component {
                     />
                 }
                 {this.state.upsertFormIsOpen === true &&
-                    <Fragment />
+                    this.renderUpsertForm(sharedProps)
                 }
             </div>
         )

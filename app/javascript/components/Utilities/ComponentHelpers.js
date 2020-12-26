@@ -28,15 +28,14 @@ export const ContentSectionsInfo = {
             // additionalMappedItemPreviewProps
             // alternateDeleteUrl
             // alternateIndexUrl
+            // alternateShowUrl
+            // alternateUpdateUrl
             destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
             key="recipe"
             mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormComponent={(upsertProps) => 
-                <RecipeUpsertForm 
-                    {...upsertProps} 
-                />}
+            upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
         /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },

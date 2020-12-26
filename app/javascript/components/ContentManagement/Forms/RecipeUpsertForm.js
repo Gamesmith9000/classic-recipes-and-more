@@ -12,6 +12,10 @@ import { mapRecipeSectionsData } from '../../Utilities/ResponseDataHelpers'
 import PhotoPicker from '../Pickers/PhotoPicker'
 
 class RecipeUpsertForm extends React.Component {
+    //  [NOTE] Check all passed in props are implemented, even after obvious items are converted
+    //  [NOTE] Reverse also needs to be checked (old props that have not been implemented into new versions - photoVersions, etc.)
+    //  [NOTE] Addendum: Consider using React context for the global photo config options. Should be perfect way to refactor
+
     constructor() {
         super();
         const defaultRecipeState = () => { 
