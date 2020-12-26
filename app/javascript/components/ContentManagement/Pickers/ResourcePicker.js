@@ -58,16 +58,18 @@ class ResourcePicker extends React.Component {
 
         axios.get(indexUrl)
         .then(res => {
-            const validIgnoreProps = (nonSortByFields && Array.isArray(nonSortByFields) === true);
-            const ignoredSortingFields = validIgnoreProps === true ? nonSortByFields : [];
+            if(res.data.data.length > 0) {
+                const validIgnoreProps = (nonSortByFields && Array.isArray(nonSortByFields) === true);
+                const ignoredSortingFields = validIgnoreProps === true ? nonSortByFields : [];
 
-            const sortingState = this.state.sorting;
-            sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields);
+                const sortingState = this.state.sorting;
+                sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields);
 
-            this.setState({
-                itemData: res.data.data,
-                sorting: sortingState
-            });
+                this.setState({
+                    itemData: res.data.data,
+                    sorting: sortingState
+                });
+            }
         })
         .catch(err => console.log(err));
     }
