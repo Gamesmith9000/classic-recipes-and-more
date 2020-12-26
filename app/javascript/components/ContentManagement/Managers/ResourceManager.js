@@ -15,7 +15,7 @@ class ResourceManager extends React.Component {
         this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.destroyer(), true);
     }
 
-    handleEditButtonPress = (event) => {
+    handleUpsertButtonPress = (event) => {
         event.preventDefault();
         this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), true);
     }
@@ -34,13 +34,15 @@ class ResourceManager extends React.Component {
         const { additionalMappedItemPreviewProps, nonSortByFields} = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
-        const managerClassName = `${paramCase(itemName)}-manager`;
+        const managerClassName = `${paramCase(itemName)} resource-manager`;
         const sharedProps = { itemName, selectedItemId: this.state.selectedItemId, subcomponentKey: keyProp }
 
         return (
             <div className={managerClassName}>
                 {this.state.destroyerIsOpen === false && this.state.upsertFormIsOpen === false &&
-                    <Fragment />
+                    <button className={`${paramCase(itemName)} create-item`} onClick={this.handleUpsertButtonPress}>
+                        Create Recipe
+                    </button>
                 }
                 {this.state.destroyerIsOpen === true &&
                     <ResourceDestroyer 
@@ -61,7 +63,7 @@ class ResourceManager extends React.Component {
                         mappedItemPreviewComponent={mappedItemPreviewComponent}
                         nonSortByFields={nonSortByFields}
                         onDeleteButtonPress={this.handleDeleteButtonPress}
-                        onEditButtonPress={this.handleEditButtonPress}
+                        onEditButtonPress={this.handleUpsertButtonPress}
                         onSelectedItemIdChange={(itemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(itemId))}
                     />
                 }

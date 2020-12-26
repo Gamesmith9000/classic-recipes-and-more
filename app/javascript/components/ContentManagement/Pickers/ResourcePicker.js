@@ -46,7 +46,7 @@ class ResourcePicker extends React.Component {
         });
 
         return (
-            <ul className={`${singleItemClassName}-previews-list`}>
+            <ul className={`${singleItemClassName} previews-list`}>
                 { mappedPreviews }
             </ul>
         );
@@ -76,7 +76,7 @@ class ResourcePicker extends React.Component {
 
     render() {
         const { itemName, subcomponentKey } = this.props;
-        const pickerClassName = `${paramCase(itemName)}-picker`;
+        const pickerClassName = `${paramCase(itemName)} resource-picker`;
 
         // Before the component mounts, itemData is null. Afterward, it will be an array (even if empty)
         return (

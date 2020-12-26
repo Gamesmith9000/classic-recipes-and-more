@@ -10,6 +10,8 @@ import ResourceDestroyer from '../ContentManagement/Destroyers/ResourceDestroyer
 
 import MappedRecipePreview from '../ContentManagement/Pickers/Subcomponents/MappedRecipePreview'
 import RecipeDestroyerUi from '../ContentManagement/Destroyers/Subcomponents/RecipeDestroyerUi'
+import RecipeForm from '../ContentManagement/Forms/RecipeForm'
+import RecipeUpsertForm from '../ContentManagement/Forms/RecipeUpsertForm'
 
 export const ContentSectionsInfo = {
     isValidSectionId: function (newSectionIdentifier) {
@@ -31,6 +33,10 @@ export const ContentSectionsInfo = {
             key="recipe"
             mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
+            upsertFormComponent={(upsertProps) => 
+                <RecipeUpsertForm 
+                    {...upsertProps} 
+                />}
         /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
