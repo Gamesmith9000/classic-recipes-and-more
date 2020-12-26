@@ -5,7 +5,7 @@ import PickerSortSelect from './Subcomponents/PickerSortSelect'
 import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 
-class Picker extends React.Component {
+class ResourcePicker extends React.Component {
     constructor () {
         super();
         this.state = {
@@ -102,4 +102,4 @@ class Picker extends React.Component {
     }
 }
 
-export default Picker
+export default ResourcePicker

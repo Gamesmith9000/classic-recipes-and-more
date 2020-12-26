@@ -1,6 +1,6 @@
 import React from 'react'
 import { paramCase } from 'change-case'
-import Picker from '../Pickers/Picker'
+import ResourcePicker from '../Pickers/ResourcePicker'
 import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 class ResourceManager extends React.Component {
@@ -19,13 +19,6 @@ class ResourceManager extends React.Component {
         this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), true);
     }
 
-    idFormatValidAfterParse = (idValue) => {            
-        console.log('This function needs to relocated into FormsOpenedState');
-
-        const parsedIdValue = parseInt(idValue);
-        return (isValuelessFalsey(parsedIdValue) === false && Number.isInteger(parsedIdValue) === true);
-    }
-
     updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false) => {
         const updatedState = { ...newState };
         if(doNotChangeSelectedItemId === true) { updatedState.selectedItemId = this.state.selectedItemId }
@@ -34,14 +27,14 @@ class ResourceManager extends React.Component {
     }
 
     render() { 
-        const { additionalMappedItemPreviewProps, alternateGetUri, alternateSubcomponentKey, itemName, mappedItemPreviewComponent, nonSortByFields } = this.props;  // match exactly with picker
+        const { additionalMappedItemPreviewProps, alternateGetUri, alternateSubcomponentKey, itemName, mappedItemPreviewComponent, nonSortByFields } = this.props;
         const keyProp = alternateSubcomponentKey ? alternateSubcomponentKey : itemName;
         const managerClassName = `${paramCase(itemName)}-manager`;
 
         return (
             <div className={managerClassName}>
                 {this.state.pickerIsOpen === true &&
-                    <Picker 
+                    <ResourcePicker 
                         additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
                         alternateGetUri={alternateGetUri}
                         itemName={itemName}
@@ -74,10 +67,13 @@ const FormsOpenedState = {
         selectedItemId: null,
         upsertFormIsOpen: false
     },
+    filteredId: (idValue) => {            
+        const parsedIdValue = parseInt(idValue);
+        return (isValuelessFalsey(parsedIdValue) === false && Number.isInteger(parsedIdValue) === true) ? parsedIdValue : null;
+    },
     // this item not generally intended to used outside of FormsOpenedState:
     inactive: {
         except: function (propertyName, selectedItemId = null) {
-            console.log('Id needs validation/correction before being assigned');
             const openState = { ...FormsOpenedState.inactive.withId(selectedItemId)};
             if(openState.hasOwnProperty(propertyName) === true) { openState[propertyName] = true; }
             else { 
@@ -92,10 +88,9 @@ const FormsOpenedState = {
             selectedItemId: null,
             upsertFormIsOpen: false
         },
-        withId: function (selectedItemId) {
-            console.log('Id needs validation/correction before being assigned');
+        withId: (selectedItemId) => {
             const openState = { ...FormsOpenedState.inactive.value};
-            openState.selectedItemId = selectedItemId;
+            openState.selectedItemId = FormsOpenedState.filteredId(selectedItemId);
             return openState;
         }
     }
