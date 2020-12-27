@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react'
-import AdminUserDisplay from './Misc/AdminUserDisplay'
-import SectionPicker from './Pickers/SectionPicker';
-import { ContentSectionsInfo } from '../Utilities/ComponentHelpers';
+import AdminUserDisplay from './Subcomponents/AdminUserDisplay'
 import { existsInLocalStorage, objectsHaveMatchingValues } from '../Utilities/Helpers';
+import ContentSectionManager from './Managers/ContentSectionManager';
 
 class ContentDashboard extends React.Component {
     constructor () {
@@ -15,12 +14,9 @@ class ContentDashboard extends React.Component {
     }
 
     changeContentSection = (newSectionIdentifier) => {
-        const newSectionId = parseInt(newSectionIdentifier);
-        if(!ContentSectionsInfo.isValidSectionId(newSectionId)) { return; } 
-
         this.setState({
             contentSectionOpen: true,
-            selectedContentSection: newSectionId
+            selectedContentSection: newSectionIdentifier
         });
     }
     
@@ -95,20 +91,16 @@ class ContentDashboard extends React.Component {
         if(this.localStorageMatchesState() === false) { this.updateLocalStorageToMatchState(); }
         
         return (
-            <div className="content-management">
-                <h1>Manage Content</h1>
+            <div className="content-dashboard">
+                <h1>Content Dashboard</h1>
                 <AdminUserDisplay displayName={userDisplay} />
-                <SectionPicker 
-                    changeContentSection={this.changeContentSection}
-                    closeContentSection={this.closeContentSection}      
-                    contentSectionOpen={this.state.contentSectionOpen}
-                    selectedContentSection={this.state.selectedContentSection}
-                />
-                <hr />
-                { this.state.contentSectionOpen === true && this.state.componentHasMounted &&
-                    <Fragment>
-                        { ContentSectionsInfo.sections[this.state.selectedContentSection].renderComponent({ photoPickerPhotoVersion: "thumb" }) }
-                    </Fragment>
+                { this.state.componentHasMounted &&
+                    <ContentSectionManager
+                        changeContentSection={this.changeContentSection}
+                        closeContentSection={this.closeContentSection}      
+                        contentSectionOpen={this.state.contentSectionOpen}
+                        selectedContentSection={this.state.selectedContentSection}
+                    />
                 }
             </div>
         )

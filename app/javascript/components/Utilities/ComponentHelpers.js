@@ -2,50 +2,6 @@ import React, { Fragment } from 'react'
 import { sentenceCase } from 'change-case'
 
 import { isValuelessFalsey, validationErrorsToString } from './Helpers'
-import PageManager from '../ContentManagement/Managers/PageManager'
-import PhotoManager from '../ContentManagement/Managers/PhotoManager'
-import RecipeManager from '../ContentManagement/Managers/RecipeManager'
-import ResourceManager from '../ContentManagement/Managers/ResourceManager'
-import ResourceDestroyer from '../ContentManagement/Destroyers/ResourceDestroyer'
-
-import MappedRecipePreview from '../ContentManagement/Pickers/Subcomponents/MappedRecipePreview'
-import RecipeDestroyerUi from '../ContentManagement/Destroyers/Subcomponents/RecipeDestroyerUi'
-import RecipeForm from '../ContentManagement/Forms/RecipeForm'
-import RecipeUpsertForm from '../ContentManagement/Forms/RecipeUpsertForm'
-
-export const ContentSectionsInfo = {
-    isValidSectionId: function (newSectionIdentifier) {
-        if(Number.isInteger(newSectionIdentifier) === false || newSectionIdentifier < 0 || newSectionIdentifier > this.sections.length -1) {
-            return false
-        }
-        else { return true; }
-    },
-    // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
-    sections: [
-        { name: 'Pages',            renderComponent: function (props) { return <PageManager     {...props} /> } },
-        { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager 
-            {...props} 
-            // additionalMappedItemPreviewProps
-            // alternateDeleteUrl
-            // alternateIndexUrl
-            // alternateShowUrl
-            // alternateUpdateUrl
-            destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
-            itemName="recipe"
-            key="recipe-manager"
-            mappedItemPreviewComponent={(previewProps, key) => <MappedRecipePreview {...previewProps} key={key} /> } 
-            nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
-        /> } },
-        { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
-        { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Products',         renderComponent: function (props) { return <ResourceManager 
-            {...props} 
-            itemName="product"
-            key="product"
-        /> } }
-    ]
-}
 
 export function EmbeddedYoutubeVideo (props) {
     return (
