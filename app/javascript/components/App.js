@@ -9,9 +9,10 @@ import Home from './Pages/Home'
 import PhotoGallery from './Pages/PhotoGallery'
 import Shop from './Pages/Shop'
 
+import ContentDashboard from './ContentManagement/ContentDashboard'
+
 import ComingSoon from './Pages/ComingSoon'
 
-import ContentMasterManager from './ContentManagement/Managers/ContentMasterManager'
 
 function App (props) {
     const redirectOnSignIn = () => {
@@ -48,7 +49,7 @@ function App (props) {
                 { redirectOnSignIn() }
                 <Switch>
                     <Route exact path="/" component={ComingSoon} />
-                    { renderProtectedRoute("/content", ContentMasterManager) }
+                    { renderProtectedRoute("/content", ContentDashboard) }
                 </Switch>
             </Fragment>
         );
@@ -74,7 +75,7 @@ function App (props) {
                 />
                 <Route exact path="/shop" component={Shop} />
                 
-                { renderProtectedRoute("/content", ContentMasterManager) }
+                { renderProtectedRoute("/content", ContentDashboard) }
             </Switch>
         </Fragment>
     );

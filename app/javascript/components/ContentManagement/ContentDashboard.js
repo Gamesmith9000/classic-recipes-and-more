@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react'
-import AdminUserDisplay from '../Misc/AdminUserDisplay'
-import SectionPicker from '../Pickers/SectionPicker';
-import { ContentSectionsInfo } from '../../Utilities/ComponentHelpers';
-import { existsInLocalStorage, objectsHaveMatchingValues } from '../../Utilities/Helpers';
+import AdminUserDisplay from './Misc/AdminUserDisplay'
+import SectionPicker from './Pickers/SectionPicker';
+import { ContentSectionsInfo } from '../Utilities/ComponentHelpers';
+import { existsInLocalStorage, objectsHaveMatchingValues } from '../Utilities/Helpers';
 
-class ContentMasterManager extends React.Component {
+class ContentDashboard extends React.Component {
     constructor () {
         super();
         this.state = ({
@@ -115,4 +115,4 @@ class ContentMasterManager extends React.Component {
     }
 }
 
-export default ContentMasterManager
+export default ContentDashboard

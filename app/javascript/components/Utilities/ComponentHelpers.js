@@ -32,8 +32,8 @@ export const ContentSectionsInfo = {
             // alternateUpdateUrl
             destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
-            key="recipe"
-            mappedItemPreviewComponent={(previewProps) => <MappedRecipePreview {...previewProps} /> } 
+            key="recipe-manager"
+            mappedItemPreviewComponent={(previewProps, key) => <MappedRecipePreview {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
             upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
         /> } },
