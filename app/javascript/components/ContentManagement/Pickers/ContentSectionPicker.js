@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-function SectionPicker (props) {
+function ContentSectionPicker (props) {
     const { allSectionNames, changeContentSection, contentSectionOpen, closeContentSection, selectedContentSection } = props;
     
     const mapSectionButtons = () => {
@@ -26,4 +26,4 @@ function SectionPicker (props) {
     )
 }
 
-export default SectionPicker
+export default ContentSectionPicker

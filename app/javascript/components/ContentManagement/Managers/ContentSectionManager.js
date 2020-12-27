@@ -11,7 +11,7 @@ import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
 import RecipeForm from '../Forms/RecipeForm'
 import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
 
-import SectionPicker from '../Pickers/SectionPicker'
+import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 
 class ContentSectionManager extends React.Component {
     constructor(props) {
@@ -34,7 +34,7 @@ class ContentSectionManager extends React.Component {
 
         return (
             <Fragment>
-                <SectionPicker 
+                <ContentSectionPicker 
                     allSectionNames={ContentSectionsInfo.allSectionNames()}
                     changeContentSection={(newSectionId) => this.tryChangeContentSection(newSectionId)}
                     closeContentSection={closeContentSection}      

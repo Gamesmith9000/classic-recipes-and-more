@@ -41,7 +41,7 @@ class ResourcePicker extends React.Component {
                 selectedItemId: selectedItemId
             };
 
-            return mappedItemPreviewComponent(mappedItemProps, item.id)
+            return mappedItemPreviewComponent(mappedItemProps, item.id);
         });
 
         return (
