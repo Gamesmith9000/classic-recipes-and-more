@@ -4,6 +4,7 @@ import { paramCase, snakeCase } from 'change-case';
 import PickerSortSelect from './Subcomponents/PickerSortSelect'
 import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
+import MappedResourcePreview from './Subcomponents/MappedResourcePreview';
 
 class ResourcePicker extends React.Component {
     constructor () {
@@ -20,28 +21,43 @@ class ResourcePicker extends React.Component {
 
     handlePreviewSelect = (event, itemId) => {
         event.preventDefault();
-        this.props.onSelectedItemIdChange(parseInt(itemId));
+
+        const parsedItemId = parseInt(itemId);
+        if(parseInt(this.props.selectedItemId) === parsedItemId) { return; }
+        this.props.onSelectedItemIdChange(parsedItemId);
     }
 
     mapItemPreviews = (itemDataList, singleItemClassName) => {
-        const { additionalMappedItemPreviewProps, mappedItemPreviewComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
-        if(!itemDataList || !mappedItemPreviewComponent ) { return null; }
+        if(!itemDataList || ! this.props.mappedPreviewUiComponent ) { return null; }
+
+        const { itemName, subcomponentKey } = this.props;
+        const { additionalMappedItemPreviewProps, mappedPreviewUiComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
 
         const { byId, fieldIndex, validFields } = this.state.sorting;
         const sortedItemDataList = sortByAttributeNameOrId(itemDataList, validFields, fieldIndex, byId);
+
+        const previewKeyBase = `${subcomponentKey}-mp-`;
 
         const mappedPreviews = sortedItemDataList.map((item, index) => { 
             const mappedItemProps = {
                 ...additionalMappedItemPreviewProps, 
                 itemData: item,
+                itemName: itemName,
                 mappedIndex: index,
+                mappedPreviewUiComponent: mappedPreviewUiComponent,
                 onDeleteButtonPress: onDeleteButtonPress,
                 onEditButtonPress: onEditButtonPress,
                 onPreviewSelect: this.handlePreviewSelect,
-                selectedItemId: selectedItemId
+                selectedItemId: selectedItemId,
+                previewKeyBase: previewKeyBase
             };
 
-            return mappedItemPreviewComponent(mappedItemProps, item.id);
+            return (
+                <MappedResourcePreview 
+                    {...mappedItemProps}
+                    key={previewKeyBase + item.id}
+                />
+            )
         });
 
         return (

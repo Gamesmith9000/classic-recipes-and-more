@@ -30,13 +30,14 @@ class ResourceManager extends React.Component {
         const updatedState = { ...newState };
         if(doNotChangeSelectedItemId === true) { updatedState.selectedItemId = this.state.selectedItemId }
         else if(isNaN(updatedState.selectedItemId) === true) { updatedState.selectedItemId = null; }
+        
         this.setState({ ...updatedState });
     }
 
     render() { 
         const { itemName, alternateSubcomponentKey } = this.props;
         const { alternateCreateUrl, alternateDeleteUrl, alternateIndexUrl, alternateShowUrl, alternateUpdateUrl } = this.props;
-        const { destroyerUiComponent, mappedItemPreviewComponent } = this.props;
+        const { destroyerUiComponent, mappedPreviewUiComponent } = this.props;
         const { additionalMappedItemPreviewProps, nonSortByFields} = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
@@ -66,7 +67,7 @@ class ResourceManager extends React.Component {
                         additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
                         alternateIndexUrl={alternateIndexUrl}
                         key={`${keyProp}-picker`}
-                        mappedItemPreviewComponent={mappedItemPreviewComponent}
+                        mappedPreviewUiComponent={mappedPreviewUiComponent}
                         nonSortByFields={nonSortByFields}
                         onDeleteButtonPress={this.handleDeleteButtonPress}
                         onEditButtonPress={this.handleUpsertButtonPress}

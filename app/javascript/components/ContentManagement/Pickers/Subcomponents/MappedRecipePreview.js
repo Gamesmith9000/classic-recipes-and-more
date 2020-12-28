@@ -1,44 +1,16 @@
 import React, { Fragment } from 'react'
-import { isValuelessFalsey } from '../../../Utilities/Helpers'
-import SelectedMappedPreviewControls from './SelectedMappedPreviewControls'
 
-export function MappedRecipePreview(props) {
-    // [NOTE] There is currently not error checking for all props
-    
-    const { itemData, onDeleteButtonPress, onEditButtonPress, onPreviewSelect, selectedItemId } = props;
-
-    const isSelected = (isValuelessFalsey(selectedItemId) === false && selectedItemId === parseInt(itemData.id));
-    const commonItems = (
-        <Fragment>
-            <div className="id-column">ID: {itemData.id}</div>
-            <div>Title: {itemData.attributes.title}</div>
-            <div>Description: {itemData.attributes.description}</div>
-            <div>Featured: {itemData.attributes.featured === true ? '☑': '☐'}</div>
-        </Fragment>
-    );
-    if(isSelected === true) {
-        return (
-        <li className="recipe item-preview selected" key={itemData.id} >
-            <SelectedMappedPreviewControls 
-                key={itemData.id}
-                itemName="recipe"
-                onDeleteButtonPress={onDeleteButtonPress}
-                onEditButtonPress={onEditButtonPress}
-                onPreviewSelect={onPreviewSelect}
-            />
-            { commonItems }
-        </li>
-        );
-    }
+export function MappedRecipePreview(props) {    
+    const { itemData } = props;
+    const { id, attributes: { description, feature, title } } = itemData;
 
     return (
-        <li 
-            className="recipe item-preview" 
-            key={itemData.id}
-            onClick={(event) => onPreviewSelect(event, itemData.id)}
-        >
-            { commonItems }
-        </li>
+        <Fragment>
+            <div className="id-column">ID: {id}</div>
+            <div>Title: {title}</div>
+            <div>Description: {description}</div>
+            <div>Featured: {featured === true ? '☑': '☐'}</div>
+        </Fragment>
     );
 }
 export default MappedRecipePreview

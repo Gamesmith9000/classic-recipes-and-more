@@ -82,7 +82,7 @@ const ContentSectionsInfo = {
             destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
             key="recipe-manager"
-            mappedItemPreviewComponent={(previewProps, key) => <MappedRecipePreview {...previewProps} key={key} /> } 
+            mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreview {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
             upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
         /> } },
@@ -92,7 +92,7 @@ const ContentSectionsInfo = {
             {...props} 
             itemName="product"
             key="product"
-            mappedItemPreviewComponent={(previewProps, key) => <MappedProductPreview {...previewProps} key={key} /> } 
+            mappedPreviewUiComponent={(previewProps, key) => <MappedProductPreview {...previewProps} key={key} /> } 
             nonSortByFields={['product_photo_id']}
             upsertFormComponent={(upsertProps) => <ProductUpsertForm {...upsertProps} />}
         /> } }

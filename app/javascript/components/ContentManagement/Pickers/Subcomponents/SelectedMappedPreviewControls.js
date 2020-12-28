@@ -5,7 +5,7 @@ export function SelectedMappedPreviewControls (props) {
     // [NOTE] There is currently not error checking for all props
     const { itemName, onDeleteButtonPress, onEditButtonPress, onPreviewSelect } = props;
 
-    return(
+    return (
         <div className={`selected-item-controls ${paramCase(itemName)}`}>
             <button onClick={onEditButtonPress}>
                 Modify
