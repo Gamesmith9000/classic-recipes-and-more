@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react'
-import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
-export function MappedProductPreview (props) {
+export function MappedProductPreviewUi (props) {
     const { itemData } = props;
     const { id, attributes: { description, price, stock, title, total_sold }, relationships: { product_photo }} = itemData;
 
@@ -17,4 +16,4 @@ export function MappedProductPreview (props) {
         </Fragment>
     );
 }
-export default MappedProductPreview
+export default MappedProductPreviewUi

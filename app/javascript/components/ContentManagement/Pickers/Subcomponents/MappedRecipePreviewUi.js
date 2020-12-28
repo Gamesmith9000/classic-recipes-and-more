@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-export function MappedRecipePreview(props) {    
+export function MappedRecipePreviewUi (props) {    
     const { itemData } = props;
     const { id, attributes: { description, feature, title } } = itemData;
 
@@ -13,4 +13,4 @@ export function MappedRecipePreview(props) {
         </Fragment>
     );
 }
-export default MappedRecipePreview
+export default MappedRecipePreviewUi
