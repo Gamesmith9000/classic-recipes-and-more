@@ -12,6 +12,9 @@ import RecipeForm from '../Forms/RecipeForm'
 import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
 
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
+import ProductUpsertForm from '../Forms/ProductUpsertForm'
+import MappedProductPreview from '../Pickers/Subcomponents/MappedProductPreview'
+
 
 class ContentSectionManager extends React.Component {
     constructor(props) {
@@ -89,6 +92,9 @@ const ContentSectionsInfo = {
             {...props} 
             itemName="product"
             key="product"
+            mappedItemPreviewComponent={(previewProps, key) => <MappedProductPreview {...previewProps} key={key} /> } 
+            nonSortByFields={['product_photo_id']}
+            upsertFormComponent={(upsertProps) => <ProductUpsertForm {...upsertProps} />}
         /> } }
     ]
 }

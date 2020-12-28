@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { paramCase } from 'change-case'
+import { capitalCase, paramCase } from 'change-case'
 import ResourcePicker from '../Pickers/ResourcePicker'
 import { isValuelessFalsey } from '../../Utilities/Helpers';
 import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
@@ -47,7 +47,7 @@ class ResourceManager extends React.Component {
             <div className={managerClassName}>
                 {this.state.destroyerIsOpen === false && this.state.upsertFormIsOpen === false &&
                     <button className={`${paramCase(itemName)} create-item`} onClick={this.handleUpsertButtonPress}>
-                        Create Recipe
+                        {`Create ${capitalCase(itemName)}`}
                     </button>
                 }
                 {this.state.destroyerIsOpen === true &&
