@@ -6,14 +6,14 @@ import RecipeManager from './RecipeManager'
 import ResourceManager from './ResourceManager'
 import ResourceDestroyer from '../Destroyers/ResourceDestroyer'
 
-import MappedRecipePreview from '../Pickers/Subcomponents/MappedRecipePreview'
+import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
 import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
 import RecipeForm from '../Forms/RecipeForm'
 import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
 
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 import ProductUpsertForm from '../Forms/ProductUpsertForm'
-import MappedProductPreview from '../Pickers/Subcomponents/MappedProductPreview'
+import MappedProductPreviewUi from '../Pickers/Subcomponents/MappedProductPreviewUi'
 
 
 class ContentSectionManager extends React.Component {
@@ -82,7 +82,7 @@ const ContentSectionsInfo = {
             destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
             key="recipe-manager"
-            mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreview {...previewProps} key={key} /> } 
+            mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
             upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
         /> } },
@@ -92,7 +92,7 @@ const ContentSectionsInfo = {
             {...props} 
             itemName="product"
             key="product"
-            mappedPreviewUiComponent={(previewProps, key) => <MappedProductPreview {...previewProps} key={key} /> } 
+            mappedPreviewUiComponent={(previewProps, key) => <MappedProductPreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['product_photo_id']}
             upsertFormComponent={(upsertProps) => <ProductUpsertForm {...upsertProps} />}
         /> } }
