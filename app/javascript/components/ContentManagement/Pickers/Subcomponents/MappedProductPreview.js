@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { isValuelessFalsey } from '../../../Utilities/Helpers'
-
-export function MappedProductPreview(props) {
+import SelectedMappedPreviewControls from './SelectedMappedPreviewControls'
+export function MappedProductPreview (props) {
     // [NOTE] There is currently not error checking for all props
     
     const { itemData, onDeleteButtonPress, onEditButtonPress, onPreviewSelect, selectedItemId } = props;
@@ -21,18 +21,14 @@ export function MappedProductPreview(props) {
     );
     if(isSelected === true) {
         return (
-            <li className="product-preview selected" key={id} >
-                <div className='selected-product-item-buttons'>
-                    <button onClick={onEditButtonPress}>
-                        Modify
-                    </button>
-                    <button onClick={onDeleteButtonPress}>
-                        Delete
-                    </button>
-                    <button onClick={(event) => onPreviewSelect(event, null)}>
-                        Cancel
-                    </button>
-                </div>
+            <li className="product item-preview selected" key={id} >
+                <SelectedMappedPreviewControls 
+                    key={id}
+                    itemName="product"
+                    onDeleteButtonPress={onDeleteButtonPress}
+                    onEditButtonPress={onEditButtonPress}
+                    onPreviewSelect={onPreviewSelect}
+                />
                 { commonItems }
             </li>
         );
@@ -40,7 +36,7 @@ export function MappedProductPreview(props) {
 
     return (
         <li 
-            className="product-preview" 
+            className="product item-preview" 
             key={id}
             onClick={(event) => onPreviewSelect(event, id)}
         >

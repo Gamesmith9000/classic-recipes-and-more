@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { isValuelessFalsey } from '../../../Utilities/Helpers'
+import SelectedMappedPreviewControls from './SelectedMappedPreviewControls'
 
 export function MappedRecipePreview(props) {
     // [NOTE] There is currently not error checking for all props
@@ -17,18 +18,14 @@ export function MappedRecipePreview(props) {
     );
     if(isSelected === true) {
         return (
-        <li className="recipe-preview selected" key={itemData.id} >
-            <div className='selected-preview-item-buttons'>
-                <button onClick={onEditButtonPress}>
-                    Modify
-                </button>
-                <button onClick={onDeleteButtonPress}>
-                    Delete
-                </button>
-                <button onClick={(event) => onPreviewSelect(event, null)}>
-                    Cancel
-                </button>
-            </div>
+        <li className="recipe item-preview selected" key={itemData.id} >
+            <SelectedMappedPreviewControls 
+                key={itemData.id}
+                itemName="recipe"
+                onDeleteButtonPress={onDeleteButtonPress}
+                onEditButtonPress={onEditButtonPress}
+                onPreviewSelect={onPreviewSelect}
+            />
             { commonItems }
         </li>
         );
@@ -36,7 +33,7 @@ export function MappedRecipePreview(props) {
 
     return (
         <li 
-            className="recipe-preview" 
+            className="recipe item-preview" 
             key={itemData.id}
             onClick={(event) => onPreviewSelect(event, itemData.id)}
         >

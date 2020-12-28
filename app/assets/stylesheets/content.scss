@@ -1,9 +1,7 @@
 $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 
 .content-dashboard {
-    li.photo-preview,
-    li.product-photo-preview,
-    li.recipe-preview {
+    li.item-preview {
         border: 1px solid;
         display: grid;
         grid-gap: 1.5rem;

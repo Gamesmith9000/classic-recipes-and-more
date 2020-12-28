@@ -74,7 +74,7 @@ class ResourceManager extends React.Component {
                     />
                 }
                 {this.state.upsertFormIsOpen === true &&
-                    this.renderUpsertForm(sharedProps)
+                    this.renderUpsertForm({...sharedProps, alternateCreateUrl, alternateUpdateUrl})
                 }
             </div>
         )
