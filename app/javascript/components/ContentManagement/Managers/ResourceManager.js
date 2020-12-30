@@ -75,7 +75,9 @@ class ResourceManager extends React.Component {
                     />
                 }
                 {this.state.upsertFormIsOpen === true &&
-                    this.renderUpsertForm({...sharedProps, alternateCreateUrl, alternateUpdateUrl})
+                    this.renderUpsertForm({...sharedProps, alternateCreateUrl, alternateUpdateUrl, 
+                        onClose: (newSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(newSelectedItemId))
+                    })
                 }
             </div>
         )

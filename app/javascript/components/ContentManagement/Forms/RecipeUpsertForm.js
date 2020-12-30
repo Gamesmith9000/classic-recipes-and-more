@@ -86,9 +86,9 @@ class RecipeUpsertForm extends React.Component {
         event.preventDefault();
 
         const nextId = this.state.nextUniqueSectionLocalId;
-        const recipeId = this.state.existingRecipe === true ? this.state.current.sections[0].recipe_id : null;
+        const selectedItemId = this.state.existingRecipe === true ? this.state.current.sections[0].recipe_id : null;
         let sections = this.state.current.sections.slice();
-        sections.push(new RecipeFormSectionState(null, nextId, [], recipeId, ''));
+        sections.push(new RecipeFormSectionState(null, nextId, [], selectedItemId, ''));
 
         let updatedCurrentState = this.state.current;
         updatedCurrentState.sections = sections;
@@ -145,11 +145,16 @@ class RecipeUpsertForm extends React.Component {
         const sections = this.prepareSectionDataForSubmit();
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
-        const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.recipeId}` : '/api/v1/recipes';
+        const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${selectedItemId}` : '/api/v1/recipes';
 
         axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, preview_photo_id, sections, title } })
         .then(res => {
-            if(this.state.existingRecipe === false) { this.props.handleClose(); }
+            console.log(res);
+            if(this.state.existingRecipe === false) { 
+                console.log('sub?')
+                this.props.onClose(res.data?.data?.id); 
+                console.log('hmm')
+            }
             else { this.handleFormSubmitResponse(res); }
         })
         .catch(err => { this.handleFormSubmitResponse(err); });
@@ -379,8 +384,10 @@ class RecipeUpsertForm extends React.Component {
     }
 
     componentDidMount () {
-        if(this.props.recipeId) {
-            axios.get(`/api/v1/recipes/${this.props.recipeId}.json`)
+        const { selectedItemId } = this.props;
+
+        if(isValuelessFalsey(selectedItemId) === false ) {
+            axios.get(`/api/v1/recipes/${selectedItemId}.json`)
             .then(res => {
                 const attributes = res.data.data.attributes;
                 let ingredientsLength;
@@ -414,14 +421,15 @@ class RecipeUpsertForm extends React.Component {
     }
 
     render() {
+        const { onClose, selectedItemId } = this.props;
         const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
 
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>
                 <h2>{this.state.existingRecipe === true ? 'Edit' : 'New'} Recipe</h2>
                 <DragDropContext onDragEnd={this.onDragEnd}>
-                    { this.state.existingRecipe === true && this.props.recipeId &&
-                        <p>ID: {this.props.recipeId}</p>
+                    { this.state.existingRecipe === true && isValuelessFalsey(selectedItemId) === false &&
+                        <p>ID: {selectedItemId}</p>
                     }
                     <label>
                         Title
@@ -502,7 +510,7 @@ class RecipeUpsertForm extends React.Component {
                             <button disabled={allowSubmit === false} onClick={this.handleFormSubmit}>
                                 {this.state.existingRecipe === true ? 'Update' : 'Create'}
                             </button>
-                            <button onClick={this.props.handleClose}>Close</button>
+                            <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
                             <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
                         </Fragment>
                     }

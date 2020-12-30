@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 
 export function MappedRecipePreviewUi (props) {    
     const { itemData } = props;
-    const { id, attributes: { description, feature, title } } = itemData;
+    const { id, attributes: { description, featured, title } } = itemData;
 
     return (
         <Fragment>
