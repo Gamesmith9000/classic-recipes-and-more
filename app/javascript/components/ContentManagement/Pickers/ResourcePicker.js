@@ -85,6 +85,7 @@ class ResourcePicker extends React.Component {
                     sorting: sortingState
                 });
             }
+            else { this.setState({ itemData: []})}
         })
         .catch(err => console.log(err));
     }

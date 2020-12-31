@@ -145,15 +145,13 @@ class RecipeUpsertForm extends React.Component {
         const sections = this.prepareSectionDataForSubmit();
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
-        const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${selectedItemId}` : '/api/v1/recipes';
+        const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
 
         axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, preview_photo_id, sections, title } })
         .then(res => {
             console.log(res);
             if(this.state.existingRecipe === false) { 
-                console.log('sub?')
                 this.props.onClose(res.data?.data?.id); 
-                console.log('hmm')
             }
             else { this.handleFormSubmitResponse(res); }
         })
