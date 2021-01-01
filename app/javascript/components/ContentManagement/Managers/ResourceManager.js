@@ -38,7 +38,7 @@ class ResourceManager extends React.Component {
         const { itemName, alternateSubcomponentKey } = this.props;
         const { alternateCreateUrl, alternateDeleteUrl, alternateIndexUrl, alternateShowUrl, alternateUpdateUrl } = this.props;
         const { destroyerUiComponent, mappedPreviewUiComponent } = this.props;
-        const { additionalMappedItemPreviewProps, nonSortByFields} = this.props;
+        const { additionalMappedItemPreviewProps, nonSortByFields } = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
         const managerClassName = `${paramCase(itemName)} resource-manager`;

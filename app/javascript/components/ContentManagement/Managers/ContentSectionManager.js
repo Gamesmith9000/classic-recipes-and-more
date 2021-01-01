@@ -14,6 +14,8 @@ import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 import ProductUpsertForm from '../Forms/ProductUpsertForm'
 import MappedProductPreviewUi from '../Pickers/Subcomponents/MappedProductPreviewUi'
+import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
+import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
 
 
 class ContentSectionManager extends React.Component {
@@ -87,6 +89,15 @@ const ContentSectionsInfo = {
             upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
         /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
+        { name: 'Photos (Updated)', renderComponent: function (props) { return <ResourceManager    
+            {...props} 
+            destroyerUiComponent={(destoyerUiProps) => <PhotoDestroyerUi {...destoyerUiProps} />}
+            itemName="photo"
+            key="photo"
+            mappedPreviewUiComponent={(previewProps, key) => <MappedPhotoPreviewUi {...previewProps} key={key} /> } 
+            nonSortByFields={['file']}
+            // upsertFormComponent
+        /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
         { name: 'Products',         renderComponent: function (props) { return <ResourceManager 
             {...props} 
