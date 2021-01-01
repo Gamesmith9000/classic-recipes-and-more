@@ -66,3 +66,22 @@ body {
     padding: .25rem;
     width: max-content;
 }
+
+.versioned-photo {
+    &.no-photo {
+        object-fit: contain;
+    }
+
+    &.thumb {
+        max-width: 128px;
+        max-height: 128px;
+    }
+    &.small {
+        max-width: 256px;
+        max-height: 256px;
+    }
+    &.medium {
+        max-width: 512px;
+        max-height: 512px;
+    }
+}

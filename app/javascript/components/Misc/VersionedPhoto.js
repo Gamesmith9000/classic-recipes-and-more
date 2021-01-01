@@ -2,7 +2,7 @@ import React from 'react'
 import BackendConstants from '../Utilities/BackendConstants'
 
 export function VersionedPhoto (props) {
-    const { additionalStyles, renderNullWithoutUrl, targetClassName, textDisplayForNoPhoto, uploadedFileData, uploadedFileVersionName, uploaderNamePrefix } = props;
+    const { renderNullWithoutUrl, targetClassName, textDisplayForNoPhoto, uploadedFileData, uploadedFileVersionName, uploaderNamePrefix } = props;
 
     // As an alternative, uploadedFileData prop can be passed the url string directly
 
@@ -10,24 +10,21 @@ export function VersionedPhoto (props) {
     const uploaderData = BackendConstants.uploaders.safelyGetUploader(uploaderNamePrefix);
     const uploaderVersionData = uploaderData.getVersionData(uploadedFileVersionName);
 
-    const mainStyles = {
-        height: uploaderVersionData.maxHeight,
-        width: uploaderVersionData.maxWidth,
-    }
-    if(noFileData === false) { mainStyles.objectFit = "contain" }
+    const noPhotoClass = noFileData === true ? ' no-photo' : '';
+    const targetClass = targetClassName ? ' ' + targetClassName : '';
+    const versionClass = BackendConstants.uploaders.photo.isValidVersionName(uploadedFileVersionName) ? ' ' + uploadedFileVersionName : '';
 
-    let additionalProps = { style: { ...mainStyles, ...additionalStyles } };
-    if(targetClassName) { additionalProps.className = targetClassName; }
+    const itemClassName = 'versioned-photo' + versionClass + noPhotoClass + targetClass;
 
     if(noFileData === true) {
         if(renderNullWithoutUrl === true) { return null; }
-        return <div {...additionalProps}>{textDisplayForNoPhoto}</div>
+        return <div className={itemClassName}>{textDisplayForNoPhoto}</div>
     }
     else {
         const usingString = typeof(uploadedFileData) === 'string';
         const url = usingString === true ? uploadedFileData : uploaderData.getUrlForVersion(uploadedFileData, uploadedFileVersionName);
         if(renderNullWithoutUrl === true && !url) { return null; }
-        return <img src={url} {...additionalProps} />;
+        return <img className={url ? itemClassName : itemClassName + ' no-photo'} src={url} />;
     }
 }
 
