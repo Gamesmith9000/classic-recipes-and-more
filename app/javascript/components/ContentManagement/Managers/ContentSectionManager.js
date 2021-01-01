@@ -86,7 +86,7 @@ const ContentSectionsInfo = {
             key="recipe-manager"
             mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} />}
+            upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} previewPhotoVersion="small" />}
         /> } },
         { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Photos (Updated)', renderComponent: function (props) { return <ResourceManager    

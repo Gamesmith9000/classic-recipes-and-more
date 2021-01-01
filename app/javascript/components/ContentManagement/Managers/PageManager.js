@@ -37,7 +37,6 @@ class PageManager extends React.Component {
             case 1:
                 renderedItem = <PhotoGalleryPageForm imageDisplaySize="small"/>
                 break;
-
         }
         return renderedItem;
     }

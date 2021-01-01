@@ -356,6 +356,7 @@ class RecipeUpsertForm extends React.Component {
                             <VersionedPhoto
                                 uploadedFileData={this.state.previewPhotoUrl}
                                 uploadedFileVersionName={this.props.previewPhotoVersion}
+                                uploaderNamePrefix="photo"
                                 textDisplayForNoPhoto="(No photo chosen)"
                             />
                             <br />
