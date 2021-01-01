@@ -50,7 +50,7 @@ class ContentSectionManager extends React.Component {
                 <hr />
                 { contentSectionOpen === true &&
                     <Fragment>
-                        { ContentSectionsInfo.sections[selectedContentSection].renderComponent({ photoPickerPhotoVersion: "thumb" }) }
+                        { ContentSectionsInfo.sections[selectedContentSection].renderComponent() }
                     </Fragment>
                 }
             </Fragment>

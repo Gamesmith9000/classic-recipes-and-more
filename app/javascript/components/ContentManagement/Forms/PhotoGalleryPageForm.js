@@ -319,7 +319,6 @@ class PhotoGalleryPageForm extends React.Component {
                                     selectedPhotoId={this.state.photoPicker.selectedPhotoId}
                                     handleCancelForExport={this.handlePhotoPickerClose}
                                     handleUsePhotoForExport={this.handlePhotoIdDataChange}
-                                    photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                                     uploaderNamePrefix={'photo'}
                                 />
                             }

@@ -100,7 +100,6 @@ class RecipeManager extends React.Component {
                 {this.state.recipeFormIsOpen === true &&
                     <RecipeForm 
                         handleClose={this.handleCloseRecipeFormButtonInput}
-                        photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                         previewPhotoVersion="small"
                         recipeId={this.state.selectedRecipeId}
                     />

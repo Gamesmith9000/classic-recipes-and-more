@@ -342,7 +342,6 @@ class RecipeForm extends React.Component {
                             handleCancelForExport={this.handleTogglePhotoPickerOpenState}
                             handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
                             selectedPhotoId={selectedPhotoId}
-                            photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                             uploaderNamePrefix={'photo'}
                         />
                     :

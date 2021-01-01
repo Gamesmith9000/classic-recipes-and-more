@@ -2,11 +2,18 @@ import React, { Fragment } from 'react'
 import AdminUserDisplay from './Subcomponents/AdminUserDisplay'
 import { existsInLocalStorage, objectsHaveMatchingValues } from '../Utilities/Helpers';
 import ContentSectionManager from './Managers/ContentSectionManager';
+import ContentContext from './ContentOptionsContext'
 
 class ContentDashboard extends React.Component {
     constructor () {
         super();
         this.state = ({
+            contentContext: {
+                photoPicker: {
+                    exportedImageVersion: 'small',
+                    standardImageVersion: 'small'
+                }
+            },
             componentHasMounted: false,
             contentSectionOpen: false,
             selectedContentSection: 0
@@ -91,18 +98,20 @@ class ContentDashboard extends React.Component {
         if(this.localStorageMatchesState() === false) { this.updateLocalStorageToMatchState(); }
         
         return (
-            <div className="content-dashboard">
-                <h1>Content Dashboard</h1>
-                <AdminUserDisplay displayName={userDisplay} />
-                { this.state.componentHasMounted &&
-                    <ContentSectionManager
-                        changeContentSection={this.changeContentSection}
-                        closeContentSection={this.closeContentSection}      
-                        contentSectionOpen={this.state.contentSectionOpen}
-                        selectedContentSection={this.state.selectedContentSection}
-                    />
-                }
-            </div>
+            <ContentContext.Provider value={this.state.contentContext}>
+                <div className="content-dashboard">
+                    <h1>Content Dashboard</h1>
+                    <AdminUserDisplay displayName={userDisplay} />
+                    { this.state.componentHasMounted &&
+                        <ContentSectionManager
+                            changeContentSection={this.changeContentSection}
+                            closeContentSection={this.closeContentSection}      
+                            contentSectionOpen={this.state.contentSectionOpen}
+                            selectedContentSection={this.state.selectedContentSection}
+                        />
+                    }
+                </div>
+            </ContentContext.Provider>
         )
     }
 }

@@ -96,7 +96,6 @@ class PhotoManager extends React.Component {
                         changeSelectedPhotoId={this.changeSelectedPhotoId}
                         handleDeletePhotoButtonInput={this.handleDeletePhotoButtonInput}
                         handleModifyPhotoButtonInput={this.handleModifyPhotoButtonInput}
-                        photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}
                         selectedPhotoId={this.state.selectedPhotoId}
                         uploaderNamePrefix={camelCase(resourceName)}
                     />

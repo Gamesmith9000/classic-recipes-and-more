@@ -35,7 +35,7 @@ class PageManager extends React.Component {
                 renderedItem = <AboutPageForm />;
                 break;
             case 1:
-                renderedItem = <PhotoGalleryPageForm imageDisplaySize="small" photoPickerPhotoVersion={this.props.photoPickerPhotoVersion}/>
+                renderedItem = <PhotoGalleryPageForm imageDisplaySize="small"/>
                 break;
 
         }

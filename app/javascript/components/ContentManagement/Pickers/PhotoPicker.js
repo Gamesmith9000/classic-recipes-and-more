@@ -7,6 +7,7 @@ import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey } from '../../Utilities/Helpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 import { capitalCase, paramCase } from 'change-case'
+import ContentOptionsContext from '../ContentOptionsContext'
 
 class PhotoPicker extends React.Component {
     // [NOTE][OPTIMIZE] Important: This component has no caching for api calls. This is a crucial place for optimization.
@@ -69,9 +70,11 @@ class PhotoPicker extends React.Component {
         }
     }
 
-    mapPhotoPreviews = (photoDataList) => {
+    mapPhotoPreviews = (photoDataList, photoVersionOptions) => {
         if(!photoDataList || !this.state.sorting) { return null; }
-        
+
+        const photoVersion = this.props.handleUsePhotoForExport ? photoVersionOptions.standardImageVersion : photoVersionOptions.exportedImageVersion;
+
         const { byId, fieldIndex, validFields} = this.state.sorting;
         const sortedPhotoDataList = sortByAttributeNameOrId(photoDataList, validFields, fieldIndex, byId);
         const formattedName = paramCase(this.props.uploaderNamePrefix);
@@ -84,7 +87,7 @@ class PhotoPicker extends React.Component {
                     <div className="id-column">ID: {item.id}</div>
                     <VersionedPhoto 
                         uploadedFileData={item.attributes.file}
-                        uploadedFileVersionName={this.props.photoPickerPhotoVersion}
+                        uploadedFileVersionName={photoVersion}
                         uploaderNamePrefix={this.props.uploaderNamePrefix}
                     />
                     <div>Title: {item.attributes.title}</div>
@@ -179,32 +182,37 @@ class PhotoPicker extends React.Component {
         const resourceName = this.props.uploaderNamePrefix;
         const targetClassName = paramCase(resourceName + '_picker');
         const displayName = capitalCase(resourceName);
+
         return (
-            <div className={targetClassName}>
-                { this.props.handleUsePhotoForExport &&
-                    <Fragment>
-                        <h3>{`Select a ${displayName}:`}</h3>
-                        { this.props.handleCancelForExport &&
-                            <Fragment>
-                                <button onClick={this.props.handleCancelForExport}>
-                                    Cancel
-                                </button>
-                                <br/>
-                                <br/>
-                            </Fragment>
-                        }
-                    </Fragment>
-                }
-                { (!this.state.photoData || this.state.photoData.length === 0)
-                    ? 
-                        <EmptyPickerEntriesDisplay entryTypeName={resourceName} />
-                    :
+            <ContentOptionsContext.Consumer>
+            { (contentOptions) =>
+                <div className={targetClassName}>
+                    { this.props.handleUsePhotoForExport &&
                         <Fragment>
-                            { this.renderSortSelect() }
-                            { this.mapPhotoPreviews(this.state.photoData) }
-                        </Fragment> 
-                }
-            </div>
+                            <h3>{`Select a ${displayName}:`}</h3>
+                            { this.props.handleCancelForExport &&
+                                <Fragment>
+                                    <button onClick={this.props.handleCancelForExport}>
+                                        Cancel
+                                    </button>
+                                    <br/>
+                                    <br/>
+                                </Fragment>
+                            }
+                        </Fragment>
+                    }
+                    { (!this.state.photoData || this.state.photoData.length === 0)
+                        ? 
+                            <EmptyPickerEntriesDisplay entryTypeName={resourceName} />
+                        :
+                            <Fragment>
+                                { this.renderSortSelect() }
+                                { this.mapPhotoPreviews(this.state.photoData, contentOptions.photoPicker) }
+                            </Fragment> 
+                    }
+                </div>
+            }
+            </ContentOptionsContext.Consumer>
         )
     }
 }
