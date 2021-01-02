@@ -8,6 +8,7 @@ import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/C
 import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { mapRecipeSectionsData } from '../../Utilities/ResponseDataHelpers'
+import { camelCase, snakeCase } from 'change-case'
 
 import PhotoPicker from '../Pickers/PhotoPicker'
 
@@ -20,10 +21,14 @@ class RecipeUpsertForm extends React.Component {
     constructor() {
         super();
         const defaultRecipeState = () => { 
-            const defaultIngredientsData = [new TextSectionWithId (0, '')]
-            // const defaultSectionsData = [new RecipeFormSectionState (null, 0, [], null, '')];
-            const defaultSectionsData = [];
-            return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, defaultIngredientsData, null, defaultSectionsData, '');
+            return {
+                description: '',
+                featured: BackendConstants.models.recipe.defaults.featured,
+                ingredients: [new TextSectionWithId (0, '')],
+                // preview_photo_id: null,
+                title: ''
+                // , sections: []
+            }
         }
         this.state = {
             current: defaultRecipeState(),
@@ -46,6 +51,49 @@ class RecipeUpsertForm extends React.Component {
         .catch(err => console.log(err));
     }
 
+    // NEW
+    convertStateForSubmission = () => {
+
+    }
+    
+    // NEW
+    convertResponseToState = (responseData) => {
+        // Pass in response.data from Axios
+
+        const { data: { attributes, id /*, relationships */ }, included } = responseData;
+        let conversion = { id: parseInt(id) };
+
+        // Convert 'attributes'
+        const attributesKeys = Object.keys(attributes);
+
+        for (let i = 0; i < attributesKeys.length; i++) {
+            const attributeValue = attributes[attributesKeys[i]];
+            const convertedName = camelCase(attributesKeys[i]);
+            conversion[convertedName] = attributeValue;
+        }
+
+        // Convert 'included' 
+        for (let i = 0; i < included.length; i++) {
+            const itemData = {... included[i]};
+            const itemConversion = { id: parseInt(itemData.id) };
+
+            const typeAsPlural = camelCase(itemData.type) + 's';
+            const itemAttributesKeys = Object.keys(itemData.attributes);
+
+            for (let j = 0; j < itemAttributesKeys.length; j++) {
+                const attributeValue = itemData.attributes[itemAttributesKeys[i]];
+                const convertedName = camelCase(itemAttributesKeys[i]);
+                itemConversion[convertedName] = attributeValue;
+            }
+
+            // Create the array if it doesn't yet exist
+            if(conversion.hasOwnProperty(typeAsPlural) === false) { conversion[typeAsPlural] = []; }
+
+            conversion[typeAsPlural].push(itemConversion);
+        }
+
+        return conversion;
+    }
 
     dragEndStateUpdate = (dragResult, listProperty) => {
         let newCurrentState = this.state.current;
@@ -65,14 +113,6 @@ class RecipeUpsertForm extends React.Component {
         return -1;
     }
 
-    /*
-    getSectionIndexFromState = (localId) => {
-        for(let i = 0; i < this.state.current.sections.length; i++){
-            if(this.state.current.sections[i]?.localId === localId) { return i; }
-        }
-        return -1;
-    }
-    */
 
     handleAddIngredient = (event) => {
         event.preventDefault();
@@ -122,7 +162,6 @@ class RecipeUpsertForm extends React.Component {
         const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.current.previewPhotoId;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
-        // const sections = this.prepareSectionDataForSubmit();
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
@@ -310,31 +349,30 @@ class RecipeUpsertForm extends React.Component {
         if(isValuelessFalsey(selectedItemId) === false ) {
             axios.get(`/api/v1/recipes/${selectedItemId}.json`)
             .then(res => {
-                const attributes = res.data.data.attributes;
+                console.log(res);
+                // const attributes = res.data.data.attributes;
                 let ingredientsLength;
                 let sectionsLength;
-
+                /*
                 const currentRecipeState = () => { 
-                    // const sections = mapRecipeSectionsData(res);
                     const ingredients = attributes.ingredients.map((value, index) => {
                         return (new TextSectionWithId(index, value))
                     });
 
                     ingredientsLength = ingredients.length;
-                    // sectionsLength = sections.length;
 
                     return new RecipeFormRecipeState(attributes.description, attributes.featured, ingredients, 
                         attributes.preview_photo_id, [], attributes.title
                     );
                 }
-                
+                */
                 this.setState({
-                    current: currentRecipeState(),
+                    current: this.convertResponseToState(res.data),
                     existingRecipe: true,
                     nextUniqueIngredientLocalId: ingredientsLength,
                     nextUniqueSectionLocalId: sectionsLength,
                     previewPhotoUrl: null,
-                    prior: currentRecipeState()
+                    prior: this.convertResponseToState(res.data)
                 });
             })
             .catch(err => console.log(err));
