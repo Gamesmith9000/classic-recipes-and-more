@@ -16,11 +16,13 @@ class RecipeUpsertForm extends React.Component {
     //  [NOTE] Reverse also needs to be checked (old props that have not been implemented into new versions - photoVersions, etc.)
     //  [NOTE] Addendum: Consider using React context for the global photo config options. Should be perfect way to refactor
 
+
     constructor() {
         super();
         const defaultRecipeState = () => { 
             const defaultIngredientsData = [new TextSectionWithId (0, '')]
-            const defaultSectionsData = [new RecipeFormSectionState (null, 0, [], null, '')];
+            // const defaultSectionsData = [new RecipeFormSectionState (null, 0, [], null, '')];
+            const defaultSectionsData = [];
             return new RecipeFormRecipeState('', BackendConstants.models.recipe.defaults.featured, defaultIngredientsData, null, defaultSectionsData, '');
         }
         this.state = {
@@ -63,14 +65,14 @@ class RecipeUpsertForm extends React.Component {
         return -1;
     }
 
-
+    /*
     getSectionIndexFromState = (localId) => {
         for(let i = 0; i < this.state.current.sections.length; i++){
             if(this.state.current.sections[i]?.localId === localId) { return i; }
         }
         return -1;
     }
-
+    */
 
     handleAddIngredient = (event) => {
         event.preventDefault();
@@ -86,24 +88,6 @@ class RecipeUpsertForm extends React.Component {
             nextUniqueIngredientLocalId: nextId + 1
         });
     }
-
-
-    handleAddSection = (event) => {
-        event.preventDefault();
-
-        const nextId = this.state.nextUniqueSectionLocalId;
-        const selectedItemId = this.state.existingRecipe === true ? this.state.current.sections[0].recipe_id : null;
-        let sections = this.state.current.sections.slice();
-        sections.push(new RecipeFormSectionState(null, nextId, [], selectedItemId, ''));
-
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState.sections = sections;
-        this.setState({
-            current:updatedCurrentState,
-            nextUniqueSectionLocalId: nextId + 1
-        });
-    }
-
 
     handleClearPreviewPhoto = (event) => {
         event.preventDefault();
@@ -131,20 +115,6 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
-    handleDeleteSectionButtonInput = (event, index) => {
-        event.preventDefault();
-
-        if(window.confirm("Are you sure you want to delete this section?")) {
-            let sections = this.state.current.sections.slice();
-            sections.splice(index, 1);
-
-            let updatedCurrentState = this.state.current;
-            updatedCurrentState.sections = sections;
-            this.setState({ current: updatedCurrentState});
-        }
-    }
-
-
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
@@ -152,17 +122,14 @@ class RecipeUpsertForm extends React.Component {
         const { description, featured, title } = this.state.current;
         const preview_photo_id = this.state.current.previewPhotoId;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
-        const sections = this.prepareSectionDataForSubmit();
+        // const sections = this.prepareSectionDataForSubmit();
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
 
-        axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, preview_photo_id, sections, title } })
+        axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, preview_photo_id, title } })
         .then(res => {
-            console.log(res);
-            if(this.state.existingRecipe === false) { 
-                this.props.onClose(res.data?.data?.id); 
-            }
+            if(this.state.existingRecipe === false) { this.props.onClose(res.data?.data?.id); }
             else { this.handleFormSubmitResponse(res); }
         })
         .catch(err => { this.handleFormSubmitResponse(err); });
@@ -205,16 +172,6 @@ class RecipeUpsertForm extends React.Component {
             previewPhotoUrl: newUrl,
             photoPicker: photoPickerState
         });
-    }
-
-
-    handleSectionTextInputChange = (event, index) => {
-        let sections = this.state.current.sections.slice();
-        sections[index].text_content = event.target.value;
-
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState.sections = sections;
-        this.setState({ current: updatedCurrentState });
     }
 
 
@@ -273,35 +230,6 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
-    mapSectionInputs = (sectionsList) => {
-        return sectionsList.map((element, index) => {
-            const arrayIndex = this.getSectionIndexFromState(element.localId);
-            if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
-
-            return (
-                <Draggable draggableId={`sect-${element.localId}`} index={index} key={element.localId}>
-                    { (provided) => (
-                        <li {...provided.dragHandleProps} {...provided.draggableProps} className="section-edits" ref={provided.innerRef}>
-                            <label>
-                                <textarea 
-                                    className="section-text-input" 
-                                    onChange={(event) => this.handleSectionTextInputChange(event, arrayIndex)}
-                                    value={this.state.current.sections[arrayIndex].text_content}
-                                />
-                                { sectionsList.length > 1 && 
-                                    <button className="delete-item" onClick={(event) => this.handleDeleteSectionButtonInput(event, arrayIndex)}>
-                                        Delete
-                                    </button>
-                                }
-                            </label>
-                        </li>
-                    )}
-                </Draggable>
-            )
-        });
-    }
-
-
     onDragEnd = (result) => {
         if(!result.destination) { return; }
 
@@ -322,35 +250,6 @@ class RecipeUpsertForm extends React.Component {
     }
 
     
-    prepareSectionDataForSubmit = () => {
-        let sections = this.state.current.sections.slice().map((element) => {
-            const section = Object.assign({}, element);
-            delete section.localId;
-            return section;
-        });
-
-        if(this.state.existingRecipe === true) {
-            const priorSections = this.state.prior.sections;
-            let priorIds = [];
-
-            for(let i = 0; i < priorSections.length; i++) {
-                const idValue = priorSections[i].id
-                if(!isValuelessFalsey(idValue)) { priorIds.push(idValue); }
-            }
-
-            const moreSectionsAdded = !(priorSections.length >= sections.length);
-            priorIds.sort();
-
-            for(let i = 0; i < this.state.current.sections.length; i++) {
-                const inRange = !(moreSectionsAdded === true && i >= priorIds.length);
-                sections[i].id = inRange === true ? priorIds[i] : null;
-            }
-        }
-
-        return sections;
-    }
-
-
     renderPreviewPhotoControl = () => {
         const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
         const hasPreviewPhotoId = isValuelessFalsey(previewPhotoId) === false;
@@ -416,16 +315,16 @@ class RecipeUpsertForm extends React.Component {
                 let sectionsLength;
 
                 const currentRecipeState = () => { 
-                    const sections = mapRecipeSectionsData(res);
+                    // const sections = mapRecipeSectionsData(res);
                     const ingredients = attributes.ingredients.map((value, index) => {
                         return (new TextSectionWithId(index, value))
                     });
 
                     ingredientsLength = ingredients.length;
-                    sectionsLength = sections.length;
+                    // sectionsLength = sections.length;
 
                     return new RecipeFormRecipeState(attributes.description, attributes.featured, ingredients, 
-                        attributes.preview_photo_id, sections, attributes.title
+                        attributes.preview_photo_id, [], attributes.title
                     );
                 }
                 
@@ -442,7 +341,7 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-    
+
     render() {
         const { onClose, selectedItemId } = this.props;
         const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
@@ -513,23 +412,6 @@ class RecipeUpsertForm extends React.Component {
             <br />
         </Fragment>);
 
-        const renderSections = (<Fragment>
-            <label>
-                Sections
-                <br />
-                <Droppable droppableId="sections-editor" type="section">
-                    { (provided) => (
-                        <ul {...provided.droppableProps} className="sections-editor" ref={provided.innerRef}>
-                            { this.mapSectionInputs(this.state.current.sections) }
-                            {provided.placeholder}
-                        </ul>
-                    )}
-                </Droppable>
-                <button onClick={this.handleAddSection}>+</button>
-            </label>
-            <br />
-        </Fragment>);
-
         const renderFormButtons = (<Fragment>
             <hr />
             <button disabled={allowSubmit === false} onClick={this.handleFormSubmit}>
@@ -551,7 +433,6 @@ class RecipeUpsertForm extends React.Component {
                     { renderDescription }
                     { renderFeatured }
                     { renderIngredients }
-                    { renderSections }
                     { this.state.photoPicker.isOpen === false &&
                         <Fragment>{ renderFormButtons }</Fragment>
                     }
