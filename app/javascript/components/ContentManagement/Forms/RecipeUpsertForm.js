@@ -34,6 +34,7 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
+
     attemptPreviewImageUrlFetch = () => {
         axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}.json`)
         .then(res => {
@@ -42,6 +43,7 @@ class RecipeUpsertForm extends React.Component {
         })
         .catch(err => console.log(err));
     }
+
 
     dragEndStateUpdate = (dragResult, listProperty) => {
         let newCurrentState = this.state.current;
@@ -53,6 +55,7 @@ class RecipeUpsertForm extends React.Component {
         this.setState({ current: newCurrentState });
     }
 
+
     getIngredientIndexFromState = (localId) => {
         for(let i = 0; i < this.state.current.ingredients.length; i++){
             if(this.state.current.ingredients[i]?.localId === localId) { return i; }
@@ -60,12 +63,14 @@ class RecipeUpsertForm extends React.Component {
         return -1;
     }
 
+
     getSectionIndexFromState = (localId) => {
         for(let i = 0; i < this.state.current.sections.length; i++){
             if(this.state.current.sections[i]?.localId === localId) { return i; }
         }
         return -1;
     }
+
 
     handleAddIngredient = (event) => {
         event.preventDefault();
@@ -81,6 +86,7 @@ class RecipeUpsertForm extends React.Component {
             nextUniqueIngredientLocalId: nextId + 1
         });
     }
+
 
     handleAddSection = (event) => {
         event.preventDefault();
@@ -98,6 +104,7 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
+
     handleClearPreviewPhoto = (event) => {
         event.preventDefault();
 
@@ -108,6 +115,7 @@ class RecipeUpsertForm extends React.Component {
             previewPhotoUrl: null
         });
     }
+
 
     handleDeleteIngredientButtonInput = (event, index) => {
         event.preventDefault();
@@ -122,6 +130,7 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
+
     handleDeleteSectionButtonInput = (event, index) => {
         event.preventDefault();
 
@@ -134,6 +143,7 @@ class RecipeUpsertForm extends React.Component {
             this.setState({ current: updatedCurrentState});
         }
     }
+
 
     handleFormSubmit = (event) => {
         event.preventDefault();
@@ -158,6 +168,7 @@ class RecipeUpsertForm extends React.Component {
         .catch(err => { this.handleFormSubmitResponse(err); });
     }
 
+
     handleFormSubmitResponse = (res) =>{
         if(res?.status === 200 && res.data?.data?.type === "recipe") {
             this.setState({
@@ -168,6 +179,7 @@ class RecipeUpsertForm extends React.Component {
         else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
     }
 
+
     handleIngredientTextInputChange = (event, index) => {
         let ingredients = this.state.current.ingredients.slice();
         ingredients[index].textContent = event.target.value;
@@ -176,6 +188,7 @@ class RecipeUpsertForm extends React.Component {
         updatedCurrentState.ingredients = ingredients;
         this.setState({ current: updatedCurrentState });
     }
+
 
     handlePreviewPhotoIdChange = (event) => {
         event.preventDefault();
@@ -194,6 +207,7 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
+
     handleSectionTextInputChange = (event, index) => {
         let sections = this.state.current.sections.slice();
         sections[index].text_content = event.target.value;
@@ -203,6 +217,7 @@ class RecipeUpsertForm extends React.Component {
         this.setState({ current: updatedCurrentState });
     }
 
+
     handleTogglePhotoPickerOpenState = (event) => {
         event.preventDefault();
 
@@ -210,6 +225,7 @@ class RecipeUpsertForm extends React.Component {
         photoPickerState.isOpen = !photoPickerState.isOpen;
         this.setState({ photoPicker: photoPickerState });
     }
+
 
     handleUpdateStateOfCurrent = (event, propertyName, propertyOfEventTarget='value', preventDefault = true) => {
         if(event && preventDefault === true) { event.preventDefault(); }
@@ -220,10 +236,12 @@ class RecipeUpsertForm extends React.Component {
         this.setState({ current: newRecipeState });
     }
 
+
     isExistingRecipeWithChanges = () => {
         if(this.state.existingRecipe !== true) { return false; }
         return !objectsHaveMatchingValues(this.state.current, this.state.prior);
     }
+
 
     mapIngredientInputs = (ingredientList) => {
         return ingredientList.map((element, index) => {
@@ -254,6 +272,7 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
+
     mapSectionInputs = (sectionsList) => {
         return sectionsList.map((element, index) => {
             const arrayIndex = this.getSectionIndexFromState(element.localId);
@@ -282,6 +301,7 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
+
     onDragEnd = (result) => {
         if(!result.destination) { return; }
 
@@ -301,6 +321,7 @@ class RecipeUpsertForm extends React.Component {
         if(listProperty) { this.dragEndStateUpdate(result, listProperty); }
     }
 
+    
     prepareSectionDataForSubmit = () => {
         let sections = this.state.current.sections.slice().map((element) => {
             const section = Object.assign({}, element);
@@ -328,6 +349,7 @@ class RecipeUpsertForm extends React.Component {
 
         return sections;
     }
+
 
     renderPreviewPhotoControl = () => {
         const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
@@ -375,11 +397,13 @@ class RecipeUpsertForm extends React.Component {
         );
     }
 
+
     updateStateOfPhotoPicker = (newValue, propertyName) => {
         let newPhotoPickerState = this.state.photoPicker;
         newPhotoPickerState[propertyName] = newValue;
         this.setState({ photoPicker: newPhotoPickerState });
     }
+
 
     componentDidMount () {
         const { selectedItemId } = this.props;
@@ -418,9 +442,102 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
+    
     render() {
         const { onClose, selectedItemId } = this.props;
         const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
+
+        const renderTitle = (<Fragment>
+            <label>
+                Title
+                <input 
+                    className="title-input"
+                    maxLength={BackendConstants.models.recipe.validations.title.maximum} 
+                    onChange={(event) => this.handleUpdateStateOfCurrent(event, 'title')}
+                    type="text"
+                    value={this.state.current.title}
+                />
+                <ValidationErrorDisplay 
+                    errorsObject = {this.state.errors}
+                    propertyName = "title"
+                />
+            </label>
+            <br />
+        </Fragment>);
+
+        const renderDescription = (<Fragment>
+            <label>
+                Description
+                <textarea 
+                    className="description-input"
+                    maxLength={BackendConstants.models.recipe.validations.description.maximum} 
+                    onChange={(event) => this.handleUpdateStateOfCurrent(event, 'description')}
+                    type="textarea"
+                    value={this.state.current.description}
+                />
+                <ValidationErrorDisplay 
+                    errorsObject = {this.state.errors}
+                    propertyName = "description"
+                />
+            </label>
+            <br />
+        </Fragment>);
+
+        const renderFeatured = (<Fragment>
+            <label>
+                Featured
+                <input 
+                    checked={this.state.current.featured === true}
+                    className="featured-input"
+                    onChange={(event) => this.handleUpdateStateOfCurrent(event, 'featured', 'checked', false)}
+                    type="checkbox"
+                />
+            </label>
+            <br />
+        </Fragment>);
+
+        const renderIngredients = (<Fragment>
+            <label>
+            Ingredients
+            <br />
+            <Droppable droppableId="ingredients-editor" type="ingredient">
+                { (provided) => (
+                    <ul {...provided.droppableProps} className="ingredients-editor" ref={provided.innerRef}>
+                        { this.mapIngredientInputs(this.state.current.ingredients) }
+                        {provided.placeholder}
+                    </ul>
+                )}
+            </Droppable>
+            <button onClick={this.handleAddIngredient}>+</button>
+            </label>
+            <br />
+        </Fragment>);
+
+        const renderSections = (<Fragment>
+            <label>
+                Sections
+                <br />
+                <Droppable droppableId="sections-editor" type="section">
+                    { (provided) => (
+                        <ul {...provided.droppableProps} className="sections-editor" ref={provided.innerRef}>
+                            { this.mapSectionInputs(this.state.current.sections) }
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
+                <button onClick={this.handleAddSection}>+</button>
+            </label>
+            <br />
+        </Fragment>);
+
+        const renderFormButtons = (<Fragment>
+            <hr />
+            <button disabled={allowSubmit === false} onClick={this.handleFormSubmit}>
+                {this.state.existingRecipe === true ? 'Update' : 'Create'}
+            </button>
+            <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
+            <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
+        </Fragment>);
 
         return (
             <form className="recipe-form" onSubmit={this.handleFormSubmit}>
@@ -429,88 +546,14 @@ class RecipeUpsertForm extends React.Component {
                     { this.state.existingRecipe === true && isValuelessFalsey(selectedItemId) === false &&
                         <p>ID: {selectedItemId}</p>
                     }
-                    <label>
-                        Title
-                        <input 
-                            className="title-input"
-                            maxLength={BackendConstants.models.recipe.validations.title.maximum} 
-                            onChange={(event) => this.handleUpdateStateOfCurrent(event, 'title')}
-                            type="text"
-                            value={this.state.current.title}
-                        />
-                        <ValidationErrorDisplay 
-                            errorsObject = {this.state.errors}
-                            propertyName = "title"
-                        />
-                    </label>
-                    <br />
-                    { this.renderPreviewPhotoControl() }
-                    <br />
-                    <label>
-                        Description
-                        <textarea 
-                            className="description-input"
-                            maxLength={BackendConstants.models.recipe.validations.description.maximum} 
-                            onChange={(event) => this.handleUpdateStateOfCurrent(event, 'description')}
-                            type="textarea"
-                            value={this.state.current.description}
-                        />
-                        <ValidationErrorDisplay 
-                            errorsObject = {this.state.errors}
-                            propertyName = "description"
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Featured
-                        <input 
-                            checked={this.state.current.featured === true}
-                            className="featured-input"
-                            onChange={(event) => this.handleUpdateStateOfCurrent(event, 'featured', 'checked', false)}
-                            type="checkbox"
-                        />
-                    </label>
-                    <br />
-                    <br />
-                    <label>
-                        Ingredients
-                        <br />
-                        <Droppable droppableId="ingredients-editor" type="ingredient">
-                            { (provided) => (
-                                <ul {...provided.droppableProps} className="ingredients-editor" ref={provided.innerRef}>
-                                    { this.mapIngredientInputs(this.state.current.ingredients) }
-                                    {provided.placeholder}
-                                </ul>
-                            )}
-                        </Droppable>
-                        <button onClick={this.handleAddIngredient}>+</button>
-                    </label>
-                    <br />
-                    <br />
-                    <label>
-                        Sections
-                        <br />
-                        <Droppable droppableId="sections-editor" type="section">
-                            { (provided) => (
-                                <ul {...provided.droppableProps} className="sections-editor" ref={provided.innerRef}>
-                                    { this.mapSectionInputs(this.state.current.sections) }
-                                    {provided.placeholder}
-                                </ul>
-                            )}
-                        </Droppable>
-                        <button onClick={this.handleAddSection}>+</button>
-                    </label>
-                    <br/>
-                    <br/>
+                    { renderTitle }
+                    {/* { this.renderPreviewPhotoControl() } */}
+                    { renderDescription }
+                    { renderFeatured }
+                    { renderIngredients }
+                    { renderSections }
                     { this.state.photoPicker.isOpen === false &&
-                        <Fragment>
-                            <hr />
-                            <button disabled={allowSubmit === false} onClick={this.handleFormSubmit}>
-                                {this.state.existingRecipe === true ? 'Update' : 'Create'}
-                            </button>
-                            <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
-                            <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
-                        </Fragment>
+                        <Fragment>{ renderFormButtons }</Fragment>
                     }
                 </DragDropContext>
             </form>
