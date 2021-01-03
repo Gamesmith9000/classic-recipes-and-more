@@ -1,5 +1,45 @@
 import { RecipeFormSectionState } from './Constructors'
 import { isValuelessFalsey } from './Helpers';
+import { camelCase, snakeCase } from 'change-case'
+
+
+export function convertResponseForState (responseData) {
+    // Pass in response.data from Axios
+
+    const { data: { attributes, id /*, relationships */ }, included } = responseData;
+    let conversion = { id: parseInt(id) };
+
+    // Convert 'attributes'
+    const attributesKeys = Object.keys(attributes);
+
+    for (let i = 0; i < attributesKeys.length; i++) {
+        const attributeValue = attributes[attributesKeys[i]];
+        const convertedName = camelCase(attributesKeys[i]);
+        conversion[convertedName] = attributeValue;
+    }
+
+    // Convert 'included' 
+    for (let i = 0; i < included.length; i++) {
+        const itemData = {... included[i]};
+        const itemConversion = { id: parseInt(itemData.id) };
+
+        const typeAsPlural = camelCase(itemData.type) + 's';
+        const itemAttributesKeys = Object.keys(itemData.attributes);
+
+        for (let j = 0; j < itemAttributesKeys.length; j++) {
+            const attributeValue = itemData.attributes[itemAttributesKeys[i]];
+            const convertedName = camelCase(itemAttributesKeys[i]);
+            itemConversion[convertedName] = attributeValue;
+        }
+
+        // Create the array if it doesn't yet exist
+        if(conversion.hasOwnProperty(typeAsPlural) === false) { conversion[typeAsPlural] = []; }
+
+        conversion[typeAsPlural].push(itemConversion);
+    }
+
+    return conversion;
+}
 
 function getProperDataForAttributes (res) {
     // Find the location of the proper model data from Axios response, utilizing fast_jsonapi's formatting

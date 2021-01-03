@@ -7,8 +7,7 @@ import { ExportedPhotoPickerState, RecipeFormRecipeState, RecipeFormSectionState
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
-import { mapRecipeSectionsData } from '../../Utilities/ResponseDataHelpers'
-import { camelCase, snakeCase } from 'change-case'
+import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 import PhotoPicker from '../Pickers/PhotoPicker'
 
@@ -34,7 +33,6 @@ class RecipeUpsertForm extends React.Component {
             current: defaultRecipeState(),
             existingRecipe: false,
             nextUniqueIngredientLocalId: 1,
-            nextUniqueSectionLocalId: 1,
             photoPicker: new ExportedPhotoPickerState(false, 0, null, 0),
             previewPhotoUrl: null,
             prior: defaultRecipeState()
@@ -54,45 +52,6 @@ class RecipeUpsertForm extends React.Component {
     // NEW
     convertStateForSubmission = () => {
 
-    }
-    
-    // NEW
-    convertResponseToState = (responseData) => {
-        // Pass in response.data from Axios
-
-        const { data: { attributes, id /*, relationships */ }, included } = responseData;
-        let conversion = { id: parseInt(id) };
-
-        // Convert 'attributes'
-        const attributesKeys = Object.keys(attributes);
-
-        for (let i = 0; i < attributesKeys.length; i++) {
-            const attributeValue = attributes[attributesKeys[i]];
-            const convertedName = camelCase(attributesKeys[i]);
-            conversion[convertedName] = attributeValue;
-        }
-
-        // Convert 'included' 
-        for (let i = 0; i < included.length; i++) {
-            const itemData = {... included[i]};
-            const itemConversion = { id: parseInt(itemData.id) };
-
-            const typeAsPlural = camelCase(itemData.type) + 's';
-            const itemAttributesKeys = Object.keys(itemData.attributes);
-
-            for (let j = 0; j < itemAttributesKeys.length; j++) {
-                const attributeValue = itemData.attributes[itemAttributesKeys[i]];
-                const convertedName = camelCase(itemAttributesKeys[i]);
-                itemConversion[convertedName] = attributeValue;
-            }
-
-            // Create the array if it doesn't yet exist
-            if(conversion.hasOwnProperty(typeAsPlural) === false) { conversion[typeAsPlural] = []; }
-
-            conversion[typeAsPlural].push(itemConversion);
-        }
-
-        return conversion;
     }
 
     dragEndStateUpdate = (dragResult, listProperty) => {
@@ -349,30 +308,25 @@ class RecipeUpsertForm extends React.Component {
         if(isValuelessFalsey(selectedItemId) === false ) {
             axios.get(`/api/v1/recipes/${selectedItemId}.json`)
             .then(res => {
-                console.log(res);
-                // const attributes = res.data.data.attributes;
-                let ingredientsLength;
-                let sectionsLength;
-                /*
+                const attributes = res.data.data.attributes;
+                let ingredientsLength = attributes.ingredients.length;
+
                 const currentRecipeState = () => { 
+                    const newState = convertResponseForState(res.data);
                     const ingredients = attributes.ingredients.map((value, index) => {
                         return (new TextSectionWithId(index, value))
                     });
 
-                    ingredientsLength = ingredients.length;
-
-                    return new RecipeFormRecipeState(attributes.description, attributes.featured, ingredients, 
-                        attributes.preview_photo_id, [], attributes.title
-                    );
+                    newState.ingredients = ingredients;
+                    return newState;
                 }
-                */
+
                 this.setState({
-                    current: this.convertResponseToState(res.data),
+                    current: currentRecipeState(),
                     existingRecipe: true,
                     nextUniqueIngredientLocalId: ingredientsLength,
-                    nextUniqueSectionLocalId: sectionsLength,
                     previewPhotoUrl: null,
-                    prior: this.convertResponseToState(res.data)
+                    prior: currentRecipeState(),
                 });
             })
             .catch(err => console.log(err));
