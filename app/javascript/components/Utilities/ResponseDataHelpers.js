@@ -6,8 +6,8 @@ import { camelCase, snakeCase } from 'change-case'
 export function convertResponseForState (responseData) {
     // Pass in response.data from Axios
 
-    const { data: { attributes, id /*, relationships */ }, included } = responseData;
-    let conversion = { id: parseInt(id) };
+    const { data: { attributes, id }, included } = responseData;
+    let conversion = { id: parseInt(id), associationPropertyNames: [] };
 
     // Convert 'attributes'
     const attributesKeys = Object.keys(attributes);
@@ -32,8 +32,11 @@ export function convertResponseForState (responseData) {
             itemConversion[convertedName] = attributeValue;
         }
 
-        // Create the array if it doesn't yet exist
-        if(conversion.hasOwnProperty(typeAsPlural) === false) { conversion[typeAsPlural] = []; }
+        // Create the array if it doesn't yet exist, then add it to names list
+        if(conversion.hasOwnProperty(typeAsPlural) === false) { 
+            conversion[typeAsPlural] = []; 
+            conversion.associationPropertyNames.push (typeAsPlural);
+        }
 
         conversion[typeAsPlural].push(itemConversion);
     }

@@ -26,7 +26,6 @@ class RecipeUpsertForm extends React.Component {
                 ingredients: [new TextSectionWithId (0, '')],
                 // preview_photo_id: null,
                 title: ''
-                // , sections: []
             }
         }
         this.state = {
