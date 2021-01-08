@@ -21,6 +21,7 @@ class RecipeUpsertForm extends React.Component {
         super();
         const defaultRecipeState = () => { 
             return {
+                associationPropertyNames: [],
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
@@ -107,6 +108,7 @@ class RecipeUpsertForm extends React.Component {
 
         let updatedCurrentState = this.state.current;
         updatedCurrentState.instructions = instructions;
+        if(updatedCurrentState.associationPropertyNames.includes('instructions') === false) { updatedCurrentState.associationPropertyNames.push('instructions'); }
         this.setState({ 
             current: updatedCurrentState,
             addedInstructionsCount: -nextId
@@ -165,7 +167,20 @@ class RecipeUpsertForm extends React.Component {
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
 
-        axios({ method: requestType, url: requestUrl, data: { description, featured, ingredients, preview_photo_id, title } })
+        const assocationLists = {};
+
+        console.log("WARNING: there currently no handling for the temporary id's associated with newly created items (instructions, etc.)." 
+        + "This will be very important when updating (both for submitting, and for item updating on page) ");
+
+        for(let i = 0; i < this.state.current.associationPropertyNames.length; i++) {
+            const propertyName = this.state.current.associationPropertyNames[i];
+            assocationLists[propertyName] = this.state.current[propertyName];
+        }
+
+        console.log(assocationLists);
+
+
+        axios({ method: requestType, url: requestUrl, data: { ...assocationLists, description, featured, ingredients, preview_photo_id, title } })
         .then(res => {
             if(this.state.existingRecipe === false) { this.props.onClose(res.data?.data?.id); }
             else { this.handleFormSubmitResponse(res); }

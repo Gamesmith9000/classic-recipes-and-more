@@ -16,9 +16,7 @@ module Api
                     format.html { html_disallowed_response }
                     format.json {
                         recipe = Recipe.find_by_id(params[:id])
-                        options = {}
-                        options[:include] = [:sections]
-                        render json: RecipeSerializer.new(recipe, options).serialized_json
+                        render json: RecipeSerializer.new(recipe, inclusion_options).serialized_json
                     }
                 end
             end
@@ -28,9 +26,7 @@ module Api
                     format.html { html_disallowed_response }
                     format.json {
                         recipes = Recipe.where(featured: true)
-                        options = {}
-                        options[:include] = [:sections]
-                        render json: RecipeSerializer.new(recipes, options).serialized_json
+                        render json: RecipeSerializer.new(recipes, inclusion_options).serialized_json
                     }
                 end
             end
@@ -39,17 +35,16 @@ module Api
                 recipe = Recipe.new(recipe_params)
 
                 if recipe.save
-                    if params.has_key? :sections
-                        params[:sections].each do |section|
-                            # [NOTE] validation will be needed to ensure proper creation of new sections
-                           Section.create(:recipe_id => recipe.id, :text_content => section[:text_content], :ordered_photo_ids => section[:ordered_photo_ids])
+                    if params.has_key? :instructions
+                        params[:instructions].each do |instruction|
+                            Instruction.create(:content => checked_instruction_content(instruction[:content]), :recipe_id => recipe.id)
                         end
                     else
-                        Section.create(:recipe_id => recipe.id, :text_content => "", :ordered_photo_ids => [])
+                        Instruction.create(:recipe_id => recipe.id, :content => "")
                     end
                     render_serialized_json(recipe)
                 else
-                    render json: {error: recipe.errors.messages}, status: 422
+                    render_error(error: recipe.errors.messages)
                 end
             end
 
@@ -98,7 +93,7 @@ module Api
 
                     render_serialized_json(recipe)   
                 else
-                    render json: {error: recipe.errors.messages}, status: 422
+                    render_error(error: recipe.errors.messages)
                 end
             end
 
@@ -106,10 +101,10 @@ module Api
                 recipe = Recipe.find_by_id(params[:id])
 
                 if recipe.destroy
-                    Section.where(:recipe_id => params[:id]).destroy_all
+                    # Section.where(:recipe_id => params[:id]).destroy_all
                     head :no_content
                 else
-                    render json: {error: recipe.error.messages}, status: 422
+                    render_error(error: recipe.errors.messages)
                 end
             end
 
@@ -134,9 +129,19 @@ module Api
 
             private
 
+            def checked_instruction_content (content_value)
+                return content_value.nil? ? "" : content_value 
+            end
+
             def html_disallowed_response
                 # [NOTE][DRY] This is a direct copy of method code from aux_controller
                 redirect_back(fallback_location: root_path)
+            end
+
+            def inclusion_options
+                options = {}
+                options[:include] = [:instructions]
+                return options
             end
 
             def photo_id_removal_params
@@ -150,9 +155,12 @@ module Api
                     :preview_photo_id,
                     :title, 
                     :ingredients => [], 
-                    :paragraphs => [],
-                    :sections => [ :id, :text_content, :ordered_photo_ids => [] ]
+                    :instuctions => [ :content, :id  ] # :recipe_id
                 )
+            end
+
+            def render_error (error_messages)
+                render json: { error: error_messages }, status: 422
             end
 
             def render_serialized_json (values)
@@ -161,3 +169,4 @@ module Api
         end
     end
 end
+
