@@ -1,4 +1,5 @@
 class Recipe < ApplicationRecord
+    has_many :instructions
     has_many :sections, -> { order('created_at DESC').reverse_order }
 
     validates :description, presence: true
