@@ -24,11 +24,13 @@ class RecipeUpsertForm extends React.Component {
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
+                instructions: [{ content: '', id: -1, recipeId: null}],
                 // preview_photo_id: null,
                 title: ''
             }
         }
         this.state = {
+            addedInstructionsCount: 1,
             current: defaultRecipeState(),
             existingRecipe: false,
             nextUniqueIngredientLocalId: 1,
@@ -72,6 +74,14 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
+    getInstructionIndexFromState = (instructionId) => {
+        for(let i = 0; i < this.state.current.instructions.length; i++){
+            if(this.state.current.instructions[i]?.id === instructionId) { return i; }
+        }
+        return -1;
+    }
+
+
     handleAddIngredient = (event) => {
         event.preventDefault();
 
@@ -86,6 +96,23 @@ class RecipeUpsertForm extends React.Component {
             nextUniqueIngredientLocalId: nextId + 1
         });
     }
+
+
+    handleAddInstruction = (event) => {
+        event.preventDefault();
+
+        const nextId = (this.state.addedInstructionsCount + 1) * -1;
+        let instructions = this.state.current.instructions.slice();
+        instructions.push({ content: '', id: nextId, recipeId: null });
+
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState.instructions = instructions;
+        this.setState({ 
+            current: updatedCurrentState,
+            addedInstructionsCount: -nextId
+        });
+    }
+
 
     handleClearPreviewPhoto = (event) => {
         event.preventDefault();
@@ -108,6 +135,20 @@ class RecipeUpsertForm extends React.Component {
 
             let updatedCurrentState = this.state.current;
             updatedCurrentState.ingredients = ingredients;
+            this.setState({ current: updatedCurrentState }); 
+        }
+    }
+
+
+    handleDeleteInstructionButtonInput = (event, index) => {
+        event.preventDefault();
+
+        if(window.confirm("Are you sure you want to delete this instruction?")) {
+            let instructions = this.state.current.instructions.slice();
+            instructions.splice(index, 1);
+
+            let updatedCurrentState = this.state.current;
+            updatedCurrentState.instructions = instructions;
             this.setState({ current: updatedCurrentState }); 
         }
     }
@@ -150,6 +191,16 @@ class RecipeUpsertForm extends React.Component {
         
         let updatedCurrentState = this.state.current;
         updatedCurrentState.ingredients = ingredients;
+        this.setState({ current: updatedCurrentState });
+    }
+
+
+    handleInstructionTextInputChange = (event, index) => {
+        let instructions = this.state.current.instructions.slice();
+        instructions[index].content = event.target.value;
+        
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState.instructions = instructions;
         this.setState({ current: updatedCurrentState });
     }
 
@@ -226,6 +277,35 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
+    mapInstructionInputs = (instructionsList) => {
+        return instructionsList.map((element, index) => {
+            const arrayIndex = this.getInstructionIndexFromState(element.id);
+            if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
+
+            return (
+                <Draggable draggableId={`inst-${element.id}`} index={index} key={element.id}>
+                    { (provided) => (
+                        <li {...provided.dragHandleProps} {...provided.draggableProps} className="instruction-edits" ref={provided.innerRef}>
+                            <label>
+                                <input 
+                                    className="instruction-text-input"
+                                    onChange={(event) => this.handleInstructionTextInputChange(event, arrayIndex)}
+                                    type="text"
+                                    value={this.state.current.instructions[arrayIndex].content}
+                                />
+                                { instructionsList.length > 1 &&
+                                    <button className="delete-item" onClick={(event) => this.handleDeleteInstructionButtonInput(event, arrayIndex)}>
+                                        Delete
+                                    </button>
+                                }
+                            </label>
+                        </li>
+                    )}
+                </Draggable>
+            )
+        });
+    }
+
 
     onDragEnd = (result) => {
         if(!result.destination) { return; }
@@ -236,8 +316,8 @@ class RecipeUpsertForm extends React.Component {
             case 'ingredients-editor':
                 listProperty = 'ingredients'
                 break;
-            case 'sections-editor':
-                listProperty = 'sections'
+            case 'instructions-editor':
+                listProperty = 'instructions'
                 break;
             default:
                 listProperty = null;
@@ -304,7 +384,7 @@ class RecipeUpsertForm extends React.Component {
     componentDidMount () {
         const { selectedItemId } = this.props;
 
-        if(isValuelessFalsey(selectedItemId) === false ) {
+        if(isValuelessFalsey(selectedItemId) === false) {
             axios.get(`/api/v1/recipes/${selectedItemId}.json`)
             .then(res => {
                 const attributes = res.data.data.attributes;
@@ -317,6 +397,7 @@ class RecipeUpsertForm extends React.Component {
                     });
 
                     newState.ingredients = ingredients;
+                    newState.addedInstructionsCount = 0;
                     return newState;
                 }
 
@@ -403,6 +484,23 @@ class RecipeUpsertForm extends React.Component {
             <br />
         </Fragment>);
 
+        const renderInstructions = (<Fragment>
+            <label>
+            Instructions
+            <br />
+            <Droppable droppableId="instructions-editor" type="instruction">
+                { (provided) => (
+                    <ul {...provided.droppableProps} className="instructions-editor" ref={provided.innerRef}>
+                        { this.mapInstructionInputs(this.state.current.instructions) }
+                        {provided.placeholder}
+                    </ul>
+                )}
+            </Droppable>
+            <button onClick={this.handleAddInstruction}>+</button>
+            </label>
+            <br />
+        </Fragment>);
+
         const renderFormButtons = (<Fragment>
             <hr />
             <button disabled={allowSubmit === false} onClick={this.handleFormSubmit}>
@@ -424,6 +522,7 @@ class RecipeUpsertForm extends React.Component {
                     { renderDescription }
                     { renderFeatured }
                     { renderIngredients }
+                    { renderInstructions }
                     { this.state.photoPicker.isOpen === false &&
                         <Fragment>{ renderFormButtons }</Fragment>
                     }
