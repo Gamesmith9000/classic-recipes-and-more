@@ -15,9 +15,9 @@ class ResourceManager extends React.Component {
         this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.destroyer(), true);
     }
 
-    handleUpsertButtonPress = (event) => {
+    handleUpsertButtonPress = (event, clearSelectedItemId = false) => {
         event.preventDefault();
-        this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), true);
+        this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), !clearSelectedItemId);
     }
 
     renderUpsertForm = (additionalProps) => {
@@ -47,7 +47,7 @@ class ResourceManager extends React.Component {
         return (
             <div className={managerClassName}>
                 {this.state.destroyerIsOpen === false && this.state.upsertFormIsOpen === false &&
-                    <button className={`${paramCase(itemName)} create-item`} onClick={this.handleUpsertButtonPress}>
+                    <button className={`${paramCase(itemName)} create-item`} onClick={(event) => this.handleUpsertButtonPress(event, true)}>
                         {`Create ${capitalCase(itemName)}`}
                     </button>
                 }
