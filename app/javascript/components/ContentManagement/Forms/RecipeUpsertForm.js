@@ -25,7 +25,7 @@ class RecipeUpsertForm extends React.Component {
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
-                instructions: [{ content: '', id: -1, recipeId: null}],
+                instructions: [{ content: '', id: -1, ordinal: null }],
                 // preview_photo_id: null,
                 title: ''
             }
@@ -104,14 +104,14 @@ class RecipeUpsertForm extends React.Component {
 
         const nextId = (this.state.addedInstructionsCount + 1) * -1;
         let instructions = this.state.current.instructions.slice();
-        instructions.push({ content: '', id: nextId, recipeId: null });
+        instructions.push({ content: '', id: nextId, ordinal: null });
 
         let updatedCurrentState = this.state.current;
         updatedCurrentState.instructions = instructions;
         if(updatedCurrentState.associationPropertyNames.includes('instructions') === false) { updatedCurrentState.associationPropertyNames.push('instructions'); }
         this.setState({ 
+            addedInstructionsCount: -nextId,
             current: updatedCurrentState,
-            addedInstructionsCount: -nextId
         });
     }
 
@@ -169,34 +169,34 @@ class RecipeUpsertForm extends React.Component {
 
         const assocationLists = {};
 
-        console.log("WARNING: there currently no handling for the temporary id's associated with newly created items (instructions, etc.)." 
-        + "This will be very important when updating (both for submitting, and for item updating on page) ");
-
         for(let i = 0; i < this.state.current.associationPropertyNames.length; i++) {
             const propertyName = this.state.current.associationPropertyNames[i];
             assocationLists[propertyName] = this.state.current[propertyName];
         }
 
-        console.log(assocationLists);
-
+        if(assocationLists.hasOwnProperty('instructions') === true) {
+            for(let i = 0; i < assocationLists['instructions'].length; i++) {
+                const item = assocationLists['instructions'][i];
+                item.ordinal = i;
+                if(item.id < 0) { item.id = null; }
+            }
+        }
 
         axios({ method: requestType, url: requestUrl, data: { ...assocationLists, description, featured, ingredients, preview_photo_id, title } })
-        .then(res => {
-            if(this.state.existingRecipe === false) { this.props.onClose(res.data?.data?.id); }
-            else { this.handleFormSubmitResponse(res); }
-        })
-        .catch(err => { this.handleFormSubmitResponse(err); });
+        .then( res => { this.handleFormSubmitResponse(res) })
+        .catch(err => { this.handleFormSubmitResponse(err) });
     }
 
 
-    handleFormSubmitResponse = (res) =>{
+    handleFormSubmitResponse = (res) => {
         if(res?.status === 200 && res.data?.data?.type === "recipe") {
-            this.setState({
-                errors: null,
-                prior: Object.assign({}, this.state.current),
-            });
+            if(this.state.existingRecipe === false) { this.props.onClose(res.data.data.id); }
+            else { this.initializeComponentState(); }
         }
-        else if (res?.response?.status === 422) { this.setState({ errors: res.response.data.error }); }
+        else { 
+            errors = { ...res?.response?.data?.error };
+            this.setState({ errors: errors });
+        }
     }
 
 
@@ -395,8 +395,11 @@ class RecipeUpsertForm extends React.Component {
         this.setState({ photoPicker: newPhotoPickerState });
     }
 
-
     componentDidMount () {
+        this.initializeComponentState();
+    }
+
+    initializeComponentState () {
         const { selectedItemId } = this.props;
 
         if(isValuelessFalsey(selectedItemId) === false) {
@@ -416,7 +419,10 @@ class RecipeUpsertForm extends React.Component {
                     return newState;
                 }
 
+                console.log('WARNING: instructions are not sorted by ordinal, meaning they will not actually have they array order changed');
+
                 this.setState({
+                    addedInstructionsCount: 0,
                     current: currentRecipeState(),
                     existingRecipe: true,
                     nextUniqueIngredientLocalId: ingredientsLength,
