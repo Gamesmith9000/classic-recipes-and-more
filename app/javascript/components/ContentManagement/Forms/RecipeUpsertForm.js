@@ -21,11 +21,11 @@ class RecipeUpsertForm extends React.Component {
         super();
         const defaultRecipeState = () => { 
             return {
-                associationPropertyNames: [],
+                associationPropertyNames: ['instructions'],
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
-                instructions: [{ content: '', id: -1, ordinal: null }],
+                instructions: [{ content: '', id: -1, ordinal: 0 }],
                 // preview_photo_id: null,
                 title: ''
             }
@@ -58,11 +58,12 @@ class RecipeUpsertForm extends React.Component {
 
     dragEndStateUpdate = (dragResult, listProperty) => {
         let newCurrentState = this.state.current;
-        let newItemsState = this.state.current[listProperty].slice();
+        let newItemsState = newCurrentState[listProperty].slice();
         const movedItem = newItemsState.splice(dragResult.source.index, 1)[0];
 
         newItemsState.splice(dragResult.destination.index, 0, movedItem);
         newCurrentState[listProperty] = newItemsState;
+
         this.setState({ current: newCurrentState });
     }
 
@@ -257,6 +258,41 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
+    initializeComponentState () {
+        const { selectedItemId } = this.props;
+
+        if(isValuelessFalsey(selectedItemId) === false) {
+            axios.get(`/api/v1/recipes/${selectedItemId}.json`)
+            .then(res => {
+                const attributes = res.data.data.attributes;
+                let ingredientsLength = attributes.ingredients.length;
+
+                const currentRecipeState = () => { 
+                    const newState = convertResponseForState(res.data);
+                    const ingredients = attributes.ingredients.map((value, index) => {
+                        return (new TextSectionWithId(index, value))
+                    });
+
+                    newState.ingredients = ingredients;
+                    newState.addedInstructionsCount = 0;
+                    newState.instructions.sort((a, b) => a.ordinal - b.ordinal);
+                    return newState;
+                }
+
+                this.setState({
+                    addedInstructionsCount: 0,
+                    current: currentRecipeState(),
+                    existingRecipe: true,
+                    nextUniqueIngredientLocalId: ingredientsLength,
+                    previewPhotoUrl: null,
+                    prior: currentRecipeState(),
+                });
+            })
+            .catch(err => console.log(err));
+        }
+    }
+
+
     isExistingRecipeWithChanges = () => {
         if(this.state.existingRecipe !== true) { return false; }
         return !objectsHaveMatchingValues(this.state.current, this.state.prior);
@@ -397,41 +433,6 @@ class RecipeUpsertForm extends React.Component {
 
     componentDidMount () {
         this.initializeComponentState();
-    }
-
-    initializeComponentState () {
-        const { selectedItemId } = this.props;
-
-        if(isValuelessFalsey(selectedItemId) === false) {
-            axios.get(`/api/v1/recipes/${selectedItemId}.json`)
-            .then(res => {
-                const attributes = res.data.data.attributes;
-                let ingredientsLength = attributes.ingredients.length;
-
-                const currentRecipeState = () => { 
-                    const newState = convertResponseForState(res.data);
-                    const ingredients = attributes.ingredients.map((value, index) => {
-                        return (new TextSectionWithId(index, value))
-                    });
-
-                    newState.ingredients = ingredients;
-                    newState.addedInstructionsCount = 0;
-                    return newState;
-                }
-
-                console.log('WARNING: instructions are not sorted by ordinal, meaning they will not actually have they array order changed');
-
-                this.setState({
-                    addedInstructionsCount: 0,
-                    current: currentRecipeState(),
-                    existingRecipe: true,
-                    nextUniqueIngredientLocalId: ingredientsLength,
-                    previewPhotoUrl: null,
-                    prior: currentRecipeState(),
-                });
-            })
-            .catch(err => console.log(err));
-        }
     }
 
 

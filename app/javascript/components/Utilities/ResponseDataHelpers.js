@@ -27,8 +27,8 @@ export function convertResponseForState (responseData) {
         const itemAttributesKeys = Object.keys(itemData.attributes);
 
         for (let j = 0; j < itemAttributesKeys.length; j++) {
-            const attributeValue = itemData.attributes[itemAttributesKeys[i]];
-            const convertedName = camelCase(itemAttributesKeys[i]);
+            const attributeValue = itemData.attributes[itemAttributesKeys[j]];
+            const convertedName = camelCase(itemAttributesKeys[j]);
             itemConversion[convertedName] = attributeValue;
         }
 
