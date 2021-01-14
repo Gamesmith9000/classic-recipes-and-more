@@ -1,9 +1,10 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { camelCase } from 'change-case'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'
-import { ExportedPhotoPickerState, RecipeFormRecipeState, RecipeFormSectionState, TextSectionWithId } from '../../Utilities/Constructors'
+import { ExportedPhotoPickerState, TextSectionWithId } from '../../Utilities/Constructors'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../Utilities/ComponentHelpers'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
@@ -26,7 +27,6 @@ class RecipeUpsertForm extends React.Component {
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
                 instructions: [{ content: '', id: -1, ordinal: 0 }],
-                // preview_photo_id: null,
                 title: ''
             }
         }
@@ -41,7 +41,7 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-
+    // Outdated
     attemptPreviewImageUrlFetch = () => {
         axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}.json`)
         .then(res => {
@@ -51,10 +51,6 @@ class RecipeUpsertForm extends React.Component {
         .catch(err => console.log(err));
     }
 
-    // NEW
-    convertStateForSubmission = () => {
-
-    }
 
     dragEndStateUpdate = (dragResult, listProperty) => {
         let newCurrentState = this.state.current;
@@ -67,18 +63,12 @@ class RecipeUpsertForm extends React.Component {
         this.setState({ current: newCurrentState });
     }
 
+    getItemIndexFromState (itemId, resourceName, alternateIdPropertyName = null) {
+        const listName = camelCase(resourceName) + 's';
+        const idProperty = isValuelessFalsey(alternateIdPropertyName) === false && typeof(alternateIdPropertyName) === 'string' ? alternateIdPropertyName : 'id';
 
-    getIngredientIndexFromState = (localId) => {
-        for(let i = 0; i < this.state.current.ingredients.length; i++){
-            if(this.state.current.ingredients[i]?.localId === localId) { return i; }
-        }
-        return -1;
-    }
-
-
-    getInstructionIndexFromState = (instructionId) => {
-        for(let i = 0; i < this.state.current.instructions.length; i++){
-            if(this.state.current.instructions[i]?.id === instructionId) { return i; }
+        for(let i = 0; i < this.state.current[listName].length; i++){
+            if(this.state.current[listName][i][idProperty] === itemId) { return i; }
         }
         return -1;
     }
@@ -116,7 +106,7 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
-
+    // Outdated
     handleClearPreviewPhoto = (event) => {
         event.preventDefault();
 
@@ -128,30 +118,18 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
-
-    handleDeleteIngredientButtonInput = (event, index) => {
+    handleDeleteButtonInput = (event, resourceName, index) => {
         event.preventDefault();
+        
+        const name = camelCase(resourceName);
+        const listName = name + 's';
 
-        if(window.confirm("Are you sure you want to delete this ingredient?")) {
-            let ingredients = this.state.current.ingredients.slice();
-            ingredients.splice(index, 1);
+        if(window.confirm(`Are you sure you want to delete this ${name}?`)) {
+            let updatedList = this.state.current[listName].slice();
+            updatedList.splice(index, 1);
 
             let updatedCurrentState = this.state.current;
-            updatedCurrentState.ingredients = ingredients;
-            this.setState({ current: updatedCurrentState }); 
-        }
-    }
-
-
-    handleDeleteInstructionButtonInput = (event, index) => {
-        event.preventDefault();
-
-        if(window.confirm("Are you sure you want to delete this instruction?")) {
-            let instructions = this.state.current.instructions.slice();
-            instructions.splice(index, 1);
-
-            let updatedCurrentState = this.state.current;
-            updatedCurrentState.instructions = instructions;
+            updatedCurrentState[listName] = updatedList;
             this.setState({ current: updatedCurrentState }); 
         }
     }
@@ -200,27 +178,7 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-
-    handleIngredientTextInputChange = (event, index) => {
-        let ingredients = this.state.current.ingredients.slice();
-        ingredients[index].textContent = event.target.value;
-        
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState.ingredients = ingredients;
-        this.setState({ current: updatedCurrentState });
-    }
-
-
-    handleInstructionTextInputChange = (event, index) => {
-        let instructions = this.state.current.instructions.slice();
-        instructions[index].content = event.target.value;
-        
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState.instructions = instructions;
-        this.setState({ current: updatedCurrentState });
-    }
-
-
+    // Outdated
     handlePreviewPhotoIdChange = (event) => {
         event.preventDefault();
 
@@ -238,7 +196,18 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
+    handleTextInputChange = (event, resourceName, propertyName, index) => {
+        const listName = camelCase(resourceName) + 's';
 
+        let updatedList = this.state.current[listName].slice();
+        updatedList[index][propertyName] = event.target.value;
+        
+        let updatedCurrentState = this.state.current;
+        updatedCurrentState[listName] = updatedList;
+        this.setState({ current: updatedCurrentState });
+    }
+
+    // Outdated
     handleTogglePhotoPickerOpenState = (event) => {
         event.preventDefault();
 
@@ -301,7 +270,7 @@ class RecipeUpsertForm extends React.Component {
 
     mapIngredientInputs = (ingredientList) => {
         return ingredientList.map((element, index) => {
-            const arrayIndex = this.getIngredientIndexFromState(element.localId);
+            const arrayIndex = this.getItemIndexFromState(element.localId, 'ingredient', 'localId');
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
             return (
@@ -311,12 +280,12 @@ class RecipeUpsertForm extends React.Component {
                             <label>
                                 <input 
                                     className="ingredient-text-input"
-                                    onChange={(event) => this.handleIngredientTextInputChange(event, arrayIndex)}
+                                    onChange={(event) => this.handleTextInputChange(event, 'ingredient', 'textContent' , arrayIndex)}
                                     type="text"
                                     value={this.state.current.ingredients[arrayIndex].textContent}
                                 />
                                 { ingredientList.length > 1 &&
-                                    <button className="delete-item" onClick={(event) => this.handleDeleteIngredientButtonInput(event, arrayIndex)}>
+                                    <button className="delete-item" onClick={(event) => this.handleDeleteButtonInput(event, 'ingredient', arrayIndex)}>
                                         Delete
                                     </button>
                                 }
@@ -330,7 +299,7 @@ class RecipeUpsertForm extends React.Component {
 
     mapInstructionInputs = (instructionsList) => {
         return instructionsList.map((element, index) => {
-            const arrayIndex = this.getInstructionIndexFromState(element.id);
+            const arrayIndex = this.getItemIndexFromState(element.id, 'instruction');
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
 
             return (
@@ -340,12 +309,12 @@ class RecipeUpsertForm extends React.Component {
                             <label>
                                 <input 
                                     className="instruction-text-input"
-                                    onChange={(event) => this.handleInstructionTextInputChange(event, arrayIndex)}
+                                    onChange={(event) => this.handleTextInputChange(event, 'instruction', 'content', arrayIndex)}
                                     type="text"
                                     value={this.state.current.instructions[arrayIndex].content}
                                 />
                                 { instructionsList.length > 1 &&
-                                    <button className="delete-item" onClick={(event) => this.handleDeleteInstructionButtonInput(event, arrayIndex)}>
+                                    <button className="delete-item" onClick={(event) => this.handleDeleteButtonInput(event, 'instruction', arrayIndex)}>
                                         Delete
                                     </button>
                                 }
@@ -377,7 +346,7 @@ class RecipeUpsertForm extends React.Component {
         if(listProperty) { this.dragEndStateUpdate(result, listProperty); }
     }
 
-    
+    // Outdated
     renderPreviewPhotoControl = () => {
         const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
         const hasPreviewPhotoId = isValuelessFalsey(previewPhotoId) === false;
@@ -424,7 +393,7 @@ class RecipeUpsertForm extends React.Component {
         );
     }
 
-
+    // Outdated
     updateStateOfPhotoPicker = (newValue, propertyName) => {
         let newPhotoPickerState = this.state.photoPicker;
         newPhotoPickerState[propertyName] = newValue;
