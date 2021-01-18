@@ -10,6 +10,8 @@ import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
+import { RecipeUpsertFormUi } from './Subcomponents/RecipeUpsertFormUi'
+
 import PhotoPicker from '../Pickers/PhotoPicker'
 
 class RecipeUpsertForm extends React.Component {
