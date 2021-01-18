@@ -173,7 +173,7 @@ class RecipeUpsertForm extends React.Component {
             else { this.initializeComponentState(); }
         }
         else { 
-            errors = { ...res?.response?.data?.error };
+            const errors = { ...res?.response?.data?.error?.error };
             this.setState({ errors: errors });
         }
     }
