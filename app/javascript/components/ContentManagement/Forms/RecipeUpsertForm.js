@@ -262,11 +262,6 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
-    isExistingRecipeWithChanges = () => {
-        if(this.state.existingRecipe !== true) { return false; }
-        return !objectsHaveMatchingValues(this.state.current, this.state.prior);
-    }
-
     // Outdated
     renderPreviewPhotoControl = () => {
         const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
