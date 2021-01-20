@@ -16,6 +16,7 @@ import ProductUpsertForm from '../Forms/ProductUpsertForm'
 import MappedProductPreviewUi from '../Pickers/Subcomponents/MappedProductPreviewUi'
 import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
 import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
+import PhotoUpsertForm from '../Forms/PhotoUpsertForm'
 
 
 class ContentSectionManager extends React.Component {
@@ -96,7 +97,7 @@ const ContentSectionsInfo = {
             key="photo"
             mappedPreviewUiComponent={(previewProps, key) => <MappedPhotoPreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['file']}
-            // upsertFormComponent
+            upsertFormComponent={(upsertProps) => <PhotoUpsertForm {...upsertProps} previewPhotoVersion="small" />}
         /> } },
         { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
         { name: 'Products',         renderComponent: function (props) { return <ResourceManager 
