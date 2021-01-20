@@ -2,7 +2,7 @@ import React from 'react'
 import ResourcePicker from './ResourcePicker'
 import MappedPhotoPreviewUi from './Subcomponents/MappedPhotoPreviewUi'
 
-class NestedPhotoPicker extends Component (props) {
+class NestedPhotoPicker extends React.Component {
     constructor () {
         super();
         this.state = { selectedItemId: null }
@@ -11,7 +11,7 @@ class NestedPhotoPicker extends Component (props) {
     handlePhotoChosenForExport = (event) => {
         event.preventDefault();
         const { onPhotoChosenForExport } = this.props;
-        if(onPhotoChosenForExport) { onPhotoChosenForExport(selectedItemId); }
+        if(onPhotoChosenForExport) { onPhotoChosenForExport(this.state.selectedItemId); }
     }
 
     render() {
