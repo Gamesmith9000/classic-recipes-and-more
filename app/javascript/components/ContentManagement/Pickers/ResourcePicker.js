@@ -5,6 +5,7 @@ import PickerSortSelect from './Subcomponents/PickerSortSelect'
 import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 import MappedResourcePreview from './Subcomponents/MappedResourcePreview';
+import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 class ResourcePicker extends React.Component {
     constructor () {
@@ -91,8 +92,8 @@ class ResourcePicker extends React.Component {
     }
 
     render() {
-        const { itemName, subcomponentKey } = this.props;
-        const pickerClassName = `${paramCase(itemName)} resource-picker`;
+        const { additionalClassNames, itemName, subcomponentKey } = this.props;
+        const pickerClassName = `${paramCase(itemName)} resource-picker` + isValuelessFalsey(additionalClassNames) === true ? '' : additionalClassNames;
 
         // Before the component mounts, itemData is null. Afterward, it will be an array (even if empty)
         return (
