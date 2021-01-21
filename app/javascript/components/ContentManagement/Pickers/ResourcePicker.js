@@ -93,7 +93,7 @@ class ResourcePicker extends React.Component {
 
     render() {
         const { additionalClassNames, itemName, subcomponentKey } = this.props;
-        const pickerClassName = `${paramCase(itemName)} resource-picker` + isValuelessFalsey(additionalClassNames) === true ? '' : additionalClassNames;
+        const pickerClassName = `${paramCase(itemName)} resource-picker` + (isValuelessFalsey(additionalClassNames) === true ? '' : ` ${additionalClassNames}`);
 
         // Before the component mounts, itemData is null. Afterward, it will be an array (even if empty)
         return (
