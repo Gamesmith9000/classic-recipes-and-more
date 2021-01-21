@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_11_023446) do
+ActiveRecord::Schema.define(version: 2021_01_21_032203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 2021_01_11_023446) do
     t.boolean "featured", default: false
     t.integer "preview_photo_id"
     t.string "description", default: ""
+    t.integer "photo_id"
   end
 
   create_table "sections", force: :cascade do |t|

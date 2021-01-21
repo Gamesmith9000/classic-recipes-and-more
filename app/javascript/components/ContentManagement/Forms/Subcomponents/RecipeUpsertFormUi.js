@@ -212,7 +212,7 @@ class RecipeUpsertFormUi extends React.Component {
                     { renderFeatured }
                     { renderIngredients }
                     { renderInstructions }
-                    { parentState.photoPicker.isOpen === false &&
+                    { parentState.photoPickerIsOpen === false &&
                         <Fragment>{ renderFormButtons }</Fragment>
                     }
                 </DragDropContext>

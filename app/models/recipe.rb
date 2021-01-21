@@ -1,4 +1,6 @@
 class Recipe < ApplicationRecord
+    has_one :photo
+
     has_many :instructions, :dependent => :delete_all
     has_many :sections, -> { order('created_at DESC').reverse_order }
 

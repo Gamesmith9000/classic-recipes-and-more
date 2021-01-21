@@ -126,7 +126,7 @@ module Api
 
             def inclusion_options
                 options = {}
-                options[:include] = [:instructions]
+                options[:include] = [:instructions, :photos]
                 return options
             end
 

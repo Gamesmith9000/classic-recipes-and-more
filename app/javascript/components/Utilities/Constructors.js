@@ -1,8 +1,16 @@
+import { camelCase } from 'change-case'
+
 export function ExportedPhotoPickerState (isOpen, selectedPhotoId, selectedPhotoUrl, locationId = 0) {
     this.isOpen = isOpen;
     this.locationId = locationId;
     this.selectedPhotoId = selectedPhotoId;
     this.selectedPhotoUrl = selectedPhotoUrl;
+}
+
+export function NestedPhotoPickerTarget (descriptor, listIndex) {
+    this.descriptor = typeof(descriptor) === 'string' ? camelCase(descriptor) :descriptor;
+    const parsedListIndex = parseInt(listIndex);
+    this.listIndex = isNaN(parsedListIndex) === false ? parsedListIndex : null;
 }
 
 export function RecipeFormRecipeState (description, featured, ingredients, previewPhotoId, sections, title) {

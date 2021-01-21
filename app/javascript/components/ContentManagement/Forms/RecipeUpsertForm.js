@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import { camelCase } from 'change-case'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'
-import { ExportedPhotoPickerState, TextSectionWithId } from '../../Utilities/Constructors'
+import { ExportedPhotoPickerState, NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
@@ -35,7 +35,9 @@ class RecipeUpsertForm extends React.Component {
             current: defaultRecipeState(),
             existingRecipe: false,
             nextUniqueIngredientLocalId: 1,
-            photoPicker: new ExportedPhotoPickerState(false, 0, null, 0),
+            photoPickerIsOpen: false,
+            photoPickerTarget: new NestedPhotoPickerTarget(null, null),
+            previewPhotoData: null,
             previewPhotoUrl: null,
             prior: defaultRecipeState()
         }
