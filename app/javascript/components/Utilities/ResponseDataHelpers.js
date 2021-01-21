@@ -1,46 +1,55 @@
 import { RecipeFormSectionState } from './Constructors'
 import { isValuelessFalsey } from './Helpers';
-import { camelCase, snakeCase } from 'change-case'
+import { camelCase } from 'change-case'
 
 
 export function convertResponseForState (responseData) {
-    // Pass in response.data from Axios
+    // Pass in response.data from Axios for the responseData argument
 
-    const { data: { attributes, id }, included } = responseData;
+    const { data: { attributes, id, relationships }, included } = responseData;
     let conversion = { id: parseInt(id), associationPropertyNames: [] };
 
     // Convert 'attributes'
-    const attributesKeys = Object.keys(attributes);
 
-    for (let i = 0; i < attributesKeys.length; i++) {
-        const attributeValue = attributes[attributesKeys[i]];
-        const convertedName = camelCase(attributesKeys[i]);
-        conversion[convertedName] = attributeValue;
+    for(const [key, value] of Object.entries(attributes)) {
+        conversion[camelCase(key)] = value;
+    }
+
+    // Create association names lists and add matching properties to conversion object
+
+    const associationNames = { many: [], one: [] };
+
+    for(const [key, value] of Object.entries(relationships)) {
+        const convertedName = camelCase(key);
+        const dataIsArray = Array.isArray(value.data);
+        const targetList = dataIsArray === true ? 'many' : 'one';
+        
+        associationNames[targetList].push(convertedName);
+        conversion[convertedName] = dataIsArray === true ? [] : null;
+    }
+
+    const isSingularAssociation = (propertyName) => {
+        const convertedName = camelCase(propertyName);
+        return associationNames.one.includes(convertedName);
     }
 
     // Convert 'included' 
+
     for (let i = 0; i < included.length; i++) {
-        const itemData = {... included[i]};
+        const itemData = { ...included[i] };
         const itemConversion = { id: parseInt(itemData.id) };
 
-        const typeAsPlural = camelCase(itemData.type) + 's';
-        const itemAttributesKeys = Object.keys(itemData.attributes);
-
-        for (let j = 0; j < itemAttributesKeys.length; j++) {
-            const attributeValue = itemData.attributes[itemAttributesKeys[j]];
-            const convertedName = camelCase(itemAttributesKeys[j]);
-            itemConversion[convertedName] = attributeValue;
+        // convert items' property names to camel case
+        for(const [key, value] of Object.entries(itemData.attributes)) {
+            itemConversion[camelCase(key)] = value;
         }
 
-        // Create the array if it doesn't yet exist, then add it to names list
-        if(conversion.hasOwnProperty(typeAsPlural) === false) { 
-            conversion[typeAsPlural] = []; 
-            conversion.associationPropertyNames.push (typeAsPlural);
-        }
-
-        conversion[typeAsPlural].push(itemConversion);
+        const associationName = camelCase(itemData.type);
+        const targetListName = isSingularAssociation(associationName) === true ? associationName : associationName + 's';
+        conversion[targetListName].push(itemConversion);
     }
 
+    conversion.associationPropertyNames = associationNames;
     return conversion;
 }
 

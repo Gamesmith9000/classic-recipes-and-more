@@ -22,7 +22,7 @@ class RecipeUpsertForm extends React.Component {
         super();
         const defaultRecipeState = () => { 
             return {
-                associationPropertyNames: ['instructions'],
+                associationPropertyNames: null,
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
@@ -101,7 +101,6 @@ class RecipeUpsertForm extends React.Component {
 
         let updatedCurrentState = this.state.current;
         updatedCurrentState.instructions = instructions;
-        if(updatedCurrentState.associationPropertyNames.includes('instructions') === false) { updatedCurrentState.associationPropertyNames.push('instructions'); }
         this.setState({ 
             addedInstructionsCount: -nextId,
             current: updatedCurrentState,
@@ -237,21 +236,22 @@ class RecipeUpsertForm extends React.Component {
             .then(res => {
                 const attributes = res.data.data.attributes;
                 let ingredientsLength = attributes.ingredients.length;
+                let assocPropNames = convertResponseForState(res.data).associationPropertyNames;
 
                 const currentRecipeState = () => { 
                     const newState = convertResponseForState(res.data);
-                    const ingredients = attributes.ingredients.map((value, index) => {
-                        return (new TextSectionWithId(index, value))
-                    });
+                    const ingredients = attributes.ingredients.map((value, index) => {  return (new TextSectionWithId(index, value)) });
 
                     newState.ingredients = ingredients;
                     newState.addedInstructionsCount = 0;
                     newState.instructions.sort((a, b) => a.ordinal - b.ordinal);
+                    delete newState.associationPropertyNames;
                     return newState;
                 }
 
                 this.setState({
                     addedInstructionsCount: 0,
+                    associationPropertyNames: assocPropNames,
                     current: currentRecipeState(),
                     existingRecipe: true,
                     nextUniqueIngredientLocalId: ingredientsLength,
