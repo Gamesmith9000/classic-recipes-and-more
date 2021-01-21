@@ -1,10 +1,8 @@
 import React, { Fragment } from 'react'
-
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../Utilities/ComponentHelpers'
-
 import BackendConstants from '../../../Utilities/BackendConstants'
+import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
 
 
@@ -113,7 +111,7 @@ class RecipeUpsertFormUi extends React.Component {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
         const { handleAddIngredient, handleAddInstruction, handleFormSubmit, handleUpdateStateOfCurrent } = this.props;
 
-        const renderTitle = (<Fragment>
+        const renderTitle = <Fragment>
             <label>
                 Title
                 <input 
@@ -126,9 +124,9 @@ class RecipeUpsertFormUi extends React.Component {
                 { this.validationErrorsIfPresent('title') }
             </label>
             <br />
-        </Fragment>);
+        </Fragment>
 
-        const renderDescription = (<Fragment>
+        const renderDescription = <Fragment>
             <label>
                 Description
                 <textarea 
@@ -141,9 +139,9 @@ class RecipeUpsertFormUi extends React.Component {
                 { this.validationErrorsIfPresent('description') }
             </label>
             <br />
-        </Fragment>);
+        </Fragment>
 
-        const renderFeatured = (<Fragment>
+        const renderFeatured = <Fragment>
             <label>
                 Featured
                 <input 
@@ -154,9 +152,17 @@ class RecipeUpsertFormUi extends React.Component {
                 />
             </label>
             <br />
-        </Fragment>);
+        </Fragment>
 
-        const renderIngredients = (<Fragment>
+        const renderPhoto = <Fragment>
+            <label>
+                Photo
+                
+            </label>
+            <br />
+        </Fragment>
+
+        const renderIngredients = <Fragment>
             <label>
             Ingredients
             <br />
@@ -171,9 +177,9 @@ class RecipeUpsertFormUi extends React.Component {
             <button onClick={handleAddIngredient}>+</button>
             </label>
             <br />
-        </Fragment>);
+        </Fragment>
 
-        const renderInstructions = (<Fragment>
+        const renderInstructions = <Fragment>
             <label>
             Instructions
             <br />
@@ -188,16 +194,16 @@ class RecipeUpsertFormUi extends React.Component {
             <button onClick={handleAddInstruction}>+</button>
             </label>
             <br />
-        </Fragment>);
+        </Fragment>
 
-        const renderFormButtons = (<Fragment>
+        const renderFormButtons = <Fragment>
             <hr />
             <button disabled={allowSubmit === false} onClick={handleFormSubmit}>
                 {parentState.existingRecipe === true ? 'Update' : 'Create'}
             </button>
             <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
             <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
-        </Fragment>);
+        </Fragment>
 
         return (
             <form className="recipe-form" onSubmit={handleFormSubmit}>
@@ -207,9 +213,9 @@ class RecipeUpsertFormUi extends React.Component {
                         <p>ID: {selectedItemId}</p>
                     }
                     { renderTitle }
-                    {/* { this.renderPreviewPhotoControl() } */}
                     { renderDescription }
                     { renderFeatured }
+                    { renderPhoto }
                     { renderIngredients }
                     { renderInstructions }
                     { parentState.photoPickerIsOpen === false &&

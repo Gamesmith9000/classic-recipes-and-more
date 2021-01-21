@@ -1,16 +1,18 @@
-import axios from 'axios'
 import React, { Fragment } from 'react'
+import axios from 'axios'
 import { camelCase } from 'change-case'
-
-import VersionedPhoto from '../../Misc/VersionedPhoto'
-import { ExportedPhotoPickerState, NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
-import BackendConstants from '../../Utilities/BackendConstants'
-import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
-import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
 
 import PhotoPicker from '../Pickers/PhotoPicker'
+
+import VersionedPhoto from '../../Misc/VersionedPhoto'
+import BackendConstants from '../../Utilities/BackendConstants'
+import { ExportedPhotoPickerState, NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
+import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
+import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
+import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
+
 
 class RecipeUpsertForm extends React.Component {
     //  [NOTE] Check all passed in props are implemented, even after obvious items are converted
@@ -245,7 +247,9 @@ class RecipeUpsertForm extends React.Component {
                     newState.ingredients = ingredients;
                     newState.addedInstructionsCount = 0;
                     newState.instructions.sort((a, b) => a.ordinal - b.ordinal);
-                    delete newState.associationPropertyNames;
+
+                    delete newState.addedInstructionsCount
+                    delete newState.associationPropertyNames;   
                     return newState;
                 }
 

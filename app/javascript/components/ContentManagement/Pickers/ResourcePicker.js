@@ -81,6 +81,10 @@ class ResourcePicker extends React.Component {
                 const sortingState = this.state.sorting;
                 sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields);
 
+                // When using onDataFetched prop, beware later state changes
+                const { onDataFetched } = this.props;
+                if(onDataFetched) { onDataFetched(res.data.data); }
+
                 this.setState({
                     itemData: res.data.data,
                     sorting: sortingState
