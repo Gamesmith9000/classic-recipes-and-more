@@ -4,21 +4,19 @@ import { camelCase } from 'change-case'
 
 import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
 
-import PhotoPicker from '../Pickers/PhotoPicker'
+import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { ExportedPhotoPickerState, NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
-import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
 
 class RecipeUpsertForm extends React.Component {
     //  [NOTE] Check all passed in props are implemented, even after obvious items are converted
     //  [NOTE] Reverse also needs to be checked (old props that have not been implemented into new versions - photoVersions, etc.)
     //  [NOTE] Addendum: Consider using React context for the global photo config options. Should be perfect way to refactor
-
 
     constructor() {
         super();
@@ -45,16 +43,6 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-    // Outdated
-    attemptPreviewImageUrlFetch = () => {
-        axios.get(`/api/v1/photos/${this.state.current.previewPhotoId}.json`)
-        .then(res => {
-            const url = BackendConstants.uploaders.safelyGetUploader('photo').getUrlForVersion(res.data.data.attributes.file, this.props.previewPhotoVersion);
-            this.setState({ previewPhotoUrl: url });
-        })
-        .catch(err => console.log(err));
-    }
-
 
     dragEndStateUpdate = (dragResult, listProperty) => {
         let newCurrentState = this.state.current;
@@ -67,6 +55,7 @@ class RecipeUpsertForm extends React.Component {
         this.setState({ current: newCurrentState });
     }
 
+    
     getItemIndexFromState (itemId, resourceName, alternateIdPropertyName = null) {
         const listName = camelCase(resourceName) + 's';
         const idProperty = isValuelessFalsey(alternateIdPropertyName) === false && typeof(alternateIdPropertyName) === 'string' ? alternateIdPropertyName : 'id';
@@ -109,17 +98,6 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
-    // Outdated
-    handleClearPreviewPhoto = (event) => {
-        event.preventDefault();
-
-        let currentState = this.state.current;
-        currentState.previewPhotoId = null;
-        this.setState({ 
-            current: currentState,
-            previewPhotoUrl: null
-        });
-    }
 
     handleDeleteButtonInput = (event, resourceName, index) => {
         event.preventDefault();
@@ -181,23 +159,6 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-    // Outdated
-    handlePreviewPhotoIdChange = (event) => {
-        event.preventDefault();
-
-        const newId = this.state.photoPicker.selectedPhotoId;
-        const newUrl = this.state.photoPicker.selectedPhotoUrl;
-        
-        let photoPickerState = new ExportedPhotoPickerState(false, null, null, this.state.photoPicker.locationId);
-        let currentState = this.state.current;
-        currentState.previewPhotoId = newId;
-
-        this.setState({
-            current: currentState,
-            previewPhotoUrl: newUrl,
-            photoPicker: photoPickerState
-        });
-    }
 
     handleTextInputChange = (event, resourceName, propertyName, index) => {
         const listName = camelCase(resourceName) + 's';
@@ -208,15 +169,6 @@ class RecipeUpsertForm extends React.Component {
         let updatedCurrentState = this.state.current;
         updatedCurrentState[listName] = updatedList;
         this.setState({ current: updatedCurrentState });
-    }
-
-    // Outdated
-    handleTogglePhotoPickerOpenState = (event) => {
-        event.preventDefault();
-
-        let photoPickerState = this.state.photoPicker;
-        photoPickerState.isOpen = !photoPickerState.isOpen;
-        this.setState({ photoPicker: photoPickerState });
     }
 
 
@@ -267,60 +219,6 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-
-    // Outdated
-    renderPreviewPhotoControl = () => {
-        const { current: { previewPhotoId }, previewPhotoUrl, photoPicker: { isOpen, locationId, selectedPhotoId } } = this.state;
-        const hasPreviewPhotoId = isValuelessFalsey(previewPhotoId) === false;
-
-        if(hasPreviewPhotoId === true && !previewPhotoUrl) { this.attemptPreviewImageUrlFetch(); }
-
-        return(
-            <div className="preview-photo">
-                <label>
-                    Preview Photo
-                    <br/>
-                    { (isOpen === true && locationId === 0)
-                    ?
-                        <PhotoPicker 
-                            changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
-                            changeSelectedPhotoUrl={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoUrl')}
-                            exportedPhotoUrlVersion={this.props.previewPhotoVersion}
-                            handleCancelForExport={this.handleTogglePhotoPickerOpenState}
-                            handleUsePhotoForExport={this.handlePreviewPhotoIdChange}
-                            selectedPhotoId={selectedPhotoId}
-                            uploaderNamePrefix={'photo'}
-                        />
-                    :
-                        <Fragment>
-                            <VersionedPhoto
-                                uploadedFileData={this.state.previewPhotoUrl}
-                                uploadedFileVersionName={this.props.previewPhotoVersion}
-                                uploaderNamePrefix="photo"
-                                textDisplayForNoPhoto="(No photo chosen)"
-                            />
-                            <br />
-                            <button onClick={this.handleTogglePhotoPickerOpenState}>
-                                { hasPreviewPhotoId === true ? 'Change' : 'Select' }
-                            </button>
-                            { previewPhotoId &&
-                                <button onClick={this.handleClearPreviewPhoto}>
-                                    Use No Photo
-                                </button>
-                            }
-                        </Fragment>
-                    }
-                </label>
-            </div>
-        );
-    }
-
-    // Outdated
-    updateStateOfPhotoPicker = (newValue, propertyName) => {
-        let newPhotoPickerState = this.state.photoPicker;
-        newPhotoPickerState[propertyName] = newValue;
-        this.setState({ photoPicker: newPhotoPickerState });
-    }
 
     componentDidMount () {
         this.initializeComponentState();
