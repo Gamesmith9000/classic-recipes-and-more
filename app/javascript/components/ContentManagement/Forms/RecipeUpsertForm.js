@@ -8,7 +8,7 @@ import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 import BackendConstants from '../../Utilities/BackendConstants'
-import { ExportedPhotoPickerState, NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
+import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
@@ -37,8 +37,6 @@ class RecipeUpsertForm extends React.Component {
             nextUniqueIngredientLocalId: 1,
             photoPickerIsOpen: false,
             photoPickerTarget: new NestedPhotoPickerTarget(null, null),
-            previewPhotoData: null,
-            previewPhotoUrl: null,
             prior: defaultRecipeState()
         }
     }
@@ -160,6 +158,23 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
+    handlePhotoChosen = (photoData) => {
+        console.log("Photo Chosen");
+        console.log("photoData:");
+        console.log(photoData);
+        console.log(`photoPickerTarget:`)
+        console.log(this.state.photoPickerTarget);
+
+        this.setState({ photoPickerIsOpen: false})
+    }
+
+    
+    handlePhotoPickerCancelAndExit = (event) => {
+        event.preventDefault();
+        this.setState({ photoPickerIsOpen: false})
+    }
+
+
     handleTextInputChange = (event, resourceName, propertyName, index) => {
         const listName = camelCase(resourceName) + 's';
 
@@ -211,7 +226,6 @@ class RecipeUpsertForm extends React.Component {
                     current: currentRecipeState(),
                     existingRecipe: true,
                     nextUniqueIngredientLocalId: ingredientsLength,
-                    previewPhotoUrl: null,
                     prior: currentRecipeState(),
                 });
             })
@@ -229,7 +243,10 @@ class RecipeUpsertForm extends React.Component {
         const { onClose, selectedItemId } = this.props;
         const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
 
-        return <RecipeUpsertFormUi 
+        // [NOTE] This is not the permanent code layout for this section
+
+        const ui =
+        <RecipeUpsertFormUi 
             allowSubmit={allowSubmit}
             dragEndStateUpdate={this.dragEndStateUpdate}
             getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
@@ -243,6 +260,16 @@ class RecipeUpsertForm extends React.Component {
             parentState={this.state}
             selectedItemId={selectedItemId}
         />
+
+        return <Fragment>
+            { this.state.photoPickerIsOpen === true &&
+                <NestedPhotoPicker 
+                    onCancelAndExit={this.handlePhotoPickerCancelAndExit} 
+                    onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
+                />
+            }
+            { ui }
+        </Fragment>
     }
 }
 

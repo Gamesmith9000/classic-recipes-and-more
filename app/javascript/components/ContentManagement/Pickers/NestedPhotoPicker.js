@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import ResourcePicker from './ResourcePicker'
 import MappedPhotoPreviewUi from './Subcomponents/MappedPhotoPreviewUi'
 
@@ -11,6 +11,11 @@ class NestedPhotoPicker extends React.Component {
         }
     }
 
+    // The only props that need to be passed in:
+    //      onCancelAndExit (event)
+    //      onPhotoChosenForExport (photoData)
+    
+
     handlePhotoChosenForExport = (event) => {
         event.preventDefault();
         const { onPhotoChosenForExport } = this.props;
@@ -22,10 +27,20 @@ class NestedPhotoPicker extends React.Component {
     }
 
     render() {
+        const { onCancelAndExit } = this.props;
         const additionalMappedItemPreviewProps = { auxButtonText: "Choose", hideEditAndDeleteButtons: true }
         additionalMappedItemPreviewProps.onAuxButtonPress = this.handlePhotoChosenForExport;
 
-        return (
+        // The exit button will not render without the onCancelAndExit prop
+        const exitButton = onCancelAndExit
+        ? <button className="exit" onClick={onCancelAndExit}>X</button>
+        : <Fragment />;
+
+        return <div className="nested-photo-picker-frame">
+            <div className="frame-heading">
+                <h2>Choose a Photo</h2>
+                { exitButton }
+            </div>
             <ResourcePicker 
                 additionalClassNames="nested"
                 additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
@@ -39,7 +54,7 @@ class NestedPhotoPicker extends React.Component {
                 selectedItemId = { this.state.selectedItemId }
                 subcomponentKey="photo"
             />
-        );
+        </div>
     }
 }
 
