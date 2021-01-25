@@ -87,7 +87,6 @@ module Api
                 recipe = Recipe.find_by_id(params[:id])
 
                 if recipe.destroy
-                    # Section.where(:recipe_id => params[:id]).destroy_all
                     head :no_content
                 else
                     render_error(error: recipe.errors.messages)
@@ -95,6 +94,7 @@ module Api
             end
 
             def remove_photo_id_instances
+                # [NOTE][REFACTOR] This section/method (and calls) will need to be either updated or removed 
                 return if photo_id_removal_params.has_key?(:id) == false
 
                 idParam = photo_id_removal_params[:id]
@@ -102,14 +102,6 @@ module Api
         
                 instances.each do |i|
                     i.update(preview_photo_id: nil)
-                end
-
-                q = "'" + idParam.to_s  + "' = ANY (ordered_photo_ids)"
-                instances = Section.where(q)
-        
-                instances.each do |i|
-                    updatedArray = i.ordered_photo_ids.select {|p| p != idParam}
-                    i.update(ordered_photo_ids: updatedArray)
                 end
             end
 
