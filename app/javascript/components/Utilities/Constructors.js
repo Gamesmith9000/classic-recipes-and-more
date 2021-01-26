@@ -13,15 +13,6 @@ export function NestedPhotoPickerTarget (descriptor, listIndex) {
     this.listIndex = isNaN(parsedListIndex) === false ? parsedListIndex : null;
 }
 
-export function RecipeFormRecipeState (description, featured, ingredients, previewPhotoId, sections, title) {
-    this.description = description,
-    this.featured = featured,
-    this.ingredients = ingredients,
-    this.previewPhotoId = previewPhotoId,
-    this.sections = sections,
-    this.title = title
-}
-
 export function RecipeFormSectionState (id, localId, ordered_photo_ids, recipeId, text_content) {
     // Note the use of the snake case to easy conversion for back-end.
     // Several pieces of data are retained which aid in form submission

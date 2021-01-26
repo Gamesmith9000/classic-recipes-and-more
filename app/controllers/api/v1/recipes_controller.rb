@@ -98,10 +98,10 @@ module Api
                 return if photo_id_removal_params.has_key?(:id) == false
 
                 idParam = photo_id_removal_params[:id]
-                instances = Recipe.where(preview_photo_id: idParam)
+                instances = Recipe.where(photo_id: idParam)
         
                 instances.each do |i|
-                    i.update(preview_photo_id: nil)
+                    i.update(photo_id: nil)
                 end
             end
 
@@ -130,7 +130,6 @@ module Api
                 params.require(:recipe).permit(
                     :description,
                     :featured,
-                    :preview_photo_id,
                     :title, 
                     :ingredients => [], 
                     :instuctions => [ :content, :id, :ordinal  ] # :recipe_id
