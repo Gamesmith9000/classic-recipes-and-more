@@ -5,8 +5,6 @@ import { camelCase } from 'change-case'
 import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
-
-import VersionedPhoto from '../../Misc/VersionedPhoto'
 import BackendConstants from '../../Utilities/BackendConstants'
 import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
@@ -37,7 +35,6 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-
     dragEndStateUpdate = (dragResult, listProperty) => {
         let newCurrentState = this.state.current;
         let newItemsState = newCurrentState[listProperty].slice();
@@ -48,7 +45,6 @@ class RecipeUpsertForm extends React.Component {
 
         this.setState({ current: newCurrentState });
     }
-
     
     getItemIndexFromState (itemId, resourceName, alternateIdPropertyName = null) {
         const listName = camelCase(resourceName) + 's';
@@ -59,7 +55,6 @@ class RecipeUpsertForm extends React.Component {
         }
         return -1;
     }
-
 
     handleAddIngredient = (event) => {
         event.preventDefault();
@@ -76,7 +71,6 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
-
     handleAddInstruction = (event) => {
         event.preventDefault();
 
@@ -91,7 +85,6 @@ class RecipeUpsertForm extends React.Component {
             current: updatedCurrentState,
         });
     }
-
 
     handleDeleteButtonInput = (event, resourceName, index) => {
         event.preventDefault();
@@ -108,7 +101,6 @@ class RecipeUpsertForm extends React.Component {
             this.setState({ current: updatedCurrentState }); 
         }
     }
-
 
     handleFormSubmit = (event) => {
         event.preventDefault();
@@ -141,7 +133,6 @@ class RecipeUpsertForm extends React.Component {
         .catch(err => { this.handleFormSubmitResponse(err) });
     }
 
-
     handleFormSubmitResponse = (res) => {
         if(res?.status === 200 && res.data?.data?.type === "recipe") {
             if(this.state.existingRecipe === false) { this.props.onClose(res.data.data.id); }
@@ -153,7 +144,6 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-
     handleOpenPhotoPicker = (event, descriptor, listIndex) => {
         event.preventDefault();
         if(this.state.photoPickerIsOpen === true) { return; }
@@ -163,7 +153,6 @@ class RecipeUpsertForm extends React.Component {
             photoPickerTarget: { descriptor: descriptor, listIndex: listIndex }
         });
     }
-
 
     handlePhotoChosen = (photoData) => {     
         if(!photoData) { return; }
@@ -181,7 +170,6 @@ class RecipeUpsertForm extends React.Component {
         });
     }
 
-    
     handlePhotoPickerCancelAndExit = (event) => {
         event.preventDefault();
         this.setState({ 
@@ -189,7 +177,6 @@ class RecipeUpsertForm extends React.Component {
             photoPickerTarget: { descriptor: null, listIndex: null }
         });
     }
-
 
     handleTextInputChange = (event, resourceName, propertyName, index) => {
         const listName = camelCase(resourceName) + 's';
@@ -274,35 +261,13 @@ class RecipeUpsertForm extends React.Component {
         }
     }
 
-
     componentDidMount () {
         this.initializeComponentState();
     }
 
-
     render() {
         const { onClose, selectedItemId } = this.props;
         const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
-
-        // [NOTE] This is not the permanent code layout for this section
-
-        const ui =
-        <RecipeUpsertFormUi 
-            allowSubmit={allowSubmit}
-            dragEndStateUpdate={this.dragEndStateUpdate}
-            getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
-            handleAddIngredient={this.handleAddIngredient}
-            handleAddInstruction={this.handleAddInstruction}
-            handleDeleteButtonInput={(event, resourceName, index) => this.handleDeleteButtonInput(event, resourceName, index)}
-            handleFormSubmit={this.handleFormSubmit}
-            onOmitRecipePhoto={(event) => this.handleUpdateCurrentFromList(event, ['photo', 'photoId'], [null, null])}
-            handleOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
-            handleTextInputChange={this.handleTextInputChange}
-            onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', preventDefault = true) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, preventDefault)}
-            onClose={onClose}
-            parentState={this.state}
-            selectedItemId={selectedItemId}
-        />
 
         return <Fragment>
             { this.state.photoPickerIsOpen === true &&
@@ -311,7 +276,22 @@ class RecipeUpsertForm extends React.Component {
                     onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
                 />
             }
-            { ui }
+            <RecipeUpsertFormUi 
+                allowSubmit={allowSubmit}
+                dragEndStateUpdate={this.dragEndStateUpdate}
+                getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
+                onAddIngredient={this.handleAddIngredient}
+                onAddInstruction={this.handleAddInstruction}
+                onClose={onClose}
+                onDeleteButtonInput={(event, resourceName, index) => this.handleDeleteButtonInput(event, resourceName, index)}
+                onFormSubmit={this.handleFormSubmit}
+                onOmitRecipePhoto={(event) => this.handleUpdateCurrentFromList(event, ['photo', 'photoId'], [null, null])}
+                onOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
+                onTextInputChange={this.handleTextInputChange}
+                onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', preventDefault = true) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, preventDefault)}
+                parentState={this.state}
+                selectedItemId={selectedItemId}
+            />
         </Fragment>
     }
 }

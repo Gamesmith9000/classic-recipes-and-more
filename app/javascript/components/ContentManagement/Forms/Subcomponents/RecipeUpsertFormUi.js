@@ -17,7 +17,7 @@ class RecipeUpsertFormUi extends React.Component {
     }
 
     mapIngredientInputs = (ingredientList) => {
-        const { getItemIndexFromState, parentState, handleDeleteButtonInput, handleTextInputChange } = this.props;
+        const { getItemIndexFromState, parentState, onDeleteButtonInput, onTextInputChange } = this.props;
 
         return ingredientList.map((element, index) => {
             const arrayIndex = getItemIndexFromState(element.localId, 'ingredient', 'localId');
@@ -30,12 +30,12 @@ class RecipeUpsertFormUi extends React.Component {
                             <label>
                                 <input 
                                     className="ingredient-text-input"
-                                    onChange={(event) => handleTextInputChange(event, 'ingredient', 'textContent' , arrayIndex)}
+                                    onChange={(event) => onTextInputChange(event, 'ingredient', 'textContent' , arrayIndex)}
                                     type="text"
                                     value={parentState.current.ingredients[arrayIndex].textContent}
                                 />
                                 { ingredientList.length > 1 &&
-                                    <button className="delete-item" onClick={(event) => handleDeleteButtonInput(event, 'ingredient', arrayIndex)}>
+                                    <button className="delete-item" onClick={(event) => onDeleteButtonInput(event, 'ingredient', arrayIndex)}>
                                         Delete
                                     </button>
                                 }
@@ -48,7 +48,7 @@ class RecipeUpsertFormUi extends React.Component {
     }
 
     mapInstructionInputs = (instructionsList) => {
-        const { getItemIndexFromState, parentState, handleDeleteButtonInput, handleTextInputChange } = this.props;
+        const { getItemIndexFromState, parentState, onDeleteButtonInput, onTextInputChange } = this.props;
 
         return instructionsList.map((element, index) => {
             const arrayIndex = getItemIndexFromState(element.id, 'instruction');
@@ -61,12 +61,12 @@ class RecipeUpsertFormUi extends React.Component {
                             <label>
                                 <input 
                                     className="instruction-text-input"
-                                    onChange={(event) => handleTextInputChange(event, 'instruction', 'content', arrayIndex)}
+                                    onChange={(event) => onTextInputChange(event, 'instruction', 'content', arrayIndex)}
                                     type="text"
                                     value={parentState.current.instructions[arrayIndex].content}
                                 />
                                 { instructionsList.length > 1 &&
-                                    <button className="delete-item" onClick={(event) => handleDeleteButtonInput(event, 'instruction', arrayIndex)}>
+                                    <button className="delete-item" onClick={(event) => onDeleteButtonInput(event, 'instruction', arrayIndex)}>
                                         Delete
                                     </button>
                                 }
@@ -111,7 +111,7 @@ class RecipeUpsertFormUi extends React.Component {
     
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
-        const { handleAddIngredient, handleAddInstruction, handleFormSubmit, onOmitRecipePhoto, handleOpenPhotoPicker, onUpdateCurrentFromEvent } = this.props;
+        const { onAddIngredient, onAddInstruction, onFormSubmit, onOmitRecipePhoto, onOpenPhotoPicker, onUpdateCurrentFromEvent } = this.props;
 
         const renderTitle = <Fragment>
             <label>
@@ -175,7 +175,7 @@ class RecipeUpsertFormUi extends React.Component {
                 { photoState &&
                     <br />
                 }
-                <button onClick={(event) => handleOpenPhotoPicker(event, 'recipe', null)}>
+                <button onClick={(event) => onOpenPhotoPicker(event, 'recipe', null)}>
                     { photoState ? 'Change' : 'Select' }
                 </button>
                 <button disabled={!photoState} onClick={onOmitRecipePhoto}>
@@ -197,7 +197,7 @@ class RecipeUpsertFormUi extends React.Component {
                     </ul>
                 )}
             </Droppable>
-            <button onClick={handleAddIngredient}>+</button>
+            <button onClick={onAddIngredient}>+</button>
             </label>
             <br />
         </Fragment>
@@ -214,14 +214,14 @@ class RecipeUpsertFormUi extends React.Component {
                     </ul>
                 )}
             </Droppable>
-            <button onClick={handleAddInstruction}>+</button>
+            <button onClick={onAddInstruction}>+</button>
             </label>
             <br />
         </Fragment>
 
         const renderFormButtons = <Fragment>
             <hr />
-            <button disabled={allowSubmit === false} onClick={handleFormSubmit}>
+            <button disabled={allowSubmit === false} onClick={onFormSubmit}>
                 {parentState.existingRecipe === true ? 'Update' : 'Create'}
             </button>
             <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
@@ -229,7 +229,7 @@ class RecipeUpsertFormUi extends React.Component {
         </Fragment>
 
         return (
-            <form className="recipe-form" onSubmit={handleFormSubmit}>
+            <form className="recipe-form" onSubmit={onFormSubmit}>
                 <h2>{parentState.existingRecipe === true ? 'Edit' : 'New'} Recipe</h2>
                 <DragDropContext onDragEnd={this.onDragEnd}>
                     { parentState.existingRecipe === true && isValuelessFalsey(selectedItemId) === false &&
