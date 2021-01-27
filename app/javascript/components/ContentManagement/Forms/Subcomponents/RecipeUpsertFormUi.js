@@ -1,9 +1,11 @@
 import React, { Fragment } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
+import VersionedPhoto from '../../../Misc/VersionedPhoto'
 import BackendConstants from '../../../Utilities/BackendConstants'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
+import ContentOptionsContext from '../../ContentOptionsContext'
 
 
 class RecipeUpsertFormUi extends React.Component {
@@ -109,7 +111,7 @@ class RecipeUpsertFormUi extends React.Component {
     
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
-        const { handleAddIngredient, handleAddInstruction, handleFormSubmit, handleUpdateStateOfCurrent } = this.props;
+        const { handleAddIngredient, handleAddInstruction, handleFormSubmit, onOmitRecipePhoto, handleOpenPhotoPicker, onUpdateCurrentFromEvent } = this.props;
 
         const renderTitle = <Fragment>
             <label>
@@ -117,7 +119,7 @@ class RecipeUpsertFormUi extends React.Component {
                 <input 
                     className="title-input"
                     maxLength={BackendConstants.models.recipe.validations.title.maximum} 
-                    onChange={(event) => handleUpdateStateOfCurrent(event, 'title')}
+                    onChange={(event) => onUpdateCurrentFromEvent(event, 'title')}
                     type="text"
                     value={parentState.current.title}
                 />
@@ -132,7 +134,7 @@ class RecipeUpsertFormUi extends React.Component {
                 <textarea 
                     className="description-input"
                     maxLength={BackendConstants.models.recipe.validations.description.maximum} 
-                    onChange={(event) => handleUpdateStateOfCurrent(event, 'description')}
+                    onChange={(event) => onUpdateCurrentFromEvent(event, 'description')}
                     type="textarea"
                     value={parentState.current.description}
                 />
@@ -147,17 +149,38 @@ class RecipeUpsertFormUi extends React.Component {
                 <input 
                     checked={parentState.current.featured === true}
                     className="featured-input"
-                    onChange={(event) => handleUpdateStateOfCurrent(event, 'featured', 'checked', false)}
+                    onChange={(event) => onUpdateCurrentFromEvent(event, 'featured', 'checked', false)}
                     type="checkbox"
                 />
             </label>
             <br />
         </Fragment>
 
+        const photoState = parentState?.current?.photo;
+
         const renderPhoto = <Fragment>
-            <label>
-                Photo
-                
+        <label>
+            Photo
+            <br />
+            <ContentOptionsContext.Consumer>
+                { value =>
+                    <VersionedPhoto 
+                        uploadedFileData={photoState?.attributes?.file}
+                        uploaderNamePrefix="photo"
+                        uploadedFileVersionName={value.photoPicker.exportedImageVersion}
+                        textDisplayForNoPhoto="(No photo chosen)"
+                    />
+                }
+                </ContentOptionsContext.Consumer>
+                { photoState &&
+                    <br />
+                }
+                <button onClick={(event) => handleOpenPhotoPicker(event, 'recipe', null)}>
+                    { photoState ? 'Change' : 'Select' }
+                </button>
+                <button disabled={!photoState} onClick={onOmitRecipePhoto}>
+                    Use No Photo
+                </button>
             </label>
             <br />
         </Fragment>

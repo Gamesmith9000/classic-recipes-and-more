@@ -14,10 +14,6 @@ import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 
 class RecipeUpsertForm extends React.Component {
-    //  [NOTE] Check all passed in props are implemented, even after obvious items are converted
-    //  [NOTE] Reverse also needs to be checked (old props that have not been implemented into new versions - photoVersions, etc.)
-    //  [NOTE] Addendum: Consider using React context for the global photo config options. Should be perfect way to refactor
-
     constructor() {
         super();
         const defaultRecipeState = () => { 
@@ -158,20 +154,40 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
-    handlePhotoChosen = (photoData) => {
-        console.log("Photo Chosen");
-        console.log("photoData:");
-        console.log(photoData);
-        console.log(`photoPickerTarget:`)
-        console.log(this.state.photoPickerTarget);
+    handleOpenPhotoPicker = (event, descriptor, listIndex) => {
+        event.preventDefault();
+        if(this.state.photoPickerIsOpen === true) { return; }
 
-        this.setState({ photoPickerIsOpen: false})
+        this.setState({
+            photoPickerIsOpen: true,
+            photoPickerTarget: { descriptor: descriptor, listIndex: listIndex }
+        });
+    }
+
+
+    handlePhotoChosen = (photoData) => {     
+        if(!photoData) { return; }
+        const newCurrentState = { ...this.state.current };
+        
+        if(this.state.photoPickerTarget.descriptor === 'recipe') {
+            newCurrentState.photo = photoData;
+            newCurrentState.photoId = parseInt(photoData.id);
+        }
+
+        this.setState({
+            current: newCurrentState,
+            photoPickerIsOpen: false,
+            photoPickerTarget: { descriptor: null, listIndex: null }
+        });
     }
 
     
     handlePhotoPickerCancelAndExit = (event) => {
         event.preventDefault();
-        this.setState({ photoPickerIsOpen: false})
+        this.setState({ 
+            photoPickerIsOpen: false,
+            photoPickerTarget: { descriptor: null, listIndex: null }
+        });
     }
 
 
@@ -187,15 +203,40 @@ class RecipeUpsertForm extends React.Component {
     }
 
 
-    handleUpdateStateOfCurrent = (event, propertyName, propertyOfEventTarget='value', preventDefault = true) => {
+    handleUpdateCurrentFromEvent = (event, propertyName, propertyOfEventTarget='value', preventDefault = true) => {
         if(event && preventDefault === true) { event.preventDefault(); }
         if(!event || !propertyName || !propertyOfEventTarget || !this.state?.current) { return; }
 
-        let newRecipeState = this.state.current;
+        const newRecipeState = { ...this.state.current };
         newRecipeState[propertyName] = event.target?.[propertyOfEventTarget];
         this.setState({ current: newRecipeState });
     }
 
+    handleUpdateCurrentFromList = (event, propertyNames, updatedValues, preventDefault = true) => {
+        if(event && preventDefault === true) { event.preventDefault(); }
+        if(!this.state.current) { return; }
+
+        let invalidArguments = false;
+        let argumentsChecked = false;
+
+        // ensure that propertyNames & updatedValues are non-empty arrays of matching size
+        while(invalidArguments === false && argumentsChecked === false) {
+            if(!propertyNames || !updatedValues) { invalidArguments = true; }
+            if(Array.isArray(propertyNames) === false || Array.isArray(updatedValues) === false) { invalidArguments = true; }
+            if(propertyNames.length < 1 || updatedValues.length < 1 || propertyNames.length !== updatedValues.length) { invalidArguments = true; }
+            if(invalidArguments === false) { argumentsChecked = true; }
+        }
+        
+        if(invalidArguments === true) { return; }
+
+        const newRecipeState = { ...this.state.current }
+
+        for(let i = 0; i < propertyNames.length; i++) {
+            newRecipeState[propertyNames[i]] = updatedValues[i];
+        }
+
+        this.setState({ current: newRecipeState });
+    }
 
     initializeComponentState () {
         const { selectedItemId } = this.props;
@@ -254,8 +295,10 @@ class RecipeUpsertForm extends React.Component {
             handleAddInstruction={this.handleAddInstruction}
             handleDeleteButtonInput={(event, resourceName, index) => this.handleDeleteButtonInput(event, resourceName, index)}
             handleFormSubmit={this.handleFormSubmit}
+            onOmitRecipePhoto={(event) => this.handleUpdateCurrentFromList(event, ['photo', 'photoId'], [null, null])}
+            handleOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
             handleTextInputChange={this.handleTextInputChange}
-            handleUpdateStateOfCurrent={(event, propertyName, propertyOfEventTarget='value', preventDefault = true) => this.handleUpdateStateOfCurrent(event, propertyName, propertyOfEventTarget, preventDefault)}
+            onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', preventDefault = true) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, preventDefault)}
             onClose={onClose}
             parentState={this.state}
             selectedItemId={selectedItemId}

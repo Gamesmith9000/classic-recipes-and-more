@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react'
 import AdminUserDisplay from './Subcomponents/AdminUserDisplay'
 import { existsInLocalStorage, objectsHaveMatchingValues } from '../Utilities/Helpers';
+import ContentOptionsContext from './ContentOptionsContext'
 import ContentSectionManager from './Managers/ContentSectionManager';
-import ContentContext from './ContentOptionsContext'
+
 
 class ContentDashboard extends React.Component {
     constructor () {
@@ -98,7 +99,7 @@ class ContentDashboard extends React.Component {
         if(this.localStorageMatchesState() === false) { this.updateLocalStorageToMatchState(); }
         
         return (
-            <ContentContext.Provider value={this.state.contentContext}>
+            <ContentOptionsContext.Provider value={this.state.contentContext}>
                 <div className="content-dashboard">
                     <h1>Content Dashboard</h1>
                     <AdminUserDisplay displayName={userDisplay} />
@@ -111,7 +112,7 @@ class ContentDashboard extends React.Component {
                         />
                     }
                 </div>
-            </ContentContext.Provider>
+            </ContentOptionsContext.Provider>
         )
     }
 }
