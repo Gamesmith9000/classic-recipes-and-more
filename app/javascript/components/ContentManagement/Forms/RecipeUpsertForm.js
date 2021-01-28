@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { camelCase } from 'change-case'
+import { camelCase, snakeCase } from 'change-case'
 
 import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
 
@@ -16,7 +16,6 @@ class RecipeUpsertForm extends React.Component {
         super();
         const defaultRecipeState = () => { 
             return {
-                associationPropertyNames: null,
                 description: '',
                 featured: BackendConstants.models.recipe.defaults.featured,
                 ingredients: [new TextSectionWithId (0, '')],
@@ -26,6 +25,7 @@ class RecipeUpsertForm extends React.Component {
         }
         this.state = {
             addedInstructionsCount: 1,
+            associationPropertyNames: { many: [], one: [] },
             current: defaultRecipeState(),
             existingRecipe: false,
             nextUniqueIngredientLocalId: 1,
@@ -106,29 +106,71 @@ class RecipeUpsertForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        const { description, featured, title } = this.state.current;
-        const preview_photo_id = this.state.current.previewPhotoId;
+        // note that excluded properties' names will be automatically converted to snake case
+        const excludedProperties = ['photo'];
+
+        const { description, featured, photoId, title } = this.state.current;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
 
         const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
         const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
 
-        const assocationLists = {};
+        const mainData = { description, featured, photoId, title };
 
-        for(let i = 0; i < this.state.current.associationPropertyNames.length; i++) {
-            const propertyName = this.state.current.associationPropertyNames[i];
-            assocationLists[propertyName] = this.state.current[propertyName];
+        // prepare associations data
+
+        const assocationLists = { many: [], one: []};
+
+        if(this.state.associationPropertyNames.many?.length > 0 || this.state.associationPropertyNames.one?.length > 0) {
+            const assocPropNames = { ...this.state.associationPropertyNames };
+
+            for(let i = 0; i < assocPropNames.many?.length; i++) {
+                const propertyName = assocPropNames.many[i];
+                assocationLists.many[snakeCase(propertyName)] = this.state.current[propertyName];
+            }
+
+            for(let i = 0; i < assocPropNames.one?.length; i++) {
+                const propertyName = assocPropNames.one[i];
+                assocationLists.one[snakeCase(propertyName)] = this.state.current[propertyName];
+            }
         }
 
-        if(assocationLists.hasOwnProperty('instructions') === true) {
-            for(let i = 0; i < assocationLists['instructions'].length; i++) {
-                const item = assocationLists['instructions'][i];
+        if(assocationLists.many?.hasOwnProperty('instructions') === true) {
+            for(let i = 0; i < assocationLists.many['instructions'].length; i++) {
+                const item = assocationLists.many['instructions'][i];
                 item.ordinal = i;
                 if(item.id < 0) { item.id = null; }
             }
         }
 
-        axios({ method: requestType, url: requestUrl, data: { ...assocationLists, description, featured, ingredients, preview_photo_id, title } })
+        // convert remaining key names back to snake case
+
+        const convertKey = (obj, keyName) => {
+            const snakeCaseKeyName = snakeCase(keyName);
+            if(keyName !== snakeCaseKeyName && obj.hasOwnProperty(keyName) === true) {
+                Object.assign(obj, {[snakeCaseKeyName]: obj[keyName]});
+                delete obj[keyName];
+            }
+        }
+
+        const keys = Object.keys(mainData);
+
+        for(let i = 0; i < keys.length; i++) {
+            convertKey(mainData, keys[i]);
+        }
+    
+        // aggregate properties and remove specified exclusions
+
+        const submissionData = { ...assocationLists.many, ...assocationLists.one, ...mainData, ingredients };
+
+        for(let i = 0; i < excludedProperties.length; i++) {
+            const propertyName = snakeCase(excludedProperties[i]);
+            if(submissionData.hasOwnProperty(propertyName) === true) {
+                delete submissionData[propertyName];
+            }
+        }
+
+        axios({ method: requestType, url: requestUrl, data: { ...submissionData } })
         .then( res => { this.handleFormSubmitResponse(res) })
         .catch(err => { this.handleFormSubmitResponse(err) });
     }

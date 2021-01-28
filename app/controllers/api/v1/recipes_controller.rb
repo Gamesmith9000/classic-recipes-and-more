@@ -118,7 +118,7 @@ module Api
 
             def inclusion_options
                 options = {}
-                options[:include] = [:instructions, :photos]
+                options[:include] = [:instructions, :photo]
                 return options
             end
 
@@ -130,9 +130,10 @@ module Api
                 params.require(:recipe).permit(
                     :description,
                     :featured,
+                    :photo_id,
                     :title, 
                     :ingredients => [], 
-                    :instuctions => [ :content, :id, :ordinal  ] # :recipe_id
+                    :instructions => [ :content, :id, :ordinal ]
                 )
             end
 

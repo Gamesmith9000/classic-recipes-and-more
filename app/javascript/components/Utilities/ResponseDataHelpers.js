@@ -45,8 +45,8 @@ export function convertResponseForState (responseData) {
         }
 
         const associationName = camelCase(itemData.type);
-        const targetListName = isSingularAssociation(associationName) === true ? associationName : associationName + 's';
-        conversion[targetListName].push(itemConversion);
+        if(isSingularAssociation(associationName) === true) { conversion[associationName] = itemConversion; }
+        else { conversion[`${associationName}s`].push(itemConversion); }       
     }
 
     conversion.associationPropertyNames = associationNames;
