@@ -199,10 +199,11 @@ class RecipeUpsertForm extends React.Component {
     handlePhotoChosen = (photoData) => {     
         if(!photoData) { return; }
         const newCurrentState = { ...this.state.current };
-        
+        const convertedData = { ...photoData.attributes, id: parseInt(photoData.id) };
+
         if(this.state.photoPickerTarget.descriptor === 'recipe') {
-            newCurrentState.photo = photoData;
-            newCurrentState.photoId = parseInt(photoData.id);
+            newCurrentState.photo = convertedData;
+            newCurrentState.photoId = convertedData.id;
         }
 
         this.setState({

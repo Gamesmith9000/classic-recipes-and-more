@@ -165,7 +165,7 @@ class RecipeUpsertFormUi extends React.Component {
             <ContentOptionsContext.Consumer>
                 { value =>
                     <VersionedPhoto 
-                        uploadedFileData={photoState?.attributes?.file}
+                        uploadedFileData={photoState?.file}
                         uploaderNamePrefix="photo"
                         uploadedFileVersionName={value.photoPicker.exportedImageVersion}
                         textDisplayForNoPhoto="(No photo chosen)"

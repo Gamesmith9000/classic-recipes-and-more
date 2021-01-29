@@ -35,6 +35,11 @@ module Api
                 recipe = Recipe.new(recipe_params)
 
                 if recipe.save
+                    if params.has_key? :photo_id
+                        photo = params[:photo_id].nil? == false ? Photo.find_by_id(params[:photo_id]) : nil
+                        photo.update(:recipe_id => recipe.id) if photo.nil? == false
+                    end
+
                     if params.has_key? :instructions
                         params[:instructions].each do |instruction|
                             Instruction.create(:content => instruction[:content], :ordinal => instruction[:ordinal], :recipe_id => recipe.id)
