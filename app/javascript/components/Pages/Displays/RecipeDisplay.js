@@ -2,32 +2,23 @@ import React from 'react'
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 
 function RecipeDisplay (props) {
-    const { description, featured, ingredients, photoVersion, previewPhotoUrl, sections, title } = props;
+    const { allowUnfeatured, description, featured, ingredients, instructions, photo, photoVersion, previewPhotoUrl, title } = props;
 
-    const displayPermitted = featured === true ? true : (props.allowUnfeatured && props.allowUnfeatured === true);
-    if(displayPermitted === false) { return; }
+    if(featured === false && allowUnfeatured !== true) { return null; }
 
     const mappedIngredients = () => {
         if(!ingredients) { return null; }
-
-        const mapped = ingredients.map((element, index) => {
-            return <div className="ingredient" key={index}>{element}</div>;
-        })
-
-        return <div className="ingredients">{mapped}</div>;
+        const mappedItems = ingredients.map((element, index) => { return <li className="ingredient" key={index}>{element}</li> });
+        return <ul className="ingredients">{mappedItems}</ul>;
     }
-    /*
-    const mappedSections = () => {
-        if(!sections) { return null; }
 
-        const mapped = sections.map((element, index) => {
-            // [NOTE] Since photos cannot yet be added by admin to recipe sections, they are not mapped here
-            return <div className="section" key={index}>{element.text_content}</div>;
-        })
-
-        return <div className="sections">{mapped}</div>;
+    const mappedInstructions = () => {
+        if(!instructions) { return null; }
+        const ordinalSort = (a,b) => { return a.ordinal - b.ordinal; }
+        const mappedItems = instructions.sort(ordinalSort).map((element) => { return <li className="instruction" key={element.id}>{element.content}</li> });
+        return <ul className="instructions">{mappedItems}</ul>;
     }
-    */
+
     return (
         <div className="recipe-display">
             <h1>{title}</h1>
@@ -40,7 +31,7 @@ function RecipeDisplay (props) {
             <h2>Ingredients</h2>
             { mappedIngredients() }
             <h2>Instructions</h2>
-            {/* { mappedSections() } */}
+            { mappedInstructions() }
         </div>
     );
 }
