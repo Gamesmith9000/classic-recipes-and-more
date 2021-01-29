@@ -8,7 +8,7 @@ function RecipeDisplay (props) {
     if(displayPermitted === false) { return; }
 
     const mappedIngredients = () => {
-        if(!ingredients) { return; }
+        if(!ingredients) { return null; }
 
         const mapped = ingredients.map((element, index) => {
             return <div className="ingredient" key={index}>{element}</div>;
@@ -16,7 +16,7 @@ function RecipeDisplay (props) {
 
         return <div className="ingredients">{mapped}</div>;
     }
-
+    /*
     const mappedSections = () => {
         if(!sections) { return null; }
 
@@ -27,7 +27,7 @@ function RecipeDisplay (props) {
 
         return <div className="sections">{mapped}</div>;
     }
-
+    */
     return (
         <div className="recipe-display">
             <h1>{title}</h1>
@@ -40,7 +40,7 @@ function RecipeDisplay (props) {
             <h2>Ingredients</h2>
             { mappedIngredients() }
             <h2>Instructions</h2>
-            { mappedSections() }
+            {/* { mappedSections() } */}
         </div>
     );
 }
