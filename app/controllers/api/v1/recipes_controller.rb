@@ -57,7 +57,27 @@ module Api
                     prior_instructions_ids.push p.id
                 end
 
+                prior_photo_id = recipe.photo_id
+
                 if recipe.update(recipe_params)
+                    if params.has_key? :photo_id
+                        # if a photo_id was specified before updating...
+                        if(prior_photo_id.nil? == false)
+                            # find the photo (if it exists) and clear out its recipe_id
+                            prior_photo = Photo.find_by_id(prior_photo_id)
+                            prior_photo.update(:recipe_id => nil) if prior_photo.nil? == false
+                        end
+
+                        photo = params[:photo_id].nil? == false ? Photo.find_by_id(params[:photo_id]) : nil
+
+                        if photo.nil? == false
+                            photo.update(:recipe_id => recipe.id)
+                        else
+                            # set photo_id to nil if it wasn't already
+                            recipe.update(:photo_id => nil) if prior_photo.nil? == false
+                        end
+                    end
+
                     if params.has_key? :instructions
                         params[:instructions].each do |i|
                             has_id_key = i.has_key?(:id) == true
