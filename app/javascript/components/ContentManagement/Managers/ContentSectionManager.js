@@ -113,10 +113,34 @@ const ContentSectionsInfo = {
                         photoPickerTarget: new NestedPhotoPickerTarget(null, null),
                         prior: defaultRecipeState()
                     }
+                },
+                onAddListItem: {
+                    ingredient: function (stateCopy, listCopy) {
+                        const nextId = stateCopy.nextUniqueIngredientLocalId;
+                        listCopy.push(new TextSectionWithId(nextId, ''));
+                        stateCopy.current.ingredients = listCopy;
+                        stateCopy.nextUniqueIngredientLocalId = nextId + 1;
+                        return stateCopy;
+                    },
+                    instruction: function (stateCopy, listCopy) {
+                        const nextId = (stateCopy.addedInstructionsCount + 1) * -1;
+                        listCopy.push({ content: '', id: nextId, ordinal: null });
+                        stateCopy.current.instructions = listCopy;
+                        stateCopy.addedInstructionsCount = -nextId;
+                        return stateCopy;
+                    }
+                },
+                propertyUpdatesOnPhotoChosen : function (convertedPhotoData, currentState, photoPickerTargetState) {
+                    if(photoPickerTargetState.descriptor === 'recipe') {
+                        currentState.photo = convertedPhotoData;
+                        currentState.photoId = convertedPhotoData.id;
+                    }
+
+                    return currentState;
                 }
             }}
         /> } },
-        { name: 'Photos (Old)',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
+        { name: 'Photos (Old)',     renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Photos (Updated)', renderComponent: function (props) { return <ResourceManager    
             {...props} 
             destroyerUiComponent={(destoyerUiProps) => <PhotoDestroyerUi {...destoyerUiProps} />}

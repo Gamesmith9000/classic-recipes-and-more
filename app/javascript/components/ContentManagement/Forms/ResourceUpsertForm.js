@@ -70,7 +70,20 @@ class ResourceUpsertForm extends React.Component {
         });
     }
 
-    handleDeleteButtonInput = (event, resourceName, index) => {
+    handleAddListItem = (event, resourceName) => {
+        event.preventDefault();
+
+        const { onAddListItem } = this.props;
+        const name = camelCase(resourceName);
+        
+        if(!onAddListItem || onAddListItem.hasOwnProperty(name) === false) { return; }
+
+        const list = this.state.current[name + 's'].slice();
+        const updatedState = onAddListItem[name]({ ...this.state }, list);
+        this.setState({ ...updatedState });
+    }
+
+    handleDeleteListItem = (event, resourceName, index) => {
         event.preventDefault();
         
         const name = camelCase(resourceName);
@@ -181,17 +194,17 @@ class ResourceUpsertForm extends React.Component {
     }
 
     handlePhotoChosen = (photoData) => {     
+        const { propertyUpdatesOnPhotoChosen } = this.props;
         if(!photoData) { return; }
-        const newCurrentState = { ...this.state.current };
         const convertedData = { ...photoData.attributes, id: parseInt(photoData.id) };
 
-        if(this.state.photoPickerTarget.descriptor === 'recipe') {
-            newCurrentState.photo = convertedData;
-            newCurrentState.photoId = convertedData.id;
-        }
+        const updatedCurrentState = propertyUpdatesOnPhotoChosen 
+            ? propertyUpdatesOnPhotoChosen(convertedData, { ...this.state.current }, { ...this.state.photoPickerTarget })
+            : { ...this.state.current }
+        ;
 
         this.setState({
-            current: newCurrentState,
+            current: updatedCurrentState,
             photoPickerIsOpen: false,
             photoPickerTarget: { descriptor: null, listIndex: null }
         });
@@ -307,10 +320,10 @@ class ResourceUpsertForm extends React.Component {
                 allowSubmit={allowSubmit}
                 dragEndStateUpdate={this.dragEndStateUpdate}
                 getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
-                onAddIngredient={this.handleAddIngredient}
-                onAddInstruction={this.handleAddInstruction}
+                onAddIngredient={(event) => this.handleAddListItem(event, 'ingredient')}
+                onAddInstruction={(event) => this.handleAddListItem(event, 'instruction')}
                 onClose={onClose}
-                onDeleteButtonInput={(event, resourceName, index) => this.handleDeleteButtonInput(event, resourceName, index)}
+                onDeleteButtonInput={(event, resourceName, index) => this.handleDeleteListItem(event, resourceName, index)}
                 onFormSubmit={this.handleFormSubmit}
                 onOmitRecipePhoto={(event) => this.handleUpdateCurrentFromList(event, ['photo', 'photoId'], [null, null])}
                 onOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
