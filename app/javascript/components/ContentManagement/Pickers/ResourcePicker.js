@@ -69,8 +69,8 @@ class ResourcePicker extends React.Component {
     }
 
     componentDidMount () {
-        const { alternateIndexUrl, itemName, nonSortByFields } = this.props;
-        const indexUrl = alternateIndexUrl ? alternateIndexUrl : `/api/v1/${snakeCase(itemName + 's')}.json`
+        const { itemName, nonSortByFields } = this.props;
+        const indexUrl = `/api/v1/${snakeCase(itemName + 's')}.json`;
 
         axios.get(indexUrl)
         .then(res => {

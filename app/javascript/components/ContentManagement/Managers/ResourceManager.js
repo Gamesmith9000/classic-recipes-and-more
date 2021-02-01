@@ -21,8 +21,8 @@ class ResourceManager extends React.Component {
     }
 
     renderUpsertForm = (additionalProps) => {
-        const { alternateShowUrl, alternateUpdateUrl, upsertFormComponent } = this.props;
-        const upsertProps = {...additionalProps, alternateShowUrl, alternateUpdateUrl };
+        const { upsertFormComponent } = this.props;
+        const upsertProps = { ...additionalProps };
         return <Fragment>{upsertFormComponent(upsertProps)}</Fragment>
     }
 
@@ -36,7 +36,6 @@ class ResourceManager extends React.Component {
 
     render() { 
         const { itemName, alternateSubcomponentKey } = this.props;
-        const { alternateCreateUrl, alternateDeleteUrl, alternateIndexUrl, alternateShowUrl, alternateUpdateUrl } = this.props;
         const { destroyerUiComponent, mappedPreviewUiComponent } = this.props;
         const { additionalMappedItemPreviewProps, nonSortByFields } = this.props;
 
@@ -64,7 +63,6 @@ class ResourceManager extends React.Component {
                     <ResourcePicker 
                         {...sharedProps}
                         additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
-                        alternateIndexUrl={alternateIndexUrl}
                         key={`${keyProp}-picker`}
                         mappedPreviewUiComponent={mappedPreviewUiComponent}
                         nonSortByFields={nonSortByFields}
@@ -74,9 +72,7 @@ class ResourceManager extends React.Component {
                     />
                 }
                 {this.state.upsertFormIsOpen === true &&
-                    this.renderUpsertForm({...sharedProps, alternateCreateUrl, alternateUpdateUrl, 
-                        onClose: (newSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(newSelectedItemId))
-                    })
+                    this.renderUpsertForm({ ...sharedProps, onClose: (newSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(newSelectedItemId)) })
                 }
             </div>
         )

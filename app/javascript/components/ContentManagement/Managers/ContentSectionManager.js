@@ -1,18 +1,17 @@
 import React, { Fragment } from 'react'
 
 import PageManager from './PageManager'
-import PhotoManager from './PhotoManager'
 import ResourceManager from './ResourceManager'
 
-
-import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
+import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
 import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
+import PhotoUpsertForm from '../Forms/PhotoUpsertForm'
 import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
-
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
-import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
-import PhotoUpsertForm from '../Forms/PhotoUpsertForm'
+import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
+
+import PhotoManager from './PhotoManager'
 
 
 class ContentSectionManager extends React.Component {
@@ -25,10 +24,6 @@ class ContentSectionManager extends React.Component {
         if(ContentSectionsInfo.isValidSectionId(newSectionId) === false) { return; } 
 
         this.props.changeContentSection(newSectionId);
-        // this.setState({
-        //     contentSectionOpen: true,
-        //     selectedContentSection: newSectionId
-        // });
     }
 
     render() {
@@ -74,10 +69,6 @@ const ContentSectionsInfo = {
         { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager 
             {...props} 
             // additionalMappedItemPreviewProps
-            // alternateDeleteUrl
-            // alternateIndexUrl
-            // alternateShowUrl
-            // alternateUpdateUrl
             destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
             key="recipe-manager"
@@ -85,7 +76,7 @@ const ContentSectionsInfo = {
             nonSortByFields={['ingredients', 'preview_photo_id']}
             upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} previewPhotoVersion="small" />}
         /> } },
-        { name: 'Photos',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
+        { name: 'Photos (Old)',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Photos (Updated)', renderComponent: function (props) { return <ResourceManager    
             {...props} 
             destroyerUiComponent={(destoyerUiProps) => <PhotoDestroyerUi {...destoyerUiProps} />}
