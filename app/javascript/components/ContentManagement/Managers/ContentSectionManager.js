@@ -3,15 +3,13 @@ import React, { Fragment } from 'react'
 import PageManager from './PageManager'
 import PhotoManager from './PhotoManager'
 import ResourceManager from './ResourceManager'
-import ResourceDestroyer from '../Destroyers/ResourceDestroyer'
+
 
 import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
 import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
 import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
 
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
-import ProductUpsertForm from '../Forms/ProductUpsertForm'
-import MappedProductPreviewUi from '../Pickers/Subcomponents/MappedProductPreviewUi'
 import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
 import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
 import PhotoUpsertForm from '../Forms/PhotoUpsertForm'
@@ -96,15 +94,6 @@ const ContentSectionsInfo = {
             mappedPreviewUiComponent={(previewProps, key) => <MappedPhotoPreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['file']}
             upsertFormComponent={(upsertProps) => <PhotoUpsertForm {...upsertProps} previewPhotoVersion="small" />}
-        /> } },
-        { name: 'Product Photos',   renderComponent: function (props) { return <PhotoManager    {...props} key="p-photo"  uploaderNamePrefix ="productPhoto" /> } },
-        { name: 'Products',         renderComponent: function (props) { return <ResourceManager 
-            {...props} 
-            itemName="product"
-            key="product"
-            mappedPreviewUiComponent={(previewProps, key) => <MappedProductPreviewUi {...previewProps} key={key} /> } 
-            nonSortByFields={['product_photo_id']}
-            upsertFormComponent={(upsertProps) => <ProductUpsertForm {...upsertProps} />}
         /> } }
     ]
 }
