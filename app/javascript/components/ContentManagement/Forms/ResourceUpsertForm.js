@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import axios from 'axios'
 import { camelCase, snakeCase } from 'change-case'
 
-import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
+import RecipeUpsertFormUi2 from './Subcomponents/RecipeUpsertFormUi2'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 import BackendConstants from '../../Utilities/BackendConstants'
@@ -29,7 +29,7 @@ class ResourceUpsertForm extends React.Component {
             addedInstructionsCount: 1,
             associationPropertyNames: { many: [], one: [] },
             current: defaultRecipeState(),
-            existingRecipe: false,
+            isExistingItem: false,
             nextUniqueIngredientLocalId: 1,
             photoPickerIsOpen: false,
             photoPickerTarget: new NestedPhotoPickerTarget(null, null),
@@ -114,8 +114,8 @@ class ResourceUpsertForm extends React.Component {
         const { description, featured, photoId, title } = this.state.current;
         const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
 
-        const requestType = this.state.existingRecipe === true ? 'patch' : 'post';
-        const requestUrl = this.state.existingRecipe === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
+        const requestType = this.state.isExistingItem === true ? 'patch' : 'post';
+        const requestUrl = this.state.isExistingItem === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
 
         const mainData = { description, featured, photoId, title };
 
@@ -179,7 +179,7 @@ class ResourceUpsertForm extends React.Component {
 
     handleFormSubmitResponse = (res) => {
         if(res?.status === 200 && res.data?.data?.type === "recipe") {
-            if(this.state.existingRecipe === false) { this.props.onClose(res.data.data.id); }
+            if(this.state.isExistingItem === false) { this.props.onClose(res.data.data.id); }
             else { this.initializeComponentState(); }
         }
         else { 
@@ -297,7 +297,7 @@ class ResourceUpsertForm extends React.Component {
                     addedInstructionsCount: 0,
                     associationPropertyNames: assocPropNames,
                     current: currentRecipeState(),
-                    existingRecipe: true,
+                    isExistingItem: true,
                     nextUniqueIngredientLocalId: ingredientsLength,
                     prior: currentRecipeState(),
                 });
@@ -312,7 +312,7 @@ class ResourceUpsertForm extends React.Component {
 
     render() {
         const { onClose, selectedItemId } = this.props;
-        const allowSubmit = (this.state.existingRecipe === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
+        const allowSubmit = (this.state.isExistingItem === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
 
         return <Fragment>
             { this.state.photoPickerIsOpen === true &&
@@ -321,7 +321,7 @@ class ResourceUpsertForm extends React.Component {
                     onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
                 />
             }
-            <RecipeUpsertFormUi 
+            <RecipeUpsertFormUi2 
                 allowSubmit={allowSubmit}
                 dragEndStateUpdate={this.dragEndStateUpdate}
                 getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
