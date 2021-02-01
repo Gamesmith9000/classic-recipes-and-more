@@ -14,40 +14,34 @@ import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewU
 import PhotoManager from './PhotoManager'
 
 
-class ContentSectionManager extends React.Component {
-    constructor(props) {
-        super();
-    }
+export function ContentSectionManager(props) {
+    const { changeContentSection, closeContentSection, contentSectionOpen, selectedContentSection} = props;
 
-    tryChangeContentSection = (newSectionIdentifier) => {
+    const tryChangeContentSection = (newSectionIdentifier) => {
         const newSectionId = parseInt(newSectionIdentifier);
         if(ContentSectionsInfo.isValidSectionId(newSectionId) === false) { return; } 
 
-        this.props.changeContentSection(newSectionId);
+        changeContentSection(newSectionId);
     }
 
-    render() {
-        const { closeContentSection, contentSectionOpen, selectedContentSection} = this.props;
+    return (
+        <Fragment>
+            <ContentSectionPicker 
+                allSectionNames={ContentSectionsInfo.allSectionNames()}
+                changeContentSection={(newSectionId) => tryChangeContentSection(newSectionId)}
+                closeContentSection={closeContentSection}      
+                contentSectionOpen={contentSectionOpen}
+                selectedContentSection={selectedContentSection}
+            />
 
-        return (
-            <Fragment>
-                <ContentSectionPicker 
-                    allSectionNames={ContentSectionsInfo.allSectionNames()}
-                    changeContentSection={(newSectionId) => this.tryChangeContentSection(newSectionId)}
-                    closeContentSection={closeContentSection}      
-                    contentSectionOpen={contentSectionOpen}
-                    selectedContentSection={selectedContentSection}
-                />
-
-                <hr />
-                { contentSectionOpen === true &&
-                    <Fragment>
-                        { ContentSectionsInfo.sections[selectedContentSection].renderComponent() }
-                    </Fragment>
-                }
-            </Fragment>
-        );
-    }
+            <hr />
+            { contentSectionOpen === true &&
+                <Fragment>
+                    { ContentSectionsInfo.sections[selectedContentSection].renderComponent() }
+                </Fragment>
+            }
+        </Fragment>
+    );
 }
 
 export default ContentSectionManager;
