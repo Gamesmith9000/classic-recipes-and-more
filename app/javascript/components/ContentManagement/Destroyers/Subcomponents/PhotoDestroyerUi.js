@@ -1,9 +1,7 @@
 import React, { Fragment } from 'react'
 
-export function PhotoDestroyerUi(props) {
-    // [NOTE] There is currently not error checking for all props
-    
-    const { onClose, onDestroyButtonPress, itemData, selectedItemId } = props;
+export function PhotoDestroyerUi(props) {    
+    const { onClose, onDestroyButtonPress, itemData } = props;
     const { id, attributes: { file, tag, title } } = itemData;
 
     return (

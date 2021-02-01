@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react'
 import { capitalCase, paramCase, sentenceCase } from 'change-case'
+import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
 import ResourcePicker from '../Pickers/ResourcePicker'
 import { isValuelessFalsey } from '../../Utilities/Helpers';
-import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
 
 class ResourceManager extends React.Component {
     constructor () {
@@ -55,8 +55,6 @@ class ResourceManager extends React.Component {
                 {this.state.destroyerIsOpen === true &&
                     <ResourceDestroyer 
                         {...sharedProps}
-                        alternateDeleteUrl={alternateDeleteUrl}
-                        alternateShowUrl={alternateShowUrl}
                         destroyerUiComponent={destroyerUiComponent}
                         key={`${keyProp}-destroyer`}
                         onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
