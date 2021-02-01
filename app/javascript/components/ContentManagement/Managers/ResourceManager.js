@@ -3,6 +3,7 @@ import { capitalCase, paramCase, sentenceCase } from 'change-case'
 import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
 import ResourcePicker from '../Pickers/ResourcePicker'
 import { isValuelessFalsey } from '../../Utilities/Helpers';
+import ResourceUpsertForm from '../Forms/ResourceUpsertForm';
 
 class ResourceManager extends React.Component {
     constructor () {
@@ -36,7 +37,7 @@ class ResourceManager extends React.Component {
 
     render() { 
         const { itemName, alternateSubcomponentKey } = this.props;
-        const { destroyerUiComponent, mappedPreviewUiComponent } = this.props;
+        const { destroyerUiComponent, mappedPreviewUiComponent, upsertFormAdditionalProps, upsertFormUiComponent } = this.props;
         const { additionalMappedItemPreviewProps, nonSortByFields } = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
@@ -71,7 +72,19 @@ class ResourceManager extends React.Component {
                         onSelectedItemIdChange={(itemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(itemId))}
                     />
                 }
-                {this.state.upsertFormIsOpen === true &&
+                {this.state.upsertFormIsOpen === true && upsertFormAdditionalProps &&
+                    <ResourceUpsertForm 
+                        { ...sharedProps }
+                        { ...upsertFormAdditionalProps }                        
+                        // ITEM BELOW WILL NEED TO BE MODIFIED:
+                        // When an item is created or updated, it should stay selected on exit
+                        // Unsaved changes dialog will also need to be implemented
+                        onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
+                        upsertFormUiComponent={upsertFormUiComponent}
+                        useNestedPhotoPicker={true}
+                    />
+                }
+                {this.state.upsertFormIsOpen === true && !upsertFormAdditionalProps &&
                     this.renderUpsertForm({ ...sharedProps, onClose: (newSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(newSelectedItemId)) })
                 }
             </div>

@@ -11,6 +11,11 @@ import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
 import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
 
+import BackendConstants from  '../../Utilities/BackendConstants'
+import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
+
+import RecipeUpsertFormUi2 from '../Forms/Subcomponents/RecipeUpsertFormUi2'
+
 import PhotoManager from './PhotoManager'
 
 
@@ -69,6 +74,47 @@ const ContentSectionsInfo = {
             mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
             upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} previewPhotoVersion="small" />}
+            upsertFormUiComponent={(upsertProps) => <RecipeUpsertFormUi2 {...upsertProps} previewPhotoVersion="small" />}
+            upsertFormAdditionalProps={{
+                additionalResponseToStateConversion: function(convertedState, responseItemData) {
+                    const ingredients = responseItemData.attributes.ingredients.map((value, index) => {  return (new TextSectionWithId(index, value)) });
+
+                    convertedState.ingredients = ingredients;
+                    convertedState.addedInstructionsCount = 0
+                    convertedState.instructions.sort((a, b) => a.ordinal - b.ordinal);
+
+                    delete convertedState.addedInstructionsCount
+                    return convertedState;
+                },
+                additionalStateChangesDuringResponseConversion: function (convertedState, responseItemData) {
+                    return {
+                        addedInstructionsCount: 0,
+                        nextUniqueIngredientLocalId: responseItemData.attributes.ingredients.length
+                    };
+                },
+                createInitialState: function () {
+                    const defaultRecipeState = () => { 
+                        return {
+                            description: '',
+                            errors: {},
+                            featured: BackendConstants.models.recipe.defaults.featured,
+                            ingredients: [new TextSectionWithId (0, '')],
+                            instructions: [{ content: '', id: -1, ordinal: 0 }],
+                            title: ''
+                        }
+                    }
+                    return {
+                        addedInstructionsCount: 1,
+                        associationPropertyNames: { many: [], one: [] },
+                        current: defaultRecipeState(),
+                        isExistingItem: false,
+                        nextUniqueIngredientLocalId: 1,
+                        photoPickerIsOpen: false,
+                        photoPickerTarget: new NestedPhotoPickerTarget(null, null),
+                        prior: defaultRecipeState()
+                    }
+                }
+            }}
         /> } },
         { name: 'Photos (Old)',           renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
         { name: 'Photos (Updated)', renderComponent: function (props) { return <ResourceManager    
