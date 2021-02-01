@@ -110,8 +110,15 @@ module Api
 
             def destroy
                 recipe = Recipe.find_by_id(params[:id])
+                photo_id = recipe.photo_id
 
                 if recipe.destroy
+                    photo = photo_id.nil? == false ? Photo.find_by_id(:photo_id) : nil
+
+                    if photo.nil? == false
+                        photo.update(:recipe_id => nil)
+                    end
+
                     head :no_content
                 else
                     render_error(error: recipe.errors.messages)
