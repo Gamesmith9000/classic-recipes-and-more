@@ -5,8 +5,8 @@ import { camelCase, snakeCase } from 'change-case'
 import RecipeUpsertFormUi2 from './Subcomponents/RecipeUpsertFormUi2'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
-import BackendConstants from '../../Utilities/BackendConstants'
-import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
+
+import { TextSectionWithId } from '../../Utilities/Constructors'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
@@ -14,27 +14,9 @@ import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 class ResourceUpsertForm extends React.Component {
     //  Conversion from RecipeUpsertForm to a resuable upsert form
 
-    constructor() {
-        super();
-        const defaultRecipeState = () => { 
-            return {
-                description: '',
-                featured: BackendConstants.models.recipe.defaults.featured,
-                ingredients: [new TextSectionWithId (0, '')],
-                instructions: [{ content: '', id: -1, ordinal: 0 }],
-                title: ''
-            }
-        }
-        this.state = {
-            addedInstructionsCount: 1,
-            associationPropertyNames: { many: [], one: [] },
-            current: defaultRecipeState(),
-            isExistingItem: false,
-            nextUniqueIngredientLocalId: 1,
-            photoPickerIsOpen: false,
-            photoPickerTarget: new NestedPhotoPickerTarget(null, null),
-            prior: defaultRecipeState()
-        }
+    constructor(props) {
+        super(props)
+        this.state = props.createInitialState ? { ...props.createInitialState() } : { };
     }
 
     dragEndStateUpdate = (dragResult, listProperty) => {
@@ -178,7 +160,7 @@ class ResourceUpsertForm extends React.Component {
     }
 
     handleFormSubmitResponse = (res) => {
-        if(res?.status === 200 && res.data?.data?.type === "recipe") {
+        if(res?.status === 200 && res.data?.data?.type === snakeCase(this.props.itemName)) {
             if(this.state.isExistingItem === false) { this.props.onClose(res.data.data.id); }
             else { this.initializeComponentState(); }
         }
@@ -271,35 +253,35 @@ class ResourceUpsertForm extends React.Component {
     }
 
     initializeComponentState () {
-        const { selectedItemId } = this.props;
+        const { additionalResponseToStateConversion, additionalStateChangesDuringResponseConversion, itemName, selectedItemId } = this.props;
+        const getUrl = `/api/v1/${snakeCase(itemName + 's')}`;
 
         if(isValuelessFalsey(selectedItemId) === false) {
-            axios.get(`/api/v1/recipes/${selectedItemId}.json`)
+            axios.get(`${getUrl}/${selectedItemId}.json`)
             .then(res => {
-                const attributes = res.data.data.attributes;
-                let ingredientsLength = attributes.ingredients.length;
+                // [NOTE][OPTIMIZE]: convertResponseForState function is called up to 4 times.
+                //                      The calls are separate to prevent 'current' and 'prior' from being the same object
+                
                 let assocPropNames = convertResponseForState(res.data).associationPropertyNames;
 
-                const currentRecipeState = () => { 
+                const currentItemState = () => { 
                     const newState = convertResponseForState(res.data);
-                    const ingredients = attributes.ingredients.map((value, index) => {  return (new TextSectionWithId(index, value)) });
+                    delete newState.associationPropertyNames; 
 
-                    newState.ingredients = ingredients;
-                    newState.addedInstructionsCount = 0;
-                    newState.instructions.sort((a, b) => a.ordinal - b.ordinal);
-
-                    delete newState.addedInstructionsCount
-                    delete newState.associationPropertyNames;   
-                    return newState;
+                    if(additionalResponseToStateConversion) { return additionalResponseToStateConversion(newState, res.data.data);}
+                    else { return newState; }
                 }
 
+                const otherStateChanges = additionalStateChangesDuringResponseConversion 
+                ? additionalStateChangesDuringResponseConversion(currentItemState(), res.data.data) 
+                : { }
+
                 this.setState({
-                    addedInstructionsCount: 0,
+                    ...otherStateChanges,
                     associationPropertyNames: assocPropNames,
-                    current: currentRecipeState(),
+                    current: currentItemState(),
                     isExistingItem: true,
-                    nextUniqueIngredientLocalId: ingredientsLength,
-                    prior: currentRecipeState(),
+                    prior: currentItemState(),
                 });
             })
             .catch(err => console.log(err));
@@ -311,11 +293,11 @@ class ResourceUpsertForm extends React.Component {
     }
 
     render() {
-        const { onClose, selectedItemId } = this.props;
+        const { onClose, selectedItemId, useNestedPhotoPicker } = this.props;
         const allowSubmit = (this.state.isExistingItem === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
 
         return <Fragment>
-            { this.state.photoPickerIsOpen === true &&
+            { useNestedPhotoPicker === true && this.state.photoPickerIsOpen === true &&
                 <NestedPhotoPicker 
                     onCancelAndExit={this.handlePhotoPickerCancelAndExit} 
                     onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
