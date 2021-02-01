@@ -7,7 +7,7 @@ import { FlashMessagesDisplay } from '../components/Utilities/ComponentHelpers'
 import Navbar from '../components/Navbar'
 
 export function renderIndexToDom (allowAccessToContentPages) {
-    const usingPlaceholderPage = true;
+    const usingPlaceholderPage = false;
 
     const createTopDiv = function () {
         const element = document.body.appendChild(document.createElement('div'));
