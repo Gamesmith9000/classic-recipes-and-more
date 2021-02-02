@@ -28,8 +28,8 @@ class NestedPhotoPicker extends React.Component {
 
     render() {
         const { onCancelAndExit } = this.props;
-        const additionalMappedItemPreviewProps = { auxButtonText: "Choose", hideEditAndDeleteButtons: true }
-        additionalMappedItemPreviewProps.onAuxButtonPress = this.handlePhotoChosenForExport;
+        const mappedPreviewAdditionalProps = { auxButtonText: "Choose", hideEditAndDeleteButtons: true }
+        mappedPreviewAdditionalProps.onAuxButtonPress = this.handlePhotoChosenForExport;
 
         // The exit button will not render without the onCancelAndExit prop
         const exitButton = onCancelAndExit
@@ -43,11 +43,11 @@ class NestedPhotoPicker extends React.Component {
             </div>
             <ResourcePicker 
                 additionalClassNames="nested"
-                additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
                 itemName="photo"
                 key="photo-picker"
                 onDataFetched={(fetchedData) => this.setState({ photoData: fetchedData })}
                 onSelectedItemIdChange={(itemId) => this.setState({ selectedItemId: isNaN(itemId) === false ? itemId : null })}
+                mappedPreviewAdditionalProps={mappedPreviewAdditionalProps}
                 mappedPreviewUiComponent={(previewProps, key) => <MappedPhotoPreviewUi {...previewProps} key={key} />} 
                 // [NOTE][HARD CODED] nonSortByFields is copy-pasted from ContentSectionManager
                 nonSortByFields={['file']}

@@ -38,7 +38,7 @@ class ResourceManager extends React.Component {
     render() { 
         const { itemName, alternateSubcomponentKey } = this.props;
         const { destroyerUiComponent, mappedPreviewUiComponent, upsertFormAdditionalProps, upsertFormUiComponent } = this.props;
-        const { additionalMappedItemPreviewProps, nonSortByFields } = this.props;
+        const { mappedPreviewAdditionalProps, nonSortByFields } = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
         const managerClassName = `${paramCase(itemName)} resource-manager`;
@@ -63,8 +63,8 @@ class ResourceManager extends React.Component {
                 {this.state.pickerIsOpen === true &&
                     <ResourcePicker 
                         {...sharedProps}
-                        additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
                         key={`${keyProp}-picker`}
+                        mappedPreviewAdditionalProps={mappedPreviewAdditionalProps}
                         mappedPreviewUiComponent={mappedPreviewUiComponent}
                         nonSortByFields={nonSortByFields}
                         onDeleteButtonPress={this.handleDeleteButtonPress}

@@ -67,7 +67,7 @@ const ContentSectionsInfo = {
         { name: 'Pages',            renderComponent: function (props) { return <PageManager     {...props} /> } },
         { name: 'Recipes',          renderComponent: function (props) { return <ResourceManager 
             {...props} 
-            // additionalMappedItemPreviewProps
+            // mappedPreviewAdditionalProps
             destroyerUiComponent={(destoyerUiProps) => <RecipeDestroyerUi {...destoyerUiProps} />}
             itemName="recipe"
             key="recipe-manager"
@@ -105,7 +105,7 @@ const ContentSectionsInfo = {
                     }
                     return {
                         addedInstructionsCount: 1,
-                        associationPropertyNames: { many: [], one: [] },
+                        associationPropertyNames: { many: ['instructions'], one: ['photo'] },
                         current: defaultRecipeState(),
                         isExistingItem: false,
                         nextUniqueIngredientLocalId: 1,

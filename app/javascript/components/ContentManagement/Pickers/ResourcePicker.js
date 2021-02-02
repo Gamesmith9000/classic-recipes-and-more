@@ -32,7 +32,7 @@ class ResourcePicker extends React.Component {
         if(!itemDataList || ! this.props.mappedPreviewUiComponent ) { return null; }
 
         const { itemName, subcomponentKey } = this.props;
-        const { additionalMappedItemPreviewProps, mappedPreviewUiComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
+        const { mappedPreviewAdditionalProps, mappedPreviewUiComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
 
         const { byId, fieldIndex, validFields } = this.state.sorting;
         const sortedItemDataList = sortByAttributeNameOrId(itemDataList, validFields, fieldIndex, byId);
@@ -41,7 +41,7 @@ class ResourcePicker extends React.Component {
 
         const mappedPreviews = sortedItemDataList.map((item, index) => { 
             const mappedItemProps = {
-                ...additionalMappedItemPreviewProps, 
+                ...mappedPreviewAdditionalProps, 
                 itemData: item,
                 itemName: itemName,
                 mappedIndex: index,

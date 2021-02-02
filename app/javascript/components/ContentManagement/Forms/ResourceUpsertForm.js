@@ -190,7 +190,6 @@ class ResourceUpsertForm extends React.Component {
         this.setState({ current: updatedCurrentState });
     }
 
-
     handleUpdateCurrentFromEvent = (event, propertyName, propertyOfEventTarget='value', preventDefault = true) => {
         if(event && preventDefault === true) { event.preventDefault(); }
         if(!event || !propertyName || !propertyOfEventTarget || !this.state?.current) { return; }
