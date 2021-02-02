@@ -226,7 +226,7 @@ class ResourceUpsertForm extends React.Component {
     }
 
     initializeComponentState () {
-        const { additionalResponseToStateConversion, additionalStateChangesDuringResponseConversion, itemName, selectedItemId } = this.props;
+        const { itemName, selectedItemId, atResponseConversion: { additionalItemResponseModification, additionalStateModification } } = this.props;
         const getUrl = `/api/v1/${snakeCase(itemName + 's')}`;
 
         if(isValuelessFalsey(selectedItemId) === false) {
@@ -241,13 +241,14 @@ class ResourceUpsertForm extends React.Component {
                     const newState = convertResponseForState(res.data);
                     delete newState.associationPropertyNames; 
 
-                    if(additionalResponseToStateConversion) { return additionalResponseToStateConversion(newState, res.data.data);}
+                    if(additionalItemResponseModification) { return additionalItemResponseModification(newState, res.data.data);}
                     else { return newState; }
                 }
 
-                const otherStateChanges = additionalStateChangesDuringResponseConversion 
-                ? additionalStateChangesDuringResponseConversion(currentItemState(), res.data.data) 
-                : { }
+                const otherStateChanges = additionalStateModification 
+                    ? additionalStateModification(currentItemState(), res.data.data) 
+                    : { }
+                ;
 
                 this.setState({
                     ...otherStateChanges,

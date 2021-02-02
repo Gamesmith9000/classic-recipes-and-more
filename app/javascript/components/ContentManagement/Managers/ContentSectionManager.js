@@ -6,7 +6,6 @@ import ResourceManager from './ResourceManager'
 import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
 import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
 import PhotoUpsertForm from '../Forms/PhotoUpsertForm'
-import RecipeUpsertForm from '../Forms/RecipeUpsertForm'
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
 import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
@@ -73,24 +72,25 @@ const ContentSectionsInfo = {
             key="recipe-manager"
             mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormComponent={(upsertProps) => <RecipeUpsertForm {...upsertProps} previewPhotoVersion="small" />}
             upsertFormUiComponent={(upsertProps) => <RecipeUpsertFormUi2 {...upsertProps} previewPhotoVersion="small" />}
             upsertFormAdditionalProps={{
-                additionalResponseToStateConversion: function(convertedState, responseItemData) {
-                    const ingredients = responseItemData.attributes.ingredients.map((value, index) => {  return (new TextSectionWithId(index, value)) });
+                atResponseConversion: {
+                    additionalItemResponseModification: function(convertedState, responseItemData) {
+                        const ingredients = responseItemData.attributes.ingredients.map((value, index) => {  return (new TextSectionWithId(index, value)) });
 
-                    convertedState.ingredients = ingredients;
-                    convertedState.addedInstructionsCount = 0
-                    convertedState.instructions.sort((a, b) => a.ordinal - b.ordinal);
-
-                    delete convertedState.addedInstructionsCount
-                    return convertedState;
-                },
-                additionalStateChangesDuringResponseConversion: function (convertedState, responseItemData) {
-                    return {
-                        addedInstructionsCount: 0,
-                        nextUniqueIngredientLocalId: responseItemData.attributes.ingredients.length
-                    };
+                        convertedState.ingredients = ingredients;
+                        convertedState.addedInstructionsCount = 0
+                        convertedState.instructions.sort((a, b) => a.ordinal - b.ordinal);
+    
+                        delete convertedState.addedInstructionsCount
+                        return convertedState;
+                    },
+                    additionalStateModification: function (convertedState, responseItemData) {
+                        return {
+                            addedInstructionsCount: 0,
+                            nextUniqueIngredientLocalId: responseItemData.attributes.ingredients.length
+                        };
+                    }
                 },
                 createInitialState: function () {
                     const defaultRecipeState = () => { 
@@ -153,7 +153,8 @@ const ContentSectionsInfo = {
                     }
 
                     return currentState;
-                }
+                },
+                useNestedPhotoPicker: true
             }}
         /> } },
         { name: 'Photos (Old)',     renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },

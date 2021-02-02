@@ -72,20 +72,17 @@ class ResourceManager extends React.Component {
                         onSelectedItemIdChange={(itemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(itemId))}
                     />
                 }
-                {this.state.upsertFormIsOpen === true && upsertFormAdditionalProps &&
+                {this.state.upsertFormIsOpen === true &&
                     <ResourceUpsertForm 
                         { ...sharedProps }
                         { ...upsertFormAdditionalProps }                        
                         // ITEM BELOW WILL NEED TO BE MODIFIED:
-                        // When an item is created or updated, it should stay selected on exit
+                        // [NOTE] When an item is created or updated, it should stay selected on exit
                         // Unsaved changes dialog will also need to be implemented
                         onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
                         upsertFormUiComponent={upsertFormUiComponent}
                         useNestedPhotoPicker={true}
                     />
-                }
-                {this.state.upsertFormIsOpen === true && !upsertFormAdditionalProps &&
-                    this.renderUpsertForm({ ...sharedProps, onClose: (newSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(newSelectedItemId)) })
                 }
             </div>
         )
