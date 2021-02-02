@@ -179,12 +179,20 @@ class ResourceUpsertForm extends React.Component {
 
     handleUpdateCurrent = (event, newValue, propertyName, propertyPath = []) => {
         event.preventDefault();
-        if(!propertyName) { return; }
-        
         const updatedCurrentState = { ...this.state.current };
 
+        const changeItemValue = (containingObject) => {
+            if(isValuelessFalsey(newValue) === false && typeof(newValue) === 'object') {
+                // property name is ignored, since it's built into newValue
+                for (const [key, value] of Object.entries(newValue)) {
+                    containingObject[key] = value;
+                }
+            }
+            else { containingObject[propertyName] = newValue;  }
+        }
+
         if(!propertyPath || Array.isArray(propertyPath) === false || propertyPath.length < 1) {
-            updatedCurrentState[propertyName] = newValue;
+            changeItemValue(updatedCurrentState, propertyName);
         }
         else {
             let obj = updatedCurrentState;
@@ -199,7 +207,7 @@ class ResourceUpsertForm extends React.Component {
                 obj = obj[propName];
             }
 
-            if(objIsValid() === true) { obj[propertyName] = newValue; }
+            if(objIsValid() === true) { changeItemValue(obj); }
         }
         
         this.setState({ current: updatedCurrentState });
@@ -207,32 +215,6 @@ class ResourceUpsertForm extends React.Component {
 
     handleUpdateCurrentFromEvent = (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => {
         this.handleUpdateCurrent(event, event.target?.[propertyOfEventTarget], propertyName, propertyPath);
-    }
-
-    handleUpdateCurrentFromList = (event, propertyNames, updatedValues, preventDefault = true) => {
-        if(event && preventDefault === true) { event.preventDefault(); }
-        if(!this.state.current) { return; }
-
-        let invalidArguments = false;
-        let argumentsChecked = false;
-
-        // ensure that propertyNames & updatedValues are non-empty arrays of matching size
-        while(invalidArguments === false && argumentsChecked === false) {
-            if(!propertyNames || !updatedValues) { invalidArguments = true; }
-            if(Array.isArray(propertyNames) === false || Array.isArray(updatedValues) === false) { invalidArguments = true; }
-            if(propertyNames.length < 1 || updatedValues.length < 1 || propertyNames.length !== updatedValues.length) { invalidArguments = true; }
-            if(invalidArguments === false) { argumentsChecked = true; }
-        }
-        
-        if(invalidArguments === true) { return; }
-
-        const newRecipeState = { ...this.state.current }
-
-        for(let i = 0; i < propertyNames.length; i++) {
-            newRecipeState[propertyNames[i]] = updatedValues[i];
-        }
-
-        this.setState({ current: newRecipeState });
     }
 
     initializeComponentState () {
@@ -291,12 +273,11 @@ class ResourceUpsertForm extends React.Component {
                 allowSubmit={allowSubmit}
                 dragEndStateUpdate={this.dragEndStateUpdate}
                 getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
-                onAddIngredient={(event) => this.handleAddListItem(event, 'ingredient')}
-                onAddInstruction={(event) => this.handleAddListItem(event, 'instruction')}
+                onAddListItem={(event, resourceName) => this.handleAddListItem(event, resourceName)}
                 onClose={onClose}
                 onDeleteButtonInput={(event, resourceName, index) => this.handleDeleteListItem(event, resourceName, index)}
                 onFormSubmit={this.handleFormSubmit}
-                onOmitRecipePhoto={(event) => this.handleUpdateCurrentFromList(event, ['photo', 'photoId'], [null, null])}
+                onOmitRecipePhoto={(event) => this.handleUpdateCurrent(event, { photo: null, photoId: null }, null)}
                 onOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
                 onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', propertyPath = []) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath)}
                 parentState={this.state}

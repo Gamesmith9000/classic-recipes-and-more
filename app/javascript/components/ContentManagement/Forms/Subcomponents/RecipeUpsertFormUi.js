@@ -111,7 +111,7 @@ class RecipeUpsertFormUi extends React.Component {
     
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
-        const { onAddIngredient, onAddInstruction, onFormSubmit, onOmitRecipePhoto, onOpenPhotoPicker, onUpdateCurrentFromEvent } = this.props;
+        const { onAddListItem, onFormSubmit, onOmitRecipePhoto, onOpenPhotoPicker, onUpdateCurrentFromEvent } = this.props;
 
         const renderTitle = <Fragment>
             <label>
@@ -197,7 +197,7 @@ class RecipeUpsertFormUi extends React.Component {
                     </ul>
                 )}
             </Droppable>
-            <button onClick={onAddIngredient}>+</button>
+            <button onClick={(event) => onAddListItem(event, 'ingredient')}>+</button>
             </label>
             <br />
         </Fragment>
@@ -214,7 +214,7 @@ class RecipeUpsertFormUi extends React.Component {
                     </ul>
                 )}
             </Droppable>
-            <button onClick={onAddInstruction}>+</button>
+            <button onClick={(event) => onAddListItem(event, 'instruction')}>+</button>
             </label>
             <br />
         </Fragment>
