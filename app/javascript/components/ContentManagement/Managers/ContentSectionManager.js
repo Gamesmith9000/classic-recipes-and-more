@@ -130,7 +130,23 @@ const ContentSectionsInfo = {
                         return stateCopy;
                     }
                 },
-                propertyUpdatesOnPhotoChosen : function (convertedPhotoData, currentState, photoPickerTargetState) {
+                preSubmit: {
+                    modifyAssociations: function (associationsLists) {
+                        for(let i = 0; i < associationsLists.many['instructions'].length; i++) {
+                            const item = associationsLists.many['instructions'][i];
+                            item.ordinal = i;
+                            if(item.id < 1) { item.id = null; }
+                        }
+                    },
+                    modifyStateData: function (currentState) {
+                        const ingredients = currentState.ingredients.slice().map(value => {  return value.textContent; });
+                        delete currentState.ingredient;
+                        currentState.ingredients = ingredients;
+                        return currentState;
+                    },
+                    omittedSubmitProperties: ['photo']
+                },
+                propertyUpdatesOnPhotoChosen: function (convertedPhotoData, currentState, photoPickerTargetState) {
                     if(photoPickerTargetState.descriptor === 'recipe') {
                         currentState.photo = convertedPhotoData;
                         currentState.photoId = convertedPhotoData.id;

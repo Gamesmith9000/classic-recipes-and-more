@@ -6,13 +6,12 @@ import RecipeUpsertFormUi2 from './Subcomponents/RecipeUpsertFormUi2'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
-import { TextSectionWithId } from '../../Utilities/Constructors'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 
 class ResourceUpsertForm extends React.Component {
-    //  Conversion from RecipeUpsertForm to a resuable upsert form
+    //  Conversion from RecipeUpsertForm to a reusable upsert form
 
     constructor(props) {
         super(props)
@@ -38,36 +37,6 @@ class ResourceUpsertForm extends React.Component {
             if(this.state.current[listName][i][idProperty] === itemId) { return i; }
         }
         return -1;
-    }
-
-    handleAddIngredient = (event) => {
-        event.preventDefault();
-
-        const nextId = this.state.nextUniqueIngredientLocalId;
-        let ingredients = this.state.current.ingredients.slice();
-        ingredients.push(new TextSectionWithId(nextId, ''));
-
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState.ingredients = ingredients;
-        this.setState({ 
-            current: updatedCurrentState,
-            nextUniqueIngredientLocalId: nextId + 1
-        });
-    }
-
-    handleAddInstruction = (event) => {
-        event.preventDefault();
-
-        const nextId = (this.state.addedInstructionsCount + 1) * -1;
-        let instructions = this.state.current.instructions.slice();
-        instructions.push({ content: '', id: nextId, ordinal: null });
-
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState.instructions = instructions;
-        this.setState({ 
-            addedInstructionsCount: -nextId,
-            current: updatedCurrentState,
-        });
     }
 
     handleAddListItem = (event, resourceName) => {
@@ -103,16 +72,12 @@ class ResourceUpsertForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        // note that excluded properties' names will be automatically converted to snake case
-        const excludedProperties = ['photo'];
-
-        const { description, featured, photoId, title } = this.state.current;
-        const ingredients = this.state.current.ingredients.map(value => {  return value.textContent; });
+        const { itemName, selectedItemId, preSubmit: { modifyAssociations, modifyStateData, omittedSubmitProperties } } = this.props;
 
         const requestType = this.state.isExistingItem === true ? 'patch' : 'post';
-        const requestUrl = this.state.isExistingItem === true ? `/api/v1/recipes/${this.props.selectedItemId}` : '/api/v1/recipes';
+        const requestUrl = `/api/v1/${snakeCase(itemName)}` + (this.state.isExistingItem === true ? `s/${selectedItemId}` : 's');
 
-        const mainData = { description, featured, photoId, title };
+        const mainData = modifyStateData ? modifyStateData({...this.state.current}) : { ...this.state.current };
 
         // prepare associations data
 
@@ -132,13 +97,7 @@ class ResourceUpsertForm extends React.Component {
             }
         }
 
-        if(assocationLists.many?.hasOwnProperty('instructions') === true) {
-            for(let i = 0; i < assocationLists.many['instructions'].length; i++) {
-                const item = assocationLists.many['instructions'][i];
-                item.ordinal = i;
-                if(item.id < 0) { item.id = null; }
-            }
-        }
+        if(modifyAssociations) { modifyAssociations(assocationLists); }
 
         // convert remaining key names back to snake case
 
@@ -158,15 +117,17 @@ class ResourceUpsertForm extends React.Component {
     
         // aggregate properties and remove specified exclusions
 
-        const submissionData = { ...assocationLists.many, ...assocationLists.one, ...mainData, ingredients };
+        const submissionData = { ...assocationLists.many, ...assocationLists.one, ...mainData };
 
-        for(let i = 0; i < excludedProperties.length; i++) {
-            const propertyName = snakeCase(excludedProperties[i]);
-            if(submissionData.hasOwnProperty(propertyName) === true) {
-                delete submissionData[propertyName];
+        if(omittedSubmitProperties && Array.isArray(omittedSubmitProperties) === true) {
+            for(let i = 0; i < omittedSubmitProperties.length; i++) {
+                const propertyName = snakeCase(omittedSubmitProperties[i]);
+                if(submissionData.hasOwnProperty(propertyName) === true) {
+                    delete submissionData[propertyName];
+                }
             }
         }
-
+        
         axios({ method: requestType, url: requestUrl, data: { ...submissionData } })
         .then( res => { this.handleFormSubmitResponse(res) })
         .catch(err => { this.handleFormSubmitResponse(err) });
