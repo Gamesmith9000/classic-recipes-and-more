@@ -17,7 +17,7 @@ class RecipeUpsertFormUi extends React.Component {
     }
 
     mapIngredientInputs = (ingredientList) => {
-        const { getItemIndexFromState, parentState, onDeleteButtonInput, onTextInputChange } = this.props;
+        const { getItemIndexFromState, parentState, onDeleteButtonInput, onUpdateCurrentFromEvent } = this.props;
 
         return ingredientList.map((element, index) => {
             const arrayIndex = getItemIndexFromState(element.localId, 'ingredient', 'localId');
@@ -30,7 +30,7 @@ class RecipeUpsertFormUi extends React.Component {
                             <label>
                                 <input 
                                     className="ingredient-text-input"
-                                    onChange={(event) => onTextInputChange(event, 'ingredient', 'textContent' , arrayIndex)}
+                                    onChange={(event) => onUpdateCurrentFromEvent(event, 'textContent', 'value', ['ingredients', arrayIndex])}
                                     type="text"
                                     value={parentState.current.ingredients[arrayIndex].textContent}
                                 />
@@ -48,7 +48,7 @@ class RecipeUpsertFormUi extends React.Component {
     }
 
     mapInstructionInputs = (instructionsList) => {
-        const { getItemIndexFromState, parentState, onDeleteButtonInput, onTextInputChange } = this.props;
+        const { getItemIndexFromState, parentState, onDeleteButtonInput, onUpdateCurrentFromEvent } = this.props;
 
         return instructionsList.map((element, index) => {
             const arrayIndex = getItemIndexFromState(element.id, 'instruction');
@@ -61,7 +61,7 @@ class RecipeUpsertFormUi extends React.Component {
                             <label>
                                 <input 
                                     className="instruction-text-input"
-                                    onChange={(event) => onTextInputChange(event, 'instruction', 'content', arrayIndex)}
+                                    onChange={(event) => onUpdateCurrentFromEvent(event, 'content', 'value', ['instructions', arrayIndex])}
                                     type="text"
                                     value={parentState.current.instructions[arrayIndex].content}
                                 />

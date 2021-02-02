@@ -11,7 +11,6 @@ import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 
 class ResourceUpsertForm extends React.Component {
-
     constructor(props) {
         super(props)
         this.state = props.createInitialState ? { ...props.createInitialState() } : { };
@@ -178,24 +177,36 @@ class ResourceUpsertForm extends React.Component {
         });
     }
 
-    handleTextInputChange = (event, resourceName, propertyName, index) => {
-        const listName = camelCase(resourceName) + 's';
-
-        let updatedList = this.state.current[listName].slice();
-        updatedList[index][propertyName] = event.target.value;
+    handleUpdateCurrent = (event, newValue, propertyName, propertyPath = []) => {
+        event.preventDefault();
+        if(!propertyName) { return; }
         
-        let updatedCurrentState = this.state.current;
-        updatedCurrentState[listName] = updatedList;
+        const updatedCurrentState = { ...this.state.current };
+
+        if(!propertyPath || Array.isArray(propertyPath) === false || propertyPath.length < 1) {
+            updatedCurrentState[propertyName] = newValue;
+        }
+        else {
+            let obj = updatedCurrentState;
+            const objIsValid = () => {
+                if(obj === null) { return false; }
+                if(Array.isArray(obj) === true) { return true; }
+                return (typeof(obj) === 'object');
+            }
+
+            for(let i = 0; i < propertyPath.length && objIsValid() === true; i++) {
+                const propName = propertyPath[i];
+                obj = obj[propName];
+            }
+
+            if(objIsValid() === true) { obj[propertyName] = newValue; }
+        }
+        
         this.setState({ current: updatedCurrentState });
     }
 
-    handleUpdateCurrentFromEvent = (event, propertyName, propertyOfEventTarget='value', preventDefault = true) => {
-        if(event && preventDefault === true) { event.preventDefault(); }
-        if(!event || !propertyName || !propertyOfEventTarget || !this.state?.current) { return; }
-
-        const newRecipeState = { ...this.state.current };
-        newRecipeState[propertyName] = event.target?.[propertyOfEventTarget];
-        this.setState({ current: newRecipeState });
+    handleUpdateCurrentFromEvent = (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => {
+        this.handleUpdateCurrent(event, event.target?.[propertyOfEventTarget], propertyName, propertyPath);
     }
 
     handleUpdateCurrentFromList = (event, propertyNames, updatedValues, preventDefault = true) => {
@@ -287,8 +298,7 @@ class ResourceUpsertForm extends React.Component {
                 onFormSubmit={this.handleFormSubmit}
                 onOmitRecipePhoto={(event) => this.handleUpdateCurrentFromList(event, ['photo', 'photoId'], [null, null])}
                 onOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
-                onTextInputChange={this.handleTextInputChange}
-                onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', preventDefault = true) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, preventDefault)}
+                onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', propertyPath = []) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath)}
                 parentState={this.state}
                 selectedItemId={selectedItemId}
             />
