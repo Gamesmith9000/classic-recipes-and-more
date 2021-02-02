@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import axios from 'axios'
 import { camelCase, snakeCase } from 'change-case'
 
-import RecipeUpsertFormUi2 from './Subcomponents/RecipeUpsertFormUi2'
+import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
@@ -11,7 +11,6 @@ import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 
 class ResourceUpsertForm extends React.Component {
-    //  Conversion from RecipeUpsertForm to a reusable upsert form
 
     constructor(props) {
         super(props)
@@ -277,7 +276,7 @@ class ResourceUpsertForm extends React.Component {
                     onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
                 />
             }
-            <RecipeUpsertFormUi2 
+            <RecipeUpsertFormUi 
                 allowSubmit={allowSubmit}
                 dragEndStateUpdate={this.dragEndStateUpdate}
                 getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}

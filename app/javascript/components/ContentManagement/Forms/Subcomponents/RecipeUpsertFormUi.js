@@ -12,7 +12,7 @@ class RecipeUpsertFormUi extends React.Component {
 
     isExistingRecipeWithChanges = () => {
         const { parentState } = this.props;
-        if(parentState.existingRecipe !== true) { return false; }
+        if(parentState.isExistingItem !== true) { return false; }
         return !objectsHaveMatchingValues(parentState.current, parentState.prior);
     }
 
@@ -222,7 +222,7 @@ class RecipeUpsertFormUi extends React.Component {
         const renderFormButtons = <Fragment>
             <hr />
             <button disabled={allowSubmit === false} onClick={onFormSubmit}>
-                {parentState.existingRecipe === true ? 'Update' : 'Create'}
+                {parentState.isExistingItem === true ? 'Update' : 'Create'}
             </button>
             <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
             <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
@@ -230,9 +230,9 @@ class RecipeUpsertFormUi extends React.Component {
 
         return (
             <form className="recipe-form" onSubmit={onFormSubmit}>
-                <h2>{parentState.existingRecipe === true ? 'Edit' : 'New'} Recipe</h2>
+                <h2>{parentState.isExistingItem === true ? 'Edit' : 'New'} Recipe</h2>
                 <DragDropContext onDragEnd={this.onDragEnd}>
-                    { parentState.existingRecipe === true && isValuelessFalsey(selectedItemId) === false &&
+                    { parentState.isExistingItem === true && isValuelessFalsey(selectedItemId) === false &&
                         <p>ID: {selectedItemId}</p>
                     }
                     { renderTitle }

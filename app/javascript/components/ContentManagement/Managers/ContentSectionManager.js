@@ -13,7 +13,7 @@ import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewU
 import BackendConstants from  '../../Utilities/BackendConstants'
 import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 
-import RecipeUpsertFormUi2 from '../Forms/Subcomponents/RecipeUpsertFormUi2'
+import RecipeUpsertFormUi from '../Forms/Subcomponents/RecipeUpsertFormUi'
 
 import PhotoManager from './PhotoManager'
 
@@ -72,7 +72,7 @@ const ContentSectionsInfo = {
             key="recipe-manager"
             mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormUiComponent={(upsertProps) => <RecipeUpsertFormUi2 {...upsertProps} previewPhotoVersion="small" />}
+            upsertFormUiComponent={(upsertProps) => <RecipeUpsertFormUi {...upsertProps} previewPhotoVersion="small" />}
             upsertFormAdditionalProps={{
                 atResponseConversion: {
                     additionalItemResponseModification: function(convertedState, responseItemData) {
