@@ -35,21 +35,22 @@ export function convertResponseForState (responseData) {
 
     // Convert 'included' 
 
-    for (let i = 0; i < included.length; i++) {
-        const itemData = { ...included[i] };
-        const itemConversion = { id: parseInt(itemData.id) };
+    if(included) {
+        for (let i = 0; i < included.length; i++) {
+            const itemData = { ...included[i] };
+            const itemConversion = { id: parseInt(itemData.id) };
 
-        // convert items' property names to camel case
-        for(const [key, value] of Object.entries(itemData.attributes)) {
-            itemConversion[camelCase(key)] = value;
+            // convert items' property names to camel case
+            for(const [key, value] of Object.entries(itemData.attributes)) {
+                itemConversion[camelCase(key)] = value;
+            }
+
+            const associationName = camelCase(itemData.type);
+            if(isSingularAssociation(associationName) === true) { conversion[associationName] = itemConversion; }
+            else { conversion[`${associationName}s`].push(itemConversion); }       
         }
-
-        const associationName = camelCase(itemData.type);
-        if(isSingularAssociation(associationName) === true) { conversion[associationName] = itemConversion; }
-        else { conversion[`${associationName}s`].push(itemConversion); }       
+        conversion.associationPropertyNames = associationNames;
     }
-
-    conversion.associationPropertyNames = associationNames;
     return conversion;
 }
 
