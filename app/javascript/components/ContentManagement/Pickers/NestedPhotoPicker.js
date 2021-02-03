@@ -1,8 +1,11 @@
+import { paramCase } from 'change-case';
 import React, { Fragment } from 'react'
 import ResourcePicker from './ResourcePicker'
 import MappedPhotoPreviewUi from './Subcomponents/MappedPhotoPreviewUi'
 
 class NestedPhotoPicker extends React.Component {
+    // Required props: onCancelAndExit (event), onPhotoChosenForExport (photoData)
+
     constructor () {
         super();
         this.state = {
@@ -10,11 +13,6 @@ class NestedPhotoPicker extends React.Component {
             selectedItemId: null 
         }
     }
-
-    // The only props that need to be passed in:
-    //      onCancelAndExit (event)
-    //      onPhotoChosenForExport (photoData)
-    
 
     handlePhotoChosenForExport = (event) => {
         event.preventDefault();
@@ -27,7 +25,7 @@ class NestedPhotoPicker extends React.Component {
     }
 
     render() {
-        const { onCancelAndExit } = this.props;
+        const { containingResourceName, onCancelAndExit } = this.props;
         const mappedPreviewAdditionalProps = { auxButtonText: "Choose", hideEditAndDeleteButtons: true }
         mappedPreviewAdditionalProps.onAuxButtonPress = this.handlePhotoChosenForExport;
 
@@ -35,6 +33,9 @@ class NestedPhotoPicker extends React.Component {
         const exitButton = onCancelAndExit
         ? <button className="exit" onClick={onCancelAndExit}>X</button>
         : <Fragment />;
+
+        let pickerKey = 'photo-picker-nested';
+        if(containingResourceName) { pickerKey += `-in-${paramCase(containingResourceName)}s` }
 
         return <div className="nested-photo-picker-frame">
             <div className="frame-heading">
@@ -44,12 +45,12 @@ class NestedPhotoPicker extends React.Component {
             <ResourcePicker 
                 additionalClassNames="nested"
                 itemName="photo"
-                key="photo-picker"
+                key={pickerKey}
                 onDataFetched={(fetchedData) => this.setState({ photoData: fetchedData })}
                 onSelectedItemIdChange={(itemId) => this.setState({ selectedItemId: isNaN(itemId) === false ? itemId : null })}
                 mappedPreviewAdditionalProps={mappedPreviewAdditionalProps}
                 mappedPreviewUiComponent={(previewProps, key) => <MappedPhotoPreviewUi {...previewProps} key={key} />} 
-                // [NOTE][HARD CODED] nonSortByFields is copy-pasted from ContentSectionManager
+                // [NOTE][HARD CODED] nonSortByFields values here are copy-pasted from ContentSectionManager (for photos)
                 nonSortByFields={['file']}
                 selectedItemId = { this.state.selectedItemId }
                 subcomponentKey="photo"

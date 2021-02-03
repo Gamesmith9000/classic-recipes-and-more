@@ -75,7 +75,8 @@ class ResourceManager extends React.Component {
                 {this.state.upsertFormIsOpen === true &&
                     <ResourceUpsertForm 
                         { ...sharedProps }
-                        { ...upsertFormAdditionalProps }                        
+                        { ...upsertFormAdditionalProps }
+                        key={`${keyProp}-upsert-form`}
                         // ITEM BELOW WILL NEED TO BE MODIFIED:
                         // [NOTE] When an item is created or updated, it should stay selected on exit
                         // Unsaved changes dialog will also need to be implemented

@@ -2,13 +2,10 @@ import React, { Fragment } from 'react'
 import axios from 'axios'
 import { camelCase, snakeCase } from 'change-case'
 
-import RecipeUpsertFormUi from './Subcomponents/RecipeUpsertFormUi'
-
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
-
 
 class ResourceUpsertForm extends React.Component {
     constructor(props) {
@@ -261,7 +258,7 @@ class ResourceUpsertForm extends React.Component {
     }
 
     render() {
-        const { onClose, selectedItemId, upsertFormUi, useNestedPhotoPicker } = this.props;
+        const { itemName, onClose, selectedItemId, upsertFormUi, useNestedPhotoPicker } = this.props;
         const allowSubmit = (this.state.isExistingItem === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
         const componentObject = this;
 
@@ -269,6 +266,7 @@ class ResourceUpsertForm extends React.Component {
             allowSubmit: allowSubmit,
             dragEndStateUpdate: this.dragEndStateUpdate,
             getItemIndexFromState: (itemId, resourceName, alternateIdPropertyName = null) => componentObject.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName),
+            key: componentObject.state.isExistingItem === true ? selectedItemId : 'new',
             onAddListItem: (event, resourceName) => componentObject.handleAddListItem(event, resourceName),
             onClose: onClose,
             onDeleteButtonInput: (event, resourceName, index) => componentObject.handleDeleteListItem(event, resourceName, index),
@@ -283,6 +281,7 @@ class ResourceUpsertForm extends React.Component {
         return <Fragment>
             { useNestedPhotoPicker === true && this.state.photoPickerIsOpen === true &&
                 <NestedPhotoPicker 
+                    containingResourceName={itemName}
                     onCancelAndExit={this.handlePhotoPickerCancelAndExit} 
                     onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
                 />
