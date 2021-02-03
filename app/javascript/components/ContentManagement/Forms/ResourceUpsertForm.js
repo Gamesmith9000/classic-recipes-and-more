@@ -273,7 +273,8 @@ class ResourceUpsertForm extends React.Component {
             onFormSubmit: componentObject.handleFormSubmit,
             onOmitRecipePhoto: (event) => componentObject.handleUpdateCurrent(event, { photo: null, photoId: null }, null),
             onOpenPhotoPicker: (event, descriptor, listIndex) => componentObject.handleOpenPhotoPicker (event, descriptor, listIndex),
-            onUpdateCurrentFromEvent: (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => componentObject.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath),
+            onUpdateCurrent: (event, newValue, propertyName, propertyPath = []) => componentObject.handleUpdateCurrent(event, newValue, propertyName, propertyPath = []),
+            onUpdateCurrentFromEvent: (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => componentObject.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath = []),
             parentState: componentObject.state,
             selectedItemId: selectedItemId
         };

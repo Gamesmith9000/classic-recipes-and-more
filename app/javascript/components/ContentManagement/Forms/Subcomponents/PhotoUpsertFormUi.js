@@ -27,14 +27,14 @@ class PhotoUpsertFormUi extends React.Component {
     
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
-        const { onFormSubmit, onUpdateCurrentFromEvent } = this.props;
+        const { onFormSubmit, onUpdateCurrent, onUpdateCurrentFromEvent } = this.props;
 
         const renderTitle = <Fragment>
             <label>
                 Title
                 <input 
                     className="title-input"
-                    maxLength={BackendConstants.models.recipe.validations.title.maximum} 
+                    maxLength={BackendConstants.models.photo.validations.title.maximum} 
                     onChange={(event) => onUpdateCurrentFromEvent(event, 'title')}
                     type="text"
                     value={parentState.current.title}
@@ -42,6 +42,21 @@ class PhotoUpsertFormUi extends React.Component {
                 { this.validationErrorsIfPresent('title') }
             </label>
             <br />
+        </Fragment>
+
+        const renderTag = <Fragment>
+        <label>
+            Tag
+            <input 
+                className="tag-input"
+                maxLength={BackendConstants.models.photo.validations.tag.maximum} 
+                onChange={(event) => onUpdateCurrent(event, event.target.value.toUpperCase(), 'tag')}
+                type="text"
+                value={parentState.current.tag}
+            />
+            { this.validationErrorsIfPresent('tag') }
+        </label>
+        <br />
         </Fragment>
 
         const renderFormButtons = <Fragment>
@@ -61,6 +76,7 @@ class PhotoUpsertFormUi extends React.Component {
                         <p>ID: {selectedItemId}</p>
                     }
                     { renderTitle }
+                    { renderTag }
                     { renderFormButtons }
                 </Fragment>
             </form>
