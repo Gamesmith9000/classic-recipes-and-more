@@ -37,7 +37,7 @@ class ResourceManager extends React.Component {
 
     render() { 
         const { itemName, alternateSubcomponentKey } = this.props;
-        const { destroyerUiComponent, mappedPreviewUiComponent, upsertFormAdditionalProps, upsertFormUiComponent } = this.props;
+        const { destroyerUiComponent, mappedPreviewUiComponent, upsertFormAdditionalProps, upsertFormUi } = this.props;
         const { mappedPreviewAdditionalProps, nonSortByFields } = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
@@ -80,7 +80,7 @@ class ResourceManager extends React.Component {
                         // [NOTE] When an item is created or updated, it should stay selected on exit
                         // Unsaved changes dialog will also need to be implemented
                         onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
-                        upsertFormUiComponent={upsertFormUiComponent}
+                        upsertFormUi={upsertFormUi}
                         useNestedPhotoPicker={true}
                     />
                 }

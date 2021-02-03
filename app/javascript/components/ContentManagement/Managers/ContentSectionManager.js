@@ -72,7 +72,7 @@ const ContentSectionsInfo = {
             key="recipe-manager"
             mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
             nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormUiComponent={(upsertProps) => <RecipeUpsertFormUi {...upsertProps} previewPhotoVersion="small" />}
+            upsertFormUi={(upsertProps) => <RecipeUpsertFormUi {...upsertProps} previewPhotoVersion="small" />}
             upsertFormAdditionalProps={{
                 atResponseConversion: {
                     additionalItemResponseModification: function(convertedState, responseItemData) {

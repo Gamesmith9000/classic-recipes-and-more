@@ -259,8 +259,24 @@ class ResourceUpsertForm extends React.Component {
     }
 
     render() {
-        const { onClose, selectedItemId, useNestedPhotoPicker } = this.props;
+        const { onClose, selectedItemId, upsertFormUi, useNestedPhotoPicker } = this.props;
         const allowSubmit = (this.state.isExistingItem === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
+        const componentObject = this;
+
+        const upsertProps = {
+            allowSubmit: allowSubmit,
+            dragEndStateUpdate: this.dragEndStateUpdate,
+            getItemIndexFromState: (itemId, resourceName, alternateIdPropertyName = null) => componentObject.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName),
+            onAddListItem: (event, resourceName) => componentObject.handleAddListItem(event, resourceName),
+            onClose: onClose,
+            onDeleteButtonInput: (event, resourceName, index) => componentObject.handleDeleteListItem(event, resourceName, index),
+            onFormSubmit: componentObject.handleFormSubmit,
+            onOmitRecipePhoto: (event) => componentObject.handleUpdateCurrent(event, { photo: null, photoId: null }, null),
+            onOpenPhotoPicker: (event, descriptor, listIndex) => componentObject.handleOpenPhotoPicker (event, descriptor, listIndex),
+            onUpdateCurrentFromEvent: (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => componentObject.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath),
+            parentState: componentObject.state,
+            selectedItemId: selectedItemId
+        };
 
         return <Fragment>
             { useNestedPhotoPicker === true && this.state.photoPickerIsOpen === true &&
@@ -269,20 +285,7 @@ class ResourceUpsertForm extends React.Component {
                     onPhotoChosenForExport={(photoData) => this.handlePhotoChosen(photoData)} 
                 />
             }
-            <RecipeUpsertFormUi 
-                allowSubmit={allowSubmit}
-                dragEndStateUpdate={this.dragEndStateUpdate}
-                getItemIndexFromState={(itemId, resourceName, alternateIdPropertyName = null) => this.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName)}
-                onAddListItem={(event, resourceName) => this.handleAddListItem(event, resourceName)}
-                onClose={onClose}
-                onDeleteButtonInput={(event, resourceName, index) => this.handleDeleteListItem(event, resourceName, index)}
-                onFormSubmit={this.handleFormSubmit}
-                onOmitRecipePhoto={(event) => this.handleUpdateCurrent(event, { photo: null, photoId: null }, null)}
-                onOpenPhotoPicker={(event, descriptor, listIndex) => this.handleOpenPhotoPicker (event, descriptor, listIndex)}
-                onUpdateCurrentFromEvent={(event, propertyName, propertyOfEventTarget='value', propertyPath = []) => this.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath)}
-                parentState={this.state}
-                selectedItemId={selectedItemId}
-            />
+            <Fragment>{ upsertFormUi(upsertProps) }</Fragment>
         </Fragment>
     }
 }
