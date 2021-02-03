@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
+import ContentOptionsContext from '../../ContentOptionsContext'
+
 import VersionedPhoto from '../../../Misc/VersionedPhoto'
 import BackendConstants from '../../../Utilities/BackendConstants'
 import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
-import ContentOptionsContext from '../../ContentOptionsContext'
 
 
 class RecipeUpsertFormUi extends React.Component {

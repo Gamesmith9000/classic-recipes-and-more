@@ -5,7 +5,8 @@ import ResourceManager from './ResourceManager'
 
 import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
 import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
-import PhotoUpsertForm from '../Forms/PhotoUpsertForm'
+import PhotoUpsertFormUi from '../Forms/Subcomponents/PhotoUpsertFormUi'
+import RecipeUpsertFormUi from '../Forms/Subcomponents/RecipeUpsertFormUi'
 import ContentSectionPicker from '../Pickers/ContentSectionPicker'
 import MappedPhotoPreviewUi from '../Pickers/Subcomponents/MappedPhotoPreviewUi'
 import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewUi'
@@ -13,7 +14,6 @@ import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewU
 import BackendConstants from  '../../Utilities/BackendConstants'
 import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 
-import RecipeUpsertFormUi from '../Forms/Subcomponents/RecipeUpsertFormUi'
 
 import PhotoManager from './PhotoManager'
 
@@ -71,8 +71,8 @@ const ContentSectionsInfo = {
             itemName="recipe"
             key="recipe-manager"
             mappedPreviewUiComponent={(previewProps, key) => <MappedRecipePreviewUi {...previewProps} key={key} /> } 
-            nonSortByFields={['ingredients', 'preview_photo_id']}
-            upsertFormUi={(upsertProps) => <RecipeUpsertFormUi {...upsertProps} previewPhotoVersion="small" />}
+            nonSortByFields={['ingredients', 'photo_id']}
+            upsertFormUi={(upsertProps) => <RecipeUpsertFormUi {...upsertProps} />}
             upsertFormAdditionalProps={{
                 atResponseConversion: {
                     additionalItemResponseModification: function(convertedState, responseItemData) {
@@ -164,8 +164,35 @@ const ContentSectionsInfo = {
             itemName="photo"
             key="photo"
             mappedPreviewUiComponent={(previewProps, key) => <MappedPhotoPreviewUi {...previewProps} key={key} /> } 
-            nonSortByFields={['file']}
-            upsertFormComponent={(upsertProps) => <PhotoUpsertForm {...upsertProps} previewPhotoVersion="small" />}
+            nonSortByFields={['file, recipe_id']}
+            upsertFormUi={(upsertProps) => <PhotoUpsertFormUi {...upsertProps} />}
+            upsertFormAdditionalProps={{
+                // atResponseConversion: {
+                //     additionalItemResponseModification: function(convertedState, responseItemData) {
+                //         delete convertedState.recipe
+                //         delete convertedState.recipeId
+                //         return convertedState;
+                //     }
+                // },
+                createInitialState: function () {
+                    const defaultPhotoState = () => { 
+                        return {
+                            // file: {},
+                            tag: "DEFAULT",
+                            title: ''
+                        }
+                    }
+                    return {
+                    //     associationPropertyNames: { many: [], one: [] },
+                        current: defaultPhotoState(),
+                        isExistingItem: false,
+                    //     photoPickerIsOpen: false,
+                    //     photoPickerTarget: new NestedPhotoPickerTarget(null, null),
+                        prior: defaultPhotoState()
+                    }
+                },
+                useNestedPhotoPicker: false
+            }}
         /> } }
     ]
 }
