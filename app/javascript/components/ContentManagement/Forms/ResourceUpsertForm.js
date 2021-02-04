@@ -9,8 +9,10 @@ import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
 class ResourceUpsertForm extends React.Component {
     constructor(props) {
-        super(props)
-        this.state = props.createInitialState ? { ...props.createInitialState() } : { };
+        super(props);
+        const startState = props.createInitialState ? { ...props.createInitialState() } : { };
+        startState.errors = { };
+        this.state = startState;
     }
 
     dragEndStateUpdate = (dragResult, listProperty) => {
@@ -67,7 +69,8 @@ class ResourceUpsertForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        const { itemName, selectedItemId, preSubmit: { modifyAssociations, modifyStateData, omittedSubmitProperties } } = this.props;
+        const { itemName, preSubmit, selectedItemId} = this.props;
+        const { modifyAssociations, modifyStateData, omittedSubmitProperties } = (preSubmit ? preSubmit : { });
 
         const requestType = this.state.isExistingItem === true ? 'patch' : 'post';
         const requestUrl = `/api/v1/${snakeCase(itemName)}` + (this.state.isExistingItem === true ? `s/${selectedItemId}` : 's');
@@ -78,7 +81,7 @@ class ResourceUpsertForm extends React.Component {
 
         const assocationLists = { many: [], one: []};
 
-        if(this.state.associationPropertyNames.many?.length > 0 || this.state.associationPropertyNames.one?.length > 0) {
+        if(this.state.associationPropertyNames?.many?.length > 0 || this.state.associationPropertyNames?.one?.length > 0) {
             const assocPropNames = { ...this.state.associationPropertyNames };
 
             for(let i = 0; i < assocPropNames.many?.length; i++) {
@@ -133,9 +136,9 @@ class ResourceUpsertForm extends React.Component {
             if(this.state.isExistingItem === false) { this.props.onClose(res.data.data.id); }
             else { this.initializeComponentState(); }
         }
-        else { 
-            const errors = { ...res?.response?.data?.error?.error };
-            this.setState({ errors: errors });
+        else {
+            const errors = { ...res?.response?.data?.error };
+            this.setState({ errors });
         }
     }
 

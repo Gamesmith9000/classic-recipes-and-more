@@ -96,7 +96,6 @@ const ContentSectionsInfo = {
                     const defaultRecipeState = () => { 
                         return {
                             description: '',
-                            errors: {},
                             featured: BackendConstants.models.recipe.defaults.featured,
                             ingredients: [new TextSectionWithId (0, '')],
                             instructions: [{ content: '', id: -1, ordinal: 0 }],
