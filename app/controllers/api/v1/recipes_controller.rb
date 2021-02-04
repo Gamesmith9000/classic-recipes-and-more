@@ -49,7 +49,7 @@ module Api
                     end
                     render_serialized_json(recipe)
                 else
-                    render_error(error: recipe.errors.messages)
+                    render_error(recipe.errors.messages)
                 end
             end
 
@@ -104,7 +104,7 @@ module Api
 
                     render_serialized_json(recipe)   
                 else
-                    render_error(error: recipe.errors.messages)
+                    render_error(recipe.errors.messages)
                 end
             end
 
@@ -121,7 +121,7 @@ module Api
 
                     head :no_content
                 else
-                    render_error(error: recipe.errors.messages)
+                    render_error(recipe.errors.messages)
                 end
             end
 

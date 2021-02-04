@@ -41,7 +41,7 @@ module Api
                 if photo.save
                     render_serialized_json(photo)
                 else
-                    render json: {error: photo.errors.messages}, status: 422
+                    render_error(photo.errors.messages)
                 end
             end
 
@@ -51,7 +51,7 @@ module Api
                 if photo.update(photo_params)
                     render_serialized_json(photo)   
                 else
-                    render json: {error: photo.errors.messages}, status: 422
+                    render_error(photo.errors.messages)
                 end
             end
 
@@ -61,7 +61,7 @@ module Api
                 if photo.destroy
                     head :no_content
                 else
-                    render json: {error: photo.error.messages}, status: 422
+                    render_error(photo.errors.messages)
                 end
             end
 
@@ -78,6 +78,10 @@ module Api
 
             def photo_params
                 params.require(:photo).permit(:file, :tag, :title)
+            end
+
+            def render_error (error_messages)
+                render json: { error: error_messages }, status: 422
             end
 
             def render_serialized_json (values)
