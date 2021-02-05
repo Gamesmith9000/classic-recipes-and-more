@@ -40,7 +40,7 @@ class ResourceDestroyer extends React.Component {
         const destroyerUiProps = {
             itemData: this.state.itemData,
             key: selectedItemId,
-            onClose: onClose,
+            onClose: () => onClose(true),
             onDestroyButtonPress: this.handleDestroyButtonInput,
         };
 

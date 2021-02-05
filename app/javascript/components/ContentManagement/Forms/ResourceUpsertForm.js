@@ -133,7 +133,7 @@ class ResourceUpsertForm extends React.Component {
 
     handleFormSubmitResponse = (res) => {
         if(res?.status === 200 && res.data?.data?.type === snakeCase(this.props.itemName)) {
-            if(this.state.isExistingItem === false) { this.props.onClose(res.data.data.id); }
+            if(this.state.isExistingItem === false) { this.props.onCreateAndClose(res.data.data.id); }
             else { this.initializeComponentState(); }
         }
         else {
@@ -271,7 +271,7 @@ class ResourceUpsertForm extends React.Component {
             getItemIndexFromState: (itemId, resourceName, alternateIdPropertyName = null) => componentObject.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName),
             key: componentObject.state.isExistingItem === true ? selectedItemId : 'new',
             onAddListItem: (event, resourceName) => componentObject.handleAddListItem(event, resourceName),
-            onClose: onClose,
+            onClose: () => onClose(true),
             onDeleteButtonInput: (event, resourceName, index) => componentObject.handleDeleteListItem(event, resourceName, index),
             onFormSubmit: componentObject.handleFormSubmit,
             onOmitRecipePhoto: (event) => componentObject.handleUpdateCurrent(event, { photo: null, photoId: null }, null),

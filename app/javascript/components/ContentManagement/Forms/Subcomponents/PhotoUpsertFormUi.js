@@ -54,7 +54,7 @@ class PhotoUpsertFormUi extends React.Component {
             <button disabled={allowSubmit === false} onClick={onFormSubmit}>
                 {parentState.isExistingItem === true ? 'Update' : 'Create'}
             </button>
-            <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
+            <button onClick={onclose}>Close</button>
             <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingPhotoWithChanges() === true}/>
         </Fragment>
 

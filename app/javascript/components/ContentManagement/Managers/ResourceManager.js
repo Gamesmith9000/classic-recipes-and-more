@@ -57,7 +57,7 @@ class ResourceManager extends React.Component {
                         {...sharedProps}
                         destroyerUiComponent={destroyerUiComponent}
                         key={`${keyProp}-destroyer`}
-                        onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
+                        onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId)}
                     />
                 }
                 {this.state.pickerIsOpen === true &&
@@ -77,10 +77,8 @@ class ResourceManager extends React.Component {
                         { ...sharedProps }
                         { ...upsertFormAdditionalProps }
                         key={`${keyProp}-upsert-form`}
-                        // ITEM BELOW WILL NEED TO BE MODIFIED:
-                        // [NOTE] When an item is created or updated, it should stay selected on exit
-                        // Unsaved changes dialog will also need to be implemented
-                        onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
+                        onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId)}
+                        onCreateAndClose={(createdItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(createdItemId))}
                         upsertFormUi={upsertFormUi}
                         useNestedPhotoPicker={true}
                     />

@@ -213,7 +213,7 @@ class RecipeUpsertFormUi extends React.Component {
             <button disabled={allowSubmit === false} onClick={onFormSubmit}>
                 {parentState.isExistingItem === true ? 'Update' : 'Create'}
             </button>
-            <button onClick={(selectedItemId) => onClose(selectedItemId)}>Close</button>
+            <button onClick={onClose}>Close</button>
             <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
         </Fragment>
 
