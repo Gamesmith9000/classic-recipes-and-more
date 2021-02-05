@@ -199,6 +199,7 @@ class ResourceUpsertForm extends React.Component {
 
     handleUpdateCurrent = (event, newValue, propertyName, propertyPath = []) => {
         event.preventDefault();
+        const { dashboardContext } = this.props;
         const updatedCurrentState = { ...this.state.current };
 
         const changeItemValue = (containingObject) => {
@@ -229,8 +230,32 @@ class ResourceUpsertForm extends React.Component {
 
             if(objIsValid() === true) { changeItemValue(obj); }
         }
+
+        const unsavedChangesValue = dashboardContext?.unsavedChanges;
+        let callback = null;
+
+        if(isValuelessFalsey(unsavedChangesValue) === false) {
+            
+            if(this.state.isExistingItem === true) {               
+                const existingItemNowChanging = objectsHaveMatchingValues(updatedCurrentState, this.state.prior) === false;
+
+                /* shorthand for:
+                    existingItemNowChanging is T and unsavedChangesValue is F, OR
+                    existingItemNowChanging is F and unsavedChangesValue is T        
+                */
+                if(existingItemNowChanging !== unsavedChangesValue) {
+                    callback = () => dashboardContext.updateProperty('unsavedChanges', existingItemNowChanging);
+                
+                }
+            }
+            else {
+                if(dashboardContext?.unsavedChanges === false) { 
+                    callback = () => dashboardContext.updateProperty('unsavedChanges', true); 
+                } 
+            }
+        }
         
-        this.setState({ current: updatedCurrentState });
+        this.setState({ current: updatedCurrentState }, callback);
     }
 
     handleUpdateCurrentFromEvent = (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => {
@@ -273,6 +298,12 @@ class ResourceUpsertForm extends React.Component {
                 });
             })
             .catch(err => console.log(err));
+        }
+        else {
+            const { dashboardContext } = this.props;
+            if(dashboardContext && dashboardContext.unsavedChanges === false) {
+                dashboardContext.updateProperty('unsavedChanges', true);
+            }
         }
     }
 

@@ -1,9 +1,12 @@
 import React, { Fragment } from 'react'
 import { capitalCase, paramCase, sentenceCase } from 'change-case'
+
+import ContentDashboardContext from '../ContentDashboardContext';
 import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
-import ResourcePicker from '../Pickers/ResourcePicker'
-import { isValuelessFalsey } from '../../Utilities/Helpers';
 import ResourceUpsertForm from '../Forms/ResourceUpsertForm';
+import ResourcePicker from '../Pickers/ResourcePicker'
+
+import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 class ResourceManager extends React.Component {
     constructor () {
@@ -73,15 +76,20 @@ class ResourceManager extends React.Component {
                     />
                 }
                 {this.state.upsertFormIsOpen === true &&
-                    <ResourceUpsertForm 
-                        { ...sharedProps }
-                        { ...upsertFormAdditionalProps }
-                        key={`${keyProp}-upsert-form`}
-                        onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId)}
-                        onCreateAndClose={(createdItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(createdItemId))}
-                        upsertFormUi={upsertFormUi}
-                        useNestedPhotoPicker={true}
-                    />
+                    <ContentDashboardContext.Consumer>
+                        { value =>
+                            <ResourceUpsertForm 
+                                { ...sharedProps }
+                                { ...upsertFormAdditionalProps }
+                                dashboardContext={value}
+                                key={`${keyProp}-upsert-form`}
+                                onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId)}
+                                onCreateAndClose={(createdItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(createdItemId))}
+                                upsertFormUi={upsertFormUi}
+                                useNestedPhotoPicker={true}
+                            />
+                        }
+                    </ContentDashboardContext.Consumer>
                 }
             </div>
         )

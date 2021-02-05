@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import PageManager from './PageManager'
 import ResourceManager from './ResourceManager'
 
+import ContentDashboardContext from '../ContentDashboardContext'
 import PhotoDestroyerUi from '../Destroyers/Subcomponents/PhotoDestroyerUi'
 import RecipeDestroyerUi from '../Destroyers/Subcomponents/RecipeDestroyerUi'
 import PhotoUpsertFormUi from '../Forms/Subcomponents/PhotoUpsertFormUi'
@@ -13,7 +14,6 @@ import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewU
 
 import BackendConstants from  '../../Utilities/BackendConstants'
 import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
-
 
 import PhotoManager from './PhotoManager'
 
@@ -30,14 +30,18 @@ export function ContentSectionManager(props) {
 
     return (
         <Fragment>
-            <ContentSectionPicker 
-                allSectionNames={ContentSectionsInfo.allSectionNames()}
-                changeContentSection={(newSectionId) => tryChangeContentSection(newSectionId)}
-                closeContentSection={closeContentSection}      
-                contentSectionOpen={contentSectionOpen}
-                selectedContentSection={selectedContentSection}
-            />
-
+            <ContentDashboardContext.Consumer>
+                { value =>           
+                    <ContentSectionPicker 
+                        allSectionNames={ContentSectionsInfo.allSectionNames()}
+                        changeContentSection={(newSectionId) => tryChangeContentSection(newSectionId)}
+                        closeContentSection={closeContentSection}
+                        dashboardContext={value}
+                        contentSectionOpen={contentSectionOpen}
+                        selectedContentSection={selectedContentSection}
+                    />
+                }
+            </ContentDashboardContext.Consumer>
             <hr />
             { contentSectionOpen === true &&
                 <Fragment>
