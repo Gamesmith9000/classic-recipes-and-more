@@ -5,18 +5,11 @@ import ContentOptionsContext from '../../ContentOptionsContext'
 
 import VersionedPhoto from '../../../Misc/VersionedPhoto'
 import BackendConstants from '../../../Utilities/BackendConstants'
-import { UnsavedChangesDisplay, validationErrorsIfPresent } from '../../../Utilities/ComponentHelpers'
-import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
+import { validationErrorsIfPresent } from '../../../Utilities/ComponentHelpers'
+import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
 
 class RecipeUpsertFormUi extends React.Component {
-
-    isExistingRecipeWithChanges = () => {
-        const { parentState } = this.props;
-        if(parentState.isExistingItem !== true) { return false; }
-        return !objectsHaveMatchingValues(parentState.current, parentState.prior);
-    }
-
     mapIngredientInputs = (ingredientList) => {
         const { getItemIndexFromState, parentState, onDeleteButtonInput, onUpdateCurrentFromEvent } = this.props;
 
@@ -214,7 +207,6 @@ class RecipeUpsertFormUi extends React.Component {
                 {parentState.isExistingItem === true ? 'Update' : 'Create'}
             </button>
             <button onClick={onClose}>Close</button>
-            <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingRecipeWithChanges() === true}/>
         </Fragment>
 
         return (

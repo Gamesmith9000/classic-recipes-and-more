@@ -4,17 +4,11 @@ import ContentOptionsContext from '../../ContentOptionsContext'
 
 import VersionedPhoto from '../../../Misc/VersionedPhoto'
 import BackendConstants from '../../../Utilities/BackendConstants'
-import { UnsavedChangesDisplay, validationErrorsIfPresent } from '../../../Utilities/ComponentHelpers'
-import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
+import { validationErrorsIfPresent } from '../../../Utilities/ComponentHelpers'
+import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
 
 class PhotoUpsertFormUi extends React.Component {
-    isExistingPhotoWithChanges = () => {
-        const { parentState } = this.props;
-        if(parentState.isExistingItem !== true) { return false; }
-        return !objectsHaveMatchingValues(parentState.current, parentState.prior);
-    }
-   
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
         const { onFormSubmit, onUpdateCurrent, onUpdateCurrentFromEvent } = this.props;
@@ -54,8 +48,7 @@ class PhotoUpsertFormUi extends React.Component {
             <button disabled={allowSubmit === false} onClick={onFormSubmit}>
                 {parentState.isExistingItem === true ? 'Update' : 'Create'}
             </button>
-            <button onClick={onclose}>Close</button>
-            <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingPhotoWithChanges() === true}/>
+            <button onClick={onClose}>Close</button>
         </Fragment>
 
         return (

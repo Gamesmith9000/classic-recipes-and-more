@@ -173,6 +173,9 @@ const ContentSectionsInfo = {
                 //         return convertedState;
                 //     }
                 // },
+                closingWarningItemNameModifier: function (itemDisplayName) {
+                    return itemDisplayName + "-data";
+                },
                 createInitialState: function () {
                     const defaultPhotoState = () => { 
                         return {

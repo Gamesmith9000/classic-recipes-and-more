@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react'
 import axios from 'axios'
-import { camelCase, snakeCase } from 'change-case'
+import { camelCase, noCase, snakeCase } from 'change-case'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
+import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues, setAxiosCsrfToken } from '../../Utilities/Helpers'
 import { convertResponseForState } from '../../Utilities/ResponseDataHelpers'
 
@@ -62,6 +63,25 @@ class ResourceUpsertForm extends React.Component {
             let updatedCurrentState = this.state.current;
             updatedCurrentState[listName] = updatedList;
             this.setState({ current: updatedCurrentState }); 
+        }
+    }
+
+    handleFormCloseWithConfirmation = (event) => {
+        event.preventDefault();
+
+        const { closingWarningItemNameModifier, itemName, onClose } = this.props;
+        const isExisting = this.state.isExistingItem;
+
+        // Existing items without changes do not get the confirmation prompt
+        if(isExisting === true && this.isExistingItemWithChanges() === false) { onClose(true); }
+        else {
+            const itemDisplayName = closingWarningItemNameModifier ? closingWarningItemNameModifier(noCase(itemName)) : noCase(itemName);
+            const uniqueMessage = isExisting === true 
+                ? `Your ${itemDisplayName} has unsaved changes that will be lost.`
+                : `This ${itemDisplayName} is incomplete and will be lost.`
+            ;
+            // Confirm exit without saving
+            if(window.confirm(uniqueMessage + ' Are you sure you want to exit?') === true) { onClose(true); }
         }
     }
 
@@ -256,29 +276,36 @@ class ResourceUpsertForm extends React.Component {
         }
     }
 
+    isExistingItemWithChanges = () => {
+        if(this.state.isExistingItem === false) { return false; }
+        return !objectsHaveMatchingValues(this.state.current, this.state.prior);
+    }
+
     componentDidMount () {
         this.initializeComponentState();
     }
 
     render() {
-        const { itemName, onClose, selectedItemId, upsertFormUi, useNestedPhotoPicker } = this.props;
-        const allowSubmit = (this.state.isExistingItem === false || objectsHaveMatchingValues(this.state.current, this.state.prior) === false);
-        const componentObject = this;
+        const { itemName, selectedItemId, upsertFormUi, useNestedPhotoPicker } = this.props;
+
+        const allowSubmit = (this.state.isExistingItem === false || this.isExistingItemWithChanges() === true);
+        const itemKey = this.state.isExistingItem === true ? selectedItemId : 'new';
+        const thisComponent = this;
 
         const upsertProps = {
             allowSubmit: allowSubmit,
             dragEndStateUpdate: this.dragEndStateUpdate,
-            getItemIndexFromState: (itemId, resourceName, alternateIdPropertyName = null) => componentObject.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName),
-            key: componentObject.state.isExistingItem === true ? selectedItemId : 'new',
-            onAddListItem: (event, resourceName) => componentObject.handleAddListItem(event, resourceName),
-            onClose: () => onClose(true),
-            onDeleteButtonInput: (event, resourceName, index) => componentObject.handleDeleteListItem(event, resourceName, index),
-            onFormSubmit: componentObject.handleFormSubmit,
-            onOmitRecipePhoto: (event) => componentObject.handleUpdateCurrent(event, { photo: null, photoId: null }, null),
-            onOpenPhotoPicker: (event, descriptor, listIndex) => componentObject.handleOpenPhotoPicker (event, descriptor, listIndex),
-            onUpdateCurrent: (event, newValue, propertyName, propertyPath = []) => componentObject.handleUpdateCurrent(event, newValue, propertyName, propertyPath),
-            onUpdateCurrentFromEvent: (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => componentObject.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath),
-            parentState: componentObject.state,
+            getItemIndexFromState: (itemId, resourceName, alternateIdPropertyName = null) => thisComponent.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName),
+            key: itemKey,
+            onAddListItem: (event, resourceName) => thisComponent.handleAddListItem(event, resourceName),
+            onClose: this.handleFormCloseWithConfirmation,
+            onDeleteButtonInput: (event, resourceName, index) => thisComponent.handleDeleteListItem(event, resourceName, index),
+            onFormSubmit: this.handleFormSubmit,
+            onOmitRecipePhoto: (event) => thisComponent.handleUpdateCurrent(event, { photo: null, photoId: null }, null),
+            onOpenPhotoPicker: (event, descriptor, listIndex) => thisComponent.handleOpenPhotoPicker (event, descriptor, listIndex),
+            onUpdateCurrent: (event, newValue, propertyName, propertyPath = []) => thisComponent.handleUpdateCurrent(event, newValue, propertyName, propertyPath),
+            onUpdateCurrentFromEvent: (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => thisComponent.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath),
+            parentState: this.state,
             selectedItemId: selectedItemId
         };
 
@@ -291,6 +318,7 @@ class ResourceUpsertForm extends React.Component {
                 />
             }
             <Fragment>{ upsertFormUi(upsertProps) }</Fragment>
+            <UnsavedChangesDisplay hasUnsavedChanges={this.isExistingItemWithChanges() === true} />
         </Fragment>
     }
 }
