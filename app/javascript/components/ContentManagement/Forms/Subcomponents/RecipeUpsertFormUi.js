@@ -5,7 +5,7 @@ import ContentOptionsContext from '../../ContentOptionsContext'
 
 import VersionedPhoto from '../../../Misc/VersionedPhoto'
 import BackendConstants from '../../../Utilities/BackendConstants'
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../Utilities/ComponentHelpers'
+import { UnsavedChangesDisplay, validationErrorsIfPresent } from '../../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
 
 
@@ -97,19 +97,7 @@ class RecipeUpsertFormUi extends React.Component {
 
         if(listProperty) { this.props.dragEndStateUpdate(result, listProperty); }
     }
-
-    validationErrorsIfPresent = (propertyName) => {
-        if(!propertyName) { return null; }
-
-        const errorsObject = this.props.parentState?.errors;
-        const hasErrors = errorsObject && errorsObject[propertyName] && errorsObject[propertyName].length > 0;
-        if(hasErrors === false) { return null; }
-        return <ValidationErrorDisplay 
-            errorsObject={errorsObject}
-            propertyName={propertyName}
-        />;
-    }
-    
+ 
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
         const { onAddListItem, onFormSubmit, onOmitRecipePhoto, onOpenPhotoPicker, onUpdateCurrentFromEvent } = this.props;
@@ -124,7 +112,7 @@ class RecipeUpsertFormUi extends React.Component {
                     type="text"
                     value={parentState.current.title}
                 />
-                { this.validationErrorsIfPresent('title') }
+                { validationErrorsIfPresent('title', parentState?.errors) }
             </label>
             <br />
         </Fragment>
@@ -139,7 +127,7 @@ class RecipeUpsertFormUi extends React.Component {
                     type="textarea"
                     value={parentState.current.description}
                 />
-                { this.validationErrorsIfPresent('description') }
+                { validationErrorsIfPresent('description', parentState?.errors) }
             </label>
             <br />
         </Fragment>

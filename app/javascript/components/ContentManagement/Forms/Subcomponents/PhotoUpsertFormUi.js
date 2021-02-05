@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react'
 
+import ContentOptionsContext from '../../ContentOptionsContext'
+
 import VersionedPhoto from '../../../Misc/VersionedPhoto'
 import BackendConstants from '../../../Utilities/BackendConstants'
-import { UnsavedChangesDisplay, ValidationErrorDisplay } from '../../../Utilities/ComponentHelpers'
+import { UnsavedChangesDisplay, validationErrorsIfPresent } from '../../../Utilities/ComponentHelpers'
 import { isValuelessFalsey, objectsHaveMatchingValues } from '../../../Utilities/Helpers'
 
 
@@ -12,19 +14,7 @@ class PhotoUpsertFormUi extends React.Component {
         if(parentState.isExistingItem !== true) { return false; }
         return !objectsHaveMatchingValues(parentState.current, parentState.prior);
     }
-
-    validationErrorsIfPresent = (propertyName) => {
-        if(!propertyName) { return null; }
-
-        const errorsObject = this.props.parentState?.errors;
-        const hasErrors = errorsObject && errorsObject[propertyName] && errorsObject[propertyName].length > 0;
-        if(hasErrors === false) { return null; }
-        return <ValidationErrorDisplay 
-            errorsObject={errorsObject}
-            propertyName={propertyName}
-        />;
-    }
-    
+   
     render() {
         const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
         const { onFormSubmit, onUpdateCurrent, onUpdateCurrentFromEvent } = this.props;
@@ -39,7 +29,7 @@ class PhotoUpsertFormUi extends React.Component {
                     type="text"
                     value={parentState.current.title}
                 />
-                { this.validationErrorsIfPresent('title') }
+                { validationErrorsIfPresent('title', parentState?.errors) }
             </label>
             <br />
         </Fragment>
@@ -54,7 +44,7 @@ class PhotoUpsertFormUi extends React.Component {
                 type="text"
                 value={parentState.current.tag}
             />
-            { this.validationErrorsIfPresent('tag') }
+            { validationErrorsIfPresent('tag', parentState?.errors) }
         </label>
         <br />
         </Fragment>

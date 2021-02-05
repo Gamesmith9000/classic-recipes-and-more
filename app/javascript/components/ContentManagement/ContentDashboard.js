@@ -103,6 +103,7 @@ class ContentDashboard extends React.Component {
                 <div className="content-dashboard">
                     <h1>Content Dashboard</h1>
                     <AdminUserDisplay displayName={userDisplay} />
+                    <hr />
                     { this.state.componentHasMounted &&
                         <ContentSectionManager
                             changeContentSection={this.changeContentSection}
