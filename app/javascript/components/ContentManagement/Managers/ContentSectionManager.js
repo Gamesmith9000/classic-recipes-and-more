@@ -29,9 +29,9 @@ export function ContentSectionManager(props) {
     }
 
     return (
-        <Fragment>
-            <ContentDashboardContext.Consumer>
-                { value =>           
+        <ContentDashboardContext.Consumer>
+            { value =>
+                <Fragment>
                     <ContentSectionPicker 
                         allSectionNames={ContentSectionsInfo.allSectionNames()}
                         changeContentSection={(newSectionId) => tryChangeContentSection(newSectionId)}
@@ -40,15 +40,15 @@ export function ContentSectionManager(props) {
                         contentSectionOpen={contentSectionOpen}
                         selectedContentSection={selectedContentSection}
                     />
-                }
-            </ContentDashboardContext.Consumer>
-            <hr />
-            { contentSectionOpen === true &&
-                <Fragment>
-                    { ContentSectionsInfo.sections[selectedContentSection].renderComponent() }
+                    <hr />
+                    { contentSectionOpen === true &&
+                        <Fragment>
+                            { ContentSectionsInfo.sections[selectedContentSection].renderComponent({ dashboardContext: value }) }
+                        </Fragment>
+                    }
                 </Fragment>
             }
-        </Fragment>
+        </ContentDashboardContext.Consumer>
     );
 }
 

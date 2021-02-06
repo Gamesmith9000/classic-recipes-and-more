@@ -93,10 +93,12 @@ class ContentDashboard extends React.Component {
     }
 
     componentDidMount () {
-        const dashboardContext = this.state.dashboardContext ;
+        const dashboardContext = this.state.dashboardContext;
         dashboardContext.updateProperty = (propertyName, newValue) => {
             if(Object.keys(this.state.dashboardContext).includes(propertyName) === true && propertyName !== 'updateProperty') {
-                this.setState({ dashboardContext: {[propertyName]: newValue }});
+                const updatedDashboardContext = dashboardContext;
+                updatedDashboardContext[propertyName] = newValue;
+                this.setState({ dashboardContext: updatedDashboardContext });
             }
         }
 

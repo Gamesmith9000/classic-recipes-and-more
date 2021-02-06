@@ -30,22 +30,30 @@ class ResourceManager extends React.Component {
         return <Fragment>{upsertFormComponent(upsertProps)}</Fragment>
     }
 
-    updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false) => {
+    updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false, setStateCallback = null) => {
         const updatedState = { ...newState };
         if(doNotChangeSelectedItemId === true) { updatedState.selectedItemId = this.state.selectedItemId }
         else if(isNaN(updatedState.selectedItemId) === true) { updatedState.selectedItemId = null; }
         
-        this.setState({ ...updatedState });
+        this.setState({ ...updatedState }, setStateCallback);
     }
 
     render() { 
-        const { itemName, alternateSubcomponentKey } = this.props;
+        const { dashboardContext, itemName, alternateSubcomponentKey } = this.props;
         const { destroyerUiComponent, mappedPreviewUiComponent, upsertFormAdditionalProps, upsertFormUi } = this.props;
         const { mappedPreviewAdditionalProps, nonSortByFields } = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
         const managerClassName = `${paramCase(itemName)} resource-manager`;
         const sharedProps = { itemName, selectedItemId: this.state.selectedItemId, subcomponentKey: keyProp }
+
+        let upsertCloseSetStateCallback = null;
+        if(dashboardContext?.updateProperty) {
+            const { unsavedChanges, updateProperty } = dashboardContext;
+            if(unsavedChanges === true) { 
+                upsertCloseSetStateCallback = () => updateProperty('unsavedChanges', false); 
+            }
+        }
 
         return (
             <div className={managerClassName}>
@@ -83,8 +91,8 @@ class ResourceManager extends React.Component {
                                 { ...upsertFormAdditionalProps }
                                 dashboardContext={value}
                                 key={`${keyProp}-upsert-form`}
-                                onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId)}
-                                onCreateAndClose={(createdItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(createdItemId))}
+                                onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId, upsertCloseSetStateCallback)}
+                                onCreateAndClose={(createdItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(createdItemId), false, upsertCloseSetStateCallback)}
                                 upsertFormUi={upsertFormUi}
                                 useNestedPhotoPicker={true}
                             />
