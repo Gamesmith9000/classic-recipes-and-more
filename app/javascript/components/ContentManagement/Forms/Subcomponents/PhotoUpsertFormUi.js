@@ -10,7 +10,7 @@ import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
 class PhotoUpsertFormUi extends React.Component {
     render() {
-        const { allowSubmit, onClose, parentState, selectedItemId } = this.props;
+        const { allowSubmit, onClose, parentState, selectedItemId, submissionIsProcessingWithMessage } = this.props;
         const { onFormSubmit, onUpdateCurrent, onUpdateCurrentFromEvent } = this.props;
 
         const renderTitle = <Fragment>
@@ -77,7 +77,7 @@ class PhotoUpsertFormUi extends React.Component {
             <button disabled={allowSubmit === false} onClick={onFormSubmit}>
                 {parentState.isExistingItem === true ? 'Update' : 'Create'}
             </button>
-            <button onClick={onClose}>Close</button>
+            <button disabled={submissionIsProcessingWithMessage === true} onClick={onClose}>Close</button>
         </Fragment>
 
         return (
@@ -91,6 +91,9 @@ class PhotoUpsertFormUi extends React.Component {
                     { renderTag }
                     { renderFile }
                     { renderFormButtons }
+                    { submissionIsProcessingWithMessage === true &&
+                        <div className="processing-submission">Processing... Please wait.</div>
+                    }
                 </Fragment>
             </form>
         )

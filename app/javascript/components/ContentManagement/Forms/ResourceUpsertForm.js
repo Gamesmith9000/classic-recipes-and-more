@@ -90,7 +90,7 @@ class ResourceUpsertForm extends React.Component {
         setAxiosCsrfToken();
 
         const { itemName, preSubmit, selectedItemId} = this.props;
-        const { finalAdditionalChanges, modifyAssociations, modifyStateData, omittedSubmitProperties } = (preSubmit ? preSubmit : { });
+        const { finalAdditionalChanges, modifyAssociations, modifyStateData, omittedSubmitProperties, useProcessingSubmissionMessage } = (preSubmit ? preSubmit : { });
 
         const requestType = this.state.isExistingItem === true ? 'patch' : 'post';
         const requestUrl = `/api/v1/${snakeCase(itemName)}` + (this.state.isExistingItem === true ? `s/${selectedItemId}` : 's');
@@ -149,6 +149,10 @@ class ResourceUpsertForm extends React.Component {
         axios({ method: requestType, url: requestUrl, data: finalAdditionalChanges ? finalAdditionalChanges(requestType, { ...submissionData }) : { ...submissionData } })
         .then( res => { this.handleFormSubmitResponse(res) })
         .catch(err => { this.handleFormSubmitResponse(err) });
+
+        if(useProcessingSubmissionMessage === true){
+            this.setState({ submissionIsProcessingWithMessage: true });
+        }
     }
 
     handleFormSubmitResponse = (res) => {
@@ -157,8 +161,9 @@ class ResourceUpsertForm extends React.Component {
             else { this.initializeComponentState(); }
         }
         else {
+            const additional = this.props.preSubmit?.useProcessingSubmissionMessage === true ?  { submissionIsProcessingWithMessage: false } : { };
             const errors = { ...res?.response?.data?.error };
-            this.setState({ errors });
+            this.setState({ ...additional, errors });
         }
     }
 
@@ -321,13 +326,15 @@ class ResourceUpsertForm extends React.Component {
 
     render() {
         const { itemName, selectedItemId, upsertFormUi, useNestedPhotoPicker } = this.props;
-
-        const allowSubmit = (this.state.isExistingItem === false || this.isExistingItemWithChanges() === true);
+        const submissionIsProcessingWithMessage = this.state.submissionIsProcessingWithMessage;
+        const allowSubmit = (this.state.isExistingItem === false || this.isExistingItemWithChanges() === true) && submissionIsProcessingWithMessage !== true;
+        
         const itemKey = this.state.isExistingItem === true ? selectedItemId : 'new';
         const thisComponent = this;
 
+
         const upsertProps = {
-            allowSubmit: allowSubmit,
+            allowSubmit,
             dragEndStateUpdate: this.dragEndStateUpdate,
             getItemIndexFromState: (itemId, resourceName, alternateIdPropertyName = null) => thisComponent.getItemIndexFromState(itemId, resourceName, alternateIdPropertyName),
             key: itemKey,
@@ -340,7 +347,8 @@ class ResourceUpsertForm extends React.Component {
             onUpdateCurrent: (event, newValue, propertyName, propertyPath = []) => thisComponent.handleUpdateCurrent(event, newValue, propertyName, propertyPath),
             onUpdateCurrentFromEvent: (event, propertyName, propertyOfEventTarget='value', propertyPath = []) => thisComponent.handleUpdateCurrentFromEvent(event, propertyName, propertyOfEventTarget, propertyPath),
             parentState: this.state,
-            selectedItemId: selectedItemId
+            selectedItemId,
+            submissionIsProcessingWithMessage
         };
 
         return <Fragment>

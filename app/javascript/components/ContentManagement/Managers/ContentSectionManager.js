@@ -205,7 +205,8 @@ const ContentSectionsInfo = {
                             if(key !== 'file' || requestType === 'post') { formData.append(`photo[${key}]`, value); }   
                         }
                         return formData;
-                    }
+                    },
+                    useProcessingSubmissionMessage: true
                 },
                 useNestedPhotoPicker: false
             }}
