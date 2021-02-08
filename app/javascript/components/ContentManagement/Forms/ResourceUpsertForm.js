@@ -90,7 +90,7 @@ class ResourceUpsertForm extends React.Component {
         setAxiosCsrfToken();
 
         const { itemName, preSubmit, selectedItemId} = this.props;
-        const { modifyAssociations, modifyStateData, omittedSubmitProperties } = (preSubmit ? preSubmit : { });
+        const { finalAdditionalChanges, modifyAssociations, modifyStateData, omittedSubmitProperties } = (preSubmit ? preSubmit : { });
 
         const requestType = this.state.isExistingItem === true ? 'patch' : 'post';
         const requestUrl = `/api/v1/${snakeCase(itemName)}` + (this.state.isExistingItem === true ? `s/${selectedItemId}` : 's');
@@ -145,8 +145,8 @@ class ResourceUpsertForm extends React.Component {
                 }
             }
         }
-        
-        axios({ method: requestType, url: requestUrl, data: { ...submissionData } })
+
+        axios({ method: requestType, url: requestUrl, data: finalAdditionalChanges ? finalAdditionalChanges(requestType, { ...submissionData }) : { ...submissionData } })
         .then( res => { this.handleFormSubmitResponse(res) })
         .catch(err => { this.handleFormSubmitResponse(err) });
     }
@@ -202,8 +202,12 @@ class ResourceUpsertForm extends React.Component {
         const { dashboardContext } = this.props;
         const updatedCurrentState = { ...this.state.current };
 
-        const changeItemValue = (containingObject) => {
+        const changeItemValue = (containingObject, setEntireObject = false) => {
             if(isValuelessFalsey(newValue) === false && typeof(newValue) === 'object') {
+                if(setEntireObject === true) {
+                    containingObject[propertyName] = newValue;
+                    return;
+                }
                 // property name is ignored, since it's built into newValue
                 for (const [key, value] of Object.entries(newValue)) {
                     containingObject[key] = value;
@@ -213,7 +217,7 @@ class ResourceUpsertForm extends React.Component {
         }
 
         if(!propertyPath || Array.isArray(propertyPath) === false || propertyPath.length < 1) {
-            changeItemValue(updatedCurrentState, propertyName);
+            changeItemValue(updatedCurrentState, true);
         }
         else {
             let obj = updatedCurrentState;
@@ -245,7 +249,6 @@ class ResourceUpsertForm extends React.Component {
                 */
                 if(existingItemNowChanging !== unsavedChangesValue) {
                     callback = () => dashboardContext.updateProperty('unsavedChanges', existingItemNowChanging);
-                
                 }
             }
             else {

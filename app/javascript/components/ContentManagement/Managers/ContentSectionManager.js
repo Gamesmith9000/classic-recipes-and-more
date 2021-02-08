@@ -183,7 +183,7 @@ const ContentSectionsInfo = {
                 createInitialState: function () {
                     const defaultPhotoState = () => { 
                         return {
-                            // file: {},
+                            file: null,
                             tag: "DEFAULT",
                             title: ''
                         }
@@ -192,9 +192,19 @@ const ContentSectionsInfo = {
                     //     associationPropertyNames: { many: [], one: [] },
                         current: defaultPhotoState(),
                         isExistingItem: false,
-                    //     photoPickerIsOpen: false,
-                    //     photoPickerTarget: new NestedPhotoPickerTarget(null, null),
                         prior: defaultPhotoState()
+                    }
+                },
+                preSubmit: {
+                    convertToFormData: true,
+                    finalAdditionalChanges: function (requestType, payload) {                            
+                        // loop through submission data and add each item to formData
+                        const formData = new FormData();
+            
+                        for (const [key, value] of Object.entries(payload)) {
+                            if(key !== 'file' || requestType === 'post') { formData.append(`photo[${key}]`, value); }   
+                        }
+                        return formData;
                     }
                 },
                 useNestedPhotoPicker: false

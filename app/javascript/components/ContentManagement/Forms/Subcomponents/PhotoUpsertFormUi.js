@@ -43,6 +43,35 @@ class PhotoUpsertFormUi extends React.Component {
         <br />
         </Fragment>
 
+        const renderFile = <Fragment>
+            <label>
+            File
+            <br/>
+            { parentState.isExistingItem === false &&
+                <Fragment>
+                    <input 
+                        onChange={(event) => onUpdateCurrent(event, event.target.files[0], 'file')}
+                        type="file" 
+                    />
+                    <br />
+                    <br />
+                </Fragment>
+            }
+            { validationErrorsIfPresent('file', parentState?.errors) }
+            <ContentOptionsContext.Consumer>
+                { value =>
+                    <VersionedPhoto 
+                        uploadedFileData={parentState?.current?.file}
+                        uploaderNamePrefix="photo"
+                        uploadedFileVersionName={value.photoPicker.standardImageVersion}
+                        textDisplayForNoPhoto="(Please upload an image file)"
+                    />
+                }
+                </ContentOptionsContext.Consumer>
+        </label>
+        <br />
+        </Fragment>
+
         const renderFormButtons = <Fragment>
             <hr />
             <button disabled={allowSubmit === false} onClick={onFormSubmit}>
@@ -60,6 +89,7 @@ class PhotoUpsertFormUi extends React.Component {
                     }
                     { renderTitle }
                     { renderTag }
+                    { renderFile }
                     { renderFormButtons }
                 </Fragment>
             </form>
