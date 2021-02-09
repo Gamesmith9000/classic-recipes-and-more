@@ -3,7 +3,6 @@ import React, { Fragment } from 'react'
 import qs from 'qs'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
-import { EmptyEntryDisplay } from './Subcomponents'
 import PhotoPicker from '../Pickers/PhotoPicker'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'

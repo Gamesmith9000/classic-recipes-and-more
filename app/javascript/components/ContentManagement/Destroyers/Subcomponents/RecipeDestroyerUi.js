@@ -1,17 +1,15 @@
 import React, { Fragment } from 'react'
-import { isValuelessFalsey } from '../../../Utilities/Helpers'
 
-export function RecipeDestroyerUi(props) {
-    // [NOTE] There is currently not error checking for all props
-    
-    const { itemData, onClose, onDestroyButtonPress, selectedItemId } = props;
+export function RecipeDestroyerUi(props) {    
+    const { itemData, onClose, onDestroyButtonPress } = props;
+    const { id, attributes: { description, title } } = itemData;
 
     return (
         <Fragment>
             <h3>You are about to delete a recipe:</h3>
-            <p>ID: {selectedItemId}</p>
-            <p>Title: {itemData.attributes.title}</p>
-            <p>Description: {itemData.attributes.description}</p>
+            <p>ID: {id}</p>
+            <p>Title: {title}</p>
+            <p>Description: {description}</p>
             <button onClick={onDestroyButtonPress}>Delete</button>
             <button onClick={onClose}>Cancel</button>
         </Fragment>

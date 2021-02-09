@@ -1,6 +1,5 @@
 import { paramCase } from 'change-case';
-import { parse } from 'qs';
-import React, { Fragment } from 'react'
+import React from 'react'
 import { isValuelessFalsey } from '../../../Utilities/Helpers'
 import SelectedMappedPreviewControls from './SelectedMappedPreviewControls'
 
@@ -21,10 +20,18 @@ export function MappedResourcePreview (props) {
         else { event.preventDefault(); }
     }
     
+    const { auxButtonText, hideEditAndDeleteButtons, onAuxButtonPress } = props;
+    const additionalPreviewControlProps = {
+        auxButtonText: auxButtonText,
+        hideEditAndDeleteButtons: hideEditAndDeleteButtons,
+        onAuxButtonPress: onAuxButtonPress
+    }
+
     return (
         <li className={liClassName} onClick={(event) => handleClick(event, parsedId)} >
             { isSelected === true &&
                 <SelectedMappedPreviewControls 
+                    {...additionalPreviewControlProps}
                     key={previewKeyBase + 'sc-' + parsedId}
                     itemName="product"
                     onDeleteButtonPress={onDeleteButtonPress}

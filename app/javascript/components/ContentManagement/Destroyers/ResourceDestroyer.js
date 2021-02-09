@@ -13,8 +13,8 @@ class ResourceDestroyer extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        const { alternateDeleteUrl, itemName, selectedItemId } = this.props;
-        const deleteUrl = alternateDeleteUrl ? alternateDeleteUrl : `/api/v1/${snakeCase(itemName + 's')}`
+        const { itemName, selectedItemId } = this.props;
+        const deleteUrl = `/api/v1/${snakeCase(itemName + 's')}`;
 
         axios.delete(`${deleteUrl}/${selectedItemId}.json`)
         .then(res => {
@@ -25,8 +25,8 @@ class ResourceDestroyer extends React.Component {
     }
 
     componentDidMount () {
-        const { alternateShowUrl, itemName, selectedItemId } = this.props;
-        const showUrl = alternateShowUrl ? alternateShowUrl : `/api/v1/${snakeCase(itemName + 's')}`
+        const { itemName, selectedItemId } = this.props;
+        const showUrl = `/api/v1/${snakeCase(itemName + 's')}`;
 
         axios.get(`${showUrl}/${selectedItemId}.json`)
         .then(res => this.setState({ itemData: res.data.data }))
@@ -38,12 +38,10 @@ class ResourceDestroyer extends React.Component {
         if(!destroyerUiComponent) { return null; }
 
         const destroyerUiProps = {
-            // Need analog to: ...additionalMappedItemPreviewProps, 
             itemData: this.state.itemData,
             key: selectedItemId,
-            onClose: onClose,
+            onClose: () => onClose(true),
             onDestroyButtonPress: this.handleDestroyButtonInput,
-            selectedItemId: selectedItemId
         };
 
         return destroyerUiComponent(destroyerUiProps);

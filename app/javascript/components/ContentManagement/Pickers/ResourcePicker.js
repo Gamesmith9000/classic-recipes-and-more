@@ -5,6 +5,7 @@ import PickerSortSelect from './Subcomponents/PickerSortSelect'
 import { EmptyPickerEntriesDisplay} from '../../Utilities/ComponentHelpers'
 import { getSortablePropertyNamesFromAttributes, sortByAttributeNameOrId } from '../../Utilities/ResponseDataHelpers'
 import MappedResourcePreview from './Subcomponents/MappedResourcePreview';
+import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 class ResourcePicker extends React.Component {
     constructor () {
@@ -31,7 +32,7 @@ class ResourcePicker extends React.Component {
         if(!itemDataList || ! this.props.mappedPreviewUiComponent ) { return null; }
 
         const { itemName, subcomponentKey } = this.props;
-        const { additionalMappedItemPreviewProps, mappedPreviewUiComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
+        const { mappedPreviewAdditionalProps, mappedPreviewUiComponent, onDeleteButtonPress, onEditButtonPress, selectedItemId } = this.props;
 
         const { byId, fieldIndex, validFields } = this.state.sorting;
         const sortedItemDataList = sortByAttributeNameOrId(itemDataList, validFields, fieldIndex, byId);
@@ -40,7 +41,7 @@ class ResourcePicker extends React.Component {
 
         const mappedPreviews = sortedItemDataList.map((item, index) => { 
             const mappedItemProps = {
-                ...additionalMappedItemPreviewProps, 
+                ...mappedPreviewAdditionalProps, 
                 itemData: item,
                 itemName: itemName,
                 mappedIndex: index,
@@ -68,8 +69,8 @@ class ResourcePicker extends React.Component {
     }
 
     componentDidMount () {
-        const { alternateIndexUrl, itemName, nonSortByFields } = this.props;
-        const indexUrl = alternateIndexUrl ? alternateIndexUrl : `/api/v1/${snakeCase(itemName + 's')}.json`
+        const { itemName, nonSortByFields } = this.props;
+        const indexUrl = `/api/v1/${snakeCase(itemName + 's')}.json`;
 
         axios.get(indexUrl)
         .then(res => {
@@ -79,6 +80,10 @@ class ResourcePicker extends React.Component {
 
                 const sortingState = this.state.sorting;
                 sortingState.validFields = getSortablePropertyNamesFromAttributes(res.data.data, ignoredSortingFields);
+
+                // When using onDataFetched prop, beware later state changes
+                const { onDataFetched } = this.props;
+                if(onDataFetched) { onDataFetched(res.data.data); }
 
                 this.setState({
                     itemData: res.data.data,
@@ -91,8 +96,8 @@ class ResourcePicker extends React.Component {
     }
 
     render() {
-        const { itemName, subcomponentKey } = this.props;
-        const pickerClassName = `${paramCase(itemName)} resource-picker`;
+        const { additionalClassNames, itemName, subcomponentKey } = this.props;
+        const pickerClassName = `${paramCase(itemName)} resource-picker` + (isValuelessFalsey(additionalClassNames) === true ? '' : ` ${additionalClassNames}`);
 
         // Before the component mounts, itemData is null. Afterward, it will be an array (even if empty)
         return (

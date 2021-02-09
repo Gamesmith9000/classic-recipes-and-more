@@ -1,4 +1,6 @@
 $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
+$modal-background-color: cornflowerblue;
+$modal-border: $modal-background-color groove .25rem;
 
 .content-dashboard {
     li.item-preview {
@@ -39,6 +41,38 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 
     .ingredients-edits > label, .paragraph-edits > label {
         display: flex;
+    }
+
+    .nested-photo-picker-frame {
+        background: $modal-background-color;
+        border: $modal-border;
+        // height: 100%;
+        overflow: scroll;
+        margin: auto .5rem;
+        position: fixed;
+        // width: 100%;
+        z-index: 1;
+
+        h2 {
+            justify-self: left;
+        }
+
+        button.exit {
+            border: $modal-border;
+            border-style: double;
+            font-weight: bold;
+            justify-self: right;
+            max-height: 2rem;
+            max-width: 2rem;
+            min-height: 25px;
+            min-width: 25px;
+        }
+
+        .frame-heading {
+            align-content: center;
+            display: grid;
+            grid-template-columns: auto auto;
+        }
     }
 
     .page-selector, .section-selector {
@@ -98,7 +132,7 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
     li {
         list-style-type: none;
     }
-    .ingredient-edits, .preview-photo, .section-edits {
+    .ingredient-edits, .instruction-edits, .preview-photo {
         background-color: gray;
         border: 1px darkgray solid;
     }
@@ -138,6 +172,11 @@ $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
             }
         }
     }
+}
+
+//[NOTE][HARD-CODED][STYLE] This is rendered as a simple <img>, so this is a temporary styling (see PhotoUpsertFormUi.js)
+.upload-preview {
+    max-height: 20vw;
 }
 
 

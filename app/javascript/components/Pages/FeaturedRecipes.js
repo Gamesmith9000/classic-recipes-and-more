@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
-import qs from 'qs'
 
 import VersionedPhoto from '../Misc/VersionedPhoto'
 import BackendConstants from '../Utilities/BackendConstants'
 import { isValuelessFalsey } from '../Utilities/Helpers'
+import { convertResponseForState } from '../Utilities/ResponseDataHelpers'
 import RecipeDisplay from './Displays/RecipeDisplay';
 
 //[NOTE][REFACTOR] This component gets all the photo urls for a photo. This needs to hang on to the size needed for the size shown in recipe display
@@ -16,7 +16,6 @@ class FeaturedRecipes extends React.Component {
     constructor () {
         super();
         this.state = {
-            photoData: null,
             recipes: null,
         };
     }
@@ -55,62 +54,23 @@ class FeaturedRecipes extends React.Component {
         .then(res => {
             const { data, included } = res.data;
 
-            // Map recipe and section data into a more friendly format
-
+            // Map data into a more friendly format
             const recipesData = data.map((element) => {
-                const attributes = element.attributes;
-                const id = parseInt(element.id);
-                const sections = element.relationships.sections.data.map((sectionElement) => {
-                    const sectionId = sectionElement.id;
-                    const includedIndex = included.findIndex(value => value.id === sectionId);
-                    return includedIndex !== -1 ? included[includedIndex].attributes : null;
+                const { attributes, relationships } = element;
+                const parsedId = parseInt(element.id);
+
+                // removed items that belong to other recipes
+                const relevantIncluded = included.filter((incItem) => {
+                    return (parsedId === parseInt(incItem.relationships.recipe?.data?.id));
                 });
-                return { ...attributes, id, sections };
+
+                const conversion = convertResponseForState({ data: { attributes, id: parsedId, relationships }, included: relevantIncluded });
+                delete conversion.associationPropertyNames;
+                delete conversion.photoId;
+                return conversion;
             });
 
-            // map preview photo ids and filter out any null/undefined values
-
-            const mappedRecipeIds = recipesData.map((element) => { return element.preview_photo_id; }).filter(
-                element => isValuelessFalsey(element) === false
-            );
-
-            // remove duplicates
-
-            const targetRecipeIds = [...new Set(mappedRecipeIds)];
-
-            // If targetRecipeIds is empty, don't send request to get photos
-            
-            if(targetRecipeIds.length > 0) {
-                let config = {
-                    params: { photos: { ids: targetRecipeIds } },
-                    paramsSerializer: (params) => { return qs.stringify(params); }
-                }
-
-                axios.get('/api/v1/photos/multi.json', config)
-                .then(res => {
-                    // [NOTE] 'ids' param length and return length are expected to be the same length. No special checks are done
-
-                    const photoData = res.data.data.map((element, index) => {
-                        const id = targetRecipeIds[index];
-                        const file = element.attributes.file;
-                        return { id, file };
-                    });
-
-                    this.setState({
-                        photoData: photoData,
-                        recipes: recipesData
-                    });
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-            }
-            else {
-                this.setState({
-                    photoData: null,
-                    recipes: recipesData
-                });
-            }
+            this.setState({ recipes: recipesData });
         })
         .catch(err => console.log(err))
     }

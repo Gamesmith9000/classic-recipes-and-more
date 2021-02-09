@@ -1,5 +1,58 @@
 import { RecipeFormSectionState } from './Constructors'
 import { isValuelessFalsey } from './Helpers';
+import { camelCase } from 'change-case'
+
+
+export function convertResponseForState (responseData) {
+    // Pass in response.data from Axios for the responseData argument
+
+    const { data: { attributes, id, relationships }, included } = responseData;
+    let conversion = { id: parseInt(id), associationPropertyNames: [] };
+
+    // Convert 'attributes'
+
+    for(const [key, value] of Object.entries(attributes)) {
+        conversion[camelCase(key)] = value;
+    }
+
+    // Create association names lists and add matching properties to conversion object
+
+    const associationNames = { many: [], one: [] };
+
+    for(const [key, value] of Object.entries(relationships)) {
+        const convertedName = camelCase(key);
+        const dataIsArray = Array.isArray(value.data);
+        const targetList = dataIsArray === true ? 'many' : 'one';
+        
+        associationNames[targetList].push(convertedName);
+        conversion[convertedName] = dataIsArray === true ? [] : null;
+    }
+
+    const isSingularAssociation = (propertyName) => {
+        const convertedName = camelCase(propertyName);
+        return associationNames.one.includes(convertedName);
+    }
+
+    // Convert 'included' 
+
+    if(included) {
+        for (let i = 0; i < included.length; i++) {
+            const itemData = { ...included[i] };
+            const itemConversion = { id: parseInt(itemData.id) };
+
+            // convert items' property names to camel case
+            for(const [key, value] of Object.entries(itemData.attributes)) {
+                itemConversion[camelCase(key)] = value;
+            }
+
+            const associationName = camelCase(itemData.type);
+            if(isSingularAssociation(associationName) === true) { conversion[associationName] = itemConversion; }
+            else { conversion[`${associationName}s`].push(itemConversion); }       
+        }
+        conversion.associationPropertyNames = associationNames;
+    }
+    return conversion;
+}
 
 function getProperDataForAttributes (res) {
     // Find the location of the proper model data from Axios response, utilizing fast_jsonapi's formatting

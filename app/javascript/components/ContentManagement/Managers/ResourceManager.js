@@ -1,8 +1,12 @@
 import React, { Fragment } from 'react'
-import { capitalCase, paramCase } from 'change-case'
-import ResourcePicker from '../Pickers/ResourcePicker'
-import { isValuelessFalsey } from '../../Utilities/Helpers';
+import { capitalCase, paramCase, sentenceCase } from 'change-case'
+
+import ContentDashboardContext from '../ContentDashboardContext';
 import ResourceDestroyer from '../Destroyers/ResourceDestroyer';
+import ResourceUpsertForm from '../Forms/ResourceUpsertForm';
+import ResourcePicker from '../Pickers/ResourcePicker'
+
+import { isValuelessFalsey } from '../../Utilities/Helpers';
 
 class ResourceManager extends React.Component {
     constructor () {
@@ -15,58 +19,63 @@ class ResourceManager extends React.Component {
         this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.destroyer(), true);
     }
 
-    handleUpsertButtonPress = (event) => {
+    handleUpsertButtonPress = (event, clearSelectedItemId = false) => {
         event.preventDefault();
-        this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), true);
+        this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.upsertForm(), !clearSelectedItemId);
     }
 
     renderUpsertForm = (additionalProps) => {
-        const { alternateShowUrl, alternateUpdateUrl, upsertFormComponent } = this.props;
-        const upsertProps = {...additionalProps, alternateShowUrl, alternateUpdateUrl };
+        const { upsertFormComponent } = this.props;
+        const upsertProps = { ...additionalProps };
         return <Fragment>{upsertFormComponent(upsertProps)}</Fragment>
     }
 
-    updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false) => {
+    updateFormsOpenedState = (newState, doNotChangeSelectedItemId = false, setStateCallback = null) => {
         const updatedState = { ...newState };
         if(doNotChangeSelectedItemId === true) { updatedState.selectedItemId = this.state.selectedItemId }
         else if(isNaN(updatedState.selectedItemId) === true) { updatedState.selectedItemId = null; }
         
-        this.setState({ ...updatedState });
+        this.setState({ ...updatedState }, setStateCallback);
     }
 
     render() { 
-        const { itemName, alternateSubcomponentKey } = this.props;
-        const { alternateCreateUrl, alternateDeleteUrl, alternateIndexUrl, alternateShowUrl, alternateUpdateUrl } = this.props;
-        const { destroyerUiComponent, mappedPreviewUiComponent } = this.props;
-        const { additionalMappedItemPreviewProps, nonSortByFields } = this.props;
+        const { dashboardContext, itemName, alternateSubcomponentKey } = this.props;
+        const { destroyerUiComponent, mappedPreviewUiComponent, upsertFormAdditionalProps, upsertFormUi } = this.props;
+        const { mappedPreviewAdditionalProps, nonSortByFields } = this.props;
 
         const keyProp = paramCase(alternateSubcomponentKey ? alternateSubcomponentKey : itemName);
         const managerClassName = `${paramCase(itemName)} resource-manager`;
         const sharedProps = { itemName, selectedItemId: this.state.selectedItemId, subcomponentKey: keyProp }
 
+        let upsertCloseSetStateCallback = null;
+        if(dashboardContext?.updateProperty) {
+            const { unsavedChanges, updateProperty } = dashboardContext;
+            if(unsavedChanges === true) { 
+                upsertCloseSetStateCallback = () => updateProperty('unsavedChanges', false); 
+            }
+        }
+
         return (
             <div className={managerClassName}>
+                <h1>{`${sentenceCase(itemName)} Manager`}</h1>
                 {this.state.destroyerIsOpen === false && this.state.upsertFormIsOpen === false &&
-                    <button className={`${paramCase(itemName)} create-item`} onClick={this.handleUpsertButtonPress}>
+                    <button className={`${paramCase(itemName)} create-item`} onClick={(event) => this.handleUpsertButtonPress(event, true)}>
                         {`Create ${capitalCase(itemName)}`}
                     </button>
                 }
                 {this.state.destroyerIsOpen === true &&
                     <ResourceDestroyer 
                         {...sharedProps}
-                        alternateDeleteUrl={alternateDeleteUrl}
-                        alternateShowUrl={alternateShowUrl}
                         destroyerUiComponent={destroyerUiComponent}
                         key={`${keyProp}-destroyer`}
-                        onClose={() => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null))}
+                        onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId)}
                     />
                 }
                 {this.state.pickerIsOpen === true &&
                     <ResourcePicker 
                         {...sharedProps}
-                        additionalMappedItemPreviewProps={additionalMappedItemPreviewProps}
-                        alternateIndexUrl={alternateIndexUrl}
                         key={`${keyProp}-picker`}
+                        mappedPreviewAdditionalProps={mappedPreviewAdditionalProps}
                         mappedPreviewUiComponent={mappedPreviewUiComponent}
                         nonSortByFields={nonSortByFields}
                         onDeleteButtonPress={this.handleDeleteButtonPress}
@@ -75,9 +84,20 @@ class ResourceManager extends React.Component {
                     />
                 }
                 {this.state.upsertFormIsOpen === true &&
-                    this.renderUpsertForm({...sharedProps, alternateCreateUrl, alternateUpdateUrl, 
-                        onClose: (newSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(newSelectedItemId))
-                    })
+                    <ContentDashboardContext.Consumer>
+                        { value =>
+                            <ResourceUpsertForm 
+                                { ...sharedProps }
+                                { ...upsertFormAdditionalProps }
+                                dashboardContext={value}
+                                key={`${keyProp}-upsert-form`}
+                                onClose={(retainSelectedItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(null), retainSelectedItemId, upsertCloseSetStateCallback)}
+                                onCreateAndClose={(createdItemId) => this.updateFormsOpenedState(FormsOpenedState.allInactiveExcept.picker(createdItemId), false, upsertCloseSetStateCallback)}
+                                upsertFormUi={upsertFormUi}
+                                useNestedPhotoPicker={true}
+                            />
+                        }
+                    </ContentDashboardContext.Consumer>
                 }
             </div>
         )

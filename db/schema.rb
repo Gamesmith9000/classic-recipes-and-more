@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_26_193648) do
+ActiveRecord::Schema.define(version: 2021_02_01_023725) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,34 +35,21 @@ ActiveRecord::Schema.define(version: 2020_12_26_193648) do
     t.string "photo_tags", default: ["DEFAULT"], array: true
   end
 
+  create_table "instructions", force: :cascade do |t|
+    t.integer "recipe_id"
+    t.text "content", default: ""
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "ordinal"
+  end
+
   create_table "photos", force: :cascade do |t|
     t.string "file"
     t.string "title"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "tag"
-  end
-
-  create_table "product_photos", force: :cascade do |t|
-    t.string "file"
-    t.string "tag"
-    t.string "title"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.bigint "product_id"
-    t.index ["product_id"], name: "index_product_photos_on_product_id"
-  end
-
-  create_table "products", force: :cascade do |t|
-    t.text "description"
-    t.float "price"
-    t.integer "stock", default: 0
-    t.string "title"
-    t.integer "total_sold", default: 0
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.bigint "product_photo_id"
-    t.index ["product_photo_id"], name: "index_products_on_product_photo_id"
+    t.integer "recipe_id"
   end
 
   create_table "recipes", force: :cascade do |t|
@@ -71,8 +58,8 @@ ActiveRecord::Schema.define(version: 2020_12_26_193648) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "featured", default: false
-    t.integer "preview_photo_id"
     t.string "description", default: ""
+    t.integer "photo_id"
   end
 
   create_table "sections", force: :cascade do |t|
@@ -83,6 +70,4 @@ ActiveRecord::Schema.define(version: 2020_12_26_193648) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "product_photos", "products"
-  add_foreign_key "products", "product_photos"
 end
