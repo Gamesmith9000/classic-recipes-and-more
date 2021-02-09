@@ -150,7 +150,7 @@ class ResourceUpsertForm extends React.Component {
         .then( res => { this.handleFormSubmitResponse(res) })
         .catch(err => { this.handleFormSubmitResponse(err) });
 
-        if(useProcessingSubmissionMessage === true){
+        if(requestType === 'post' && useProcessingSubmissionMessage === true){
             this.setState({ submissionIsProcessingWithMessage: true });
         }
     }

@@ -45,7 +45,7 @@ export function FlashMessagesDisplay (props) {
 }
 
 export function validationErrorsIfPresent (propertyName, errorsObject) {
-    if(!propertyName) { return null; }
+    if(!propertyName || Object.keys(errorsObject).length === 0) { return null; }
 
     const hasErrors = errorsObject && errorsObject[propertyName] && errorsObject[propertyName].length > 0;
     if(hasErrors === false) { return null; }
