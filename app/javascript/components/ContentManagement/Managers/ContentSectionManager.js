@@ -15,9 +15,6 @@ import MappedRecipePreviewUi from '../Pickers/Subcomponents/MappedRecipePreviewU
 import BackendConstants from  '../../Utilities/BackendConstants'
 import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 
-import PhotoManager from './PhotoManager'
-
-
 export function ContentSectionManager(props) {
     const { changeContentSection, closeContentSection, contentSectionOpen, selectedContentSection} = props;
 
@@ -160,8 +157,7 @@ const ContentSectionsInfo = {
                 useNestedPhotoPicker: true
             }}
         /> } },
-        { name: 'Photos (Old)',     renderComponent: function (props) { return <PhotoManager    {...props} key="s-photo"  uploaderNamePrefix ="photo" /> } },
-        { name: 'Photos (Updated)', renderComponent: function (props) { return <ResourceManager    
+        { name: 'Photos', renderComponent: function (props) { return <ResourceManager    
             {...props} 
             destroyerUiComponent={(destoyerUiProps) => <PhotoDestroyerUi {...destoyerUiProps} />}
             itemName="photo"
