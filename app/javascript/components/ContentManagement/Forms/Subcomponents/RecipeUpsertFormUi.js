@@ -142,6 +142,7 @@ class RecipeUpsertFormUi extends React.Component {
 
         const renderPhoto = <Fragment>
         <label>
+            <hr className="photo-divider" />
             Photo
             <br />
             <ContentOptionsContext.Consumer>
@@ -149,7 +150,7 @@ class RecipeUpsertFormUi extends React.Component {
                     <VersionedPhoto 
                         uploadedFileData={photoState?.file}
                         uploaderNamePrefix="photo"
-                        uploadedFileVersionName={value.photoPicker.exportedImageVersion}
+                        uploadedFileVersionName={value.photoPicker.standardImageVersion}
                         textDisplayForNoPhoto="(No photo chosen)"
                     />
                 }
@@ -164,6 +165,7 @@ class RecipeUpsertFormUi extends React.Component {
                     Use No Photo
                 </button>
             </label>
+            <hr className="photo-divider" />
             <br />
         </Fragment>
 

@@ -1,6 +1,10 @@
-$recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
-$modal-background-color: cornflowerblue;
+$draggable-background-color: grey;
+$draggable-border: 1px darkgray solid;
+
+$modal-background-color: darkgrey;
 $modal-border: $modal-background-color groove .25rem;
+
+$recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 
 .content-dashboard {
     li.item-preview {
@@ -46,12 +50,6 @@ $modal-border: $modal-background-color groove .25rem;
     .nested-photo-picker-frame {
         background: $modal-background-color;
         border: $modal-border;
-        // height: 100%;
-        overflow: scroll;
-        margin: auto .5rem;
-        position: fixed;
-        // width: 100%;
-        z-index: 1;
 
         h2 {
             justify-self: left;
@@ -93,8 +91,6 @@ $modal-border: $modal-background-color groove .25rem;
 
     .no-entries {}
     .unsaved-changes {}
-    .validation-error {}
-
     */
 }
 
@@ -103,6 +99,31 @@ $modal-border: $modal-background-color groove .25rem;
         background-color: grey;
         border: 1px solid black;
         margin-bottom: 5px;
+    }
+}
+
+.modal {
+    // Temporary static value. Will be changed to be more responsive later
+    height: 750px;
+    width: 1500px;
+
+    left: 50%;
+    max-height: 100%;
+    max-width: 100%;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+
+    &-foreground-overlay {
+        background: black;
+        height: 100%;
+        left: 0;
+        opacity: 50%;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 5;
     }
 }
 
@@ -118,7 +139,6 @@ $modal-border: $modal-background-color groove .25rem;
             &.placeholder {
                 background-image: linear-gradient(grey, darkgrey, grey, darkgrey, grey);
             }
-
         }
     }
 
@@ -129,12 +149,17 @@ $modal-border: $modal-background-color groove .25rem;
 }
 
 .recipe-form {
+    hr.photo-divider {
+        opacity: 35%;
+    }
+
     li {
         list-style-type: none;
     }
+
     .ingredient-edits, .instruction-edits, .preview-photo {
-        background-color: gray;
-        border: 1px darkgray solid;
+        background-color: $draggable-background-color;
+        border: $draggable-border;
     }
 }
 
@@ -179,18 +204,12 @@ $modal-border: $modal-background-color groove .25rem;
     max-height: 20vw;
 }
 
-
-/*
-.photo-picker {
-    .photo-manager > & {
-        // Styling for standard usage
-    }
-    :not(.photo-manager) > & {
-        // Styling for use in outside components
-    }
+.validation-error {
+    background-color: black;
+    border-radius: .5rem;
+    color: white;
+    margin: .5rem;
+    padding: .25rem;
+    width: max-content;
 }
-*/ 
-
-
-
 

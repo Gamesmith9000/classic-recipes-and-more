@@ -37,7 +37,7 @@ class NestedPhotoPicker extends React.Component {
         let pickerKey = 'photo-picker-nested';
         if(containingResourceName) { pickerKey += `-in-${paramCase(containingResourceName)}s` }
 
-        return <div className="nested-photo-picker-frame">
+        const pickerComponent = <div className="modal nested-photo-picker-frame">
             <div className="frame-heading">
                 <h2>Choose a Photo</h2>
                 { exitButton }
@@ -56,6 +56,11 @@ class NestedPhotoPicker extends React.Component {
                 subcomponentKey="photo"
             />
         </div>
+
+        return <Fragment>
+            <div className="modal-foreground-overlay" />
+            { pickerComponent }
+        </Fragment>
     }
 }
 

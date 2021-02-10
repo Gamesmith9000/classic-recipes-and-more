@@ -58,15 +58,6 @@ body {
     }
 }
 
-.validation-error {
-    background-color: black;
-    border-radius: .5rem;
-    color: white;
-    margin: .5rem;
-    padding: .25rem;
-    width: max-content;
-}
-
 .versioned-photo {
     &.no-photo {
         object-fit: contain;
