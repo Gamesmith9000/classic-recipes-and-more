@@ -1,5 +1,5 @@
 {
-  "name": "cooking_classics_anywhere",
+  "name": "classic_recipes_and_more",
   "private": true,
   "dependencies": {
     "@babel/preset-react": "^7.10.1",
