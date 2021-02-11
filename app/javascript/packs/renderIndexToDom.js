@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar'
 
 export function renderIndexToDom (allowAccessToContentPages) {
     const usingPlaceholderPage = true;
+    const placeholderPageDisplay = allowAccessToContentPages === true ? false : usingPlaceholderPage;
 
     const createTopDiv = function () {
         const element = document.body.appendChild(document.createElement('div'));
@@ -19,7 +20,7 @@ export function renderIndexToDom (allowAccessToContentPages) {
         ReactDOM.render(
             <BrowserRouter>
             <Navbar 
-                disableLinks={usingPlaceholderPage}
+                disableLinks={placeholderPageDisplay}
             />
             <FlashMessagesDisplay />
             <Route 
@@ -28,7 +29,7 @@ export function renderIndexToDom (allowAccessToContentPages) {
                     <App 
                         {...props} 
                         giveContentPageAccess={allowAccessToContentPages} 
-                        placeholderPageDisplay={usingPlaceholderPage}
+                        placeholderPageDisplay={placeholderPageDisplay}
                     />
                 )}
             />

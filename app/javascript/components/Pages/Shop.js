@@ -1,56 +1,14 @@
 import React from 'react'
-import axios from 'axios'
-import { existsInLocalStorage } from '../Utilities/Helpers';
 
 class Shop extends React.Component {
     constructor() {
         super();
-        this.state = {
-            cartItems: [],
-            componentHasMounted: false
-        }
-    }
-
-    mappedProducts = () => {
-
-    }
-
-    updateCartInLocalStorage = (cartItemsState) => {
-        localStorage.setItem('cartItems', JSON.stringify(cartItemsState));
-    }
-
-    componentDidMount() {
-        if(existsInLocalStorage('cartItems', false) === true) {
-            const cartItems = JSON.parse(localStorage.getItem('cartItems'));
-            this.setState({ cartItems });
-        }
-        paypal.Buttons().render('#paypal-button-container');
-        
-        axios.get('api/v1/products.json')
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => console.log(err))
+        this.state = { }
     }
 
     render() {
-        const exampleCartValue = [ { count: 3, itemId: 0 }, { count: 1, itemId: 2 }, { count: 101, itemId: 500 } ];
-        
         return (
-            <div className="shop">
-                <h1>Shop</h1>
-                <div id="paypal-button-container" />
-                <p>localStorage - Cart options:</p>
-                <button onClick={() => this.updateCartInLocalStorage(exampleCartValue)}>
-                    Save example to...
-                </button>
-                <button onClick={() => this.updateCartInLocalStorage("")}>
-                    Clear string in...
-                </button>
-                <button onClick={() => this.updateCartInLocalStorage([])}>
-                    Save empty array to...
-                </button>
-            </div>
+            <div className="shop">[Shop Component]</div>
         )
     }
 }
