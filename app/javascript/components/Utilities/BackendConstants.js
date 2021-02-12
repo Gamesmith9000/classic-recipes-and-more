@@ -39,21 +39,6 @@ const BackendConstants = {
                     minimum: 2
                 }
             }
-        },
-        productPhoto: {
-            defaults: {
-                tag: 'DEFAULT'
-            },
-            validations: {
-                tag: {
-                    maximum: 40,
-                    minimum: 1
-                },
-                title: {
-                    maximum: 25,
-                    minimum: 2
-                }
-            }
         }
     },
     uploaders: {
@@ -73,27 +58,6 @@ const BackendConstants = {
                 return validName === true ? this.versions[versionName] : this.defaultVersion;
             },
             railsResourceName: 'photo',
-            versions: {
-                'thumb': new backendConstantsPhotoVersion(128, 128),
-                'small': new backendConstantsPhotoVersion(256, 256),
-                'medium': new backendConstantsPhotoVersion(512, 512)
-            }
-        },
-        productPhoto: {
-            defaultVersion : new backendConstantsPhotoVersion(768, 768),
-            isValidVersionName: function(versionName){
-                return (isValuelessFalsey(versionName) === false && this.versions.hasOwnProperty(versionName));
-            },
-            getUrlForVersion: function (photoFileProperty, versionName){
-                if(!photoFileProperty) { return; }
-                const validName = this.isValidVersionName(versionName) === true;
-                return validName === true ? photoFileProperty[versionName]?.url : photoFileProperty.url;
-            },
-            getVersionData: function (versionName){
-                const validName = this.isValidVersionName(versionName) === true;
-                return validName === true ? this.versions[versionName] : this.defaultVersion;
-            },
-            railsResourceName: 'product_photo',
             versions: {
                 'thumb': new backendConstantsPhotoVersion(128, 128),
                 'small': new backendConstantsPhotoVersion(256, 256),

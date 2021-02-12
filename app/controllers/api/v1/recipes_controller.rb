@@ -16,7 +16,7 @@ module Api
                     format.html { html_disallowed_response }
                     format.json {
                         recipe = Recipe.find_by_id(params[:id])
-                        render json: RecipeSerializer.new(recipe, inclusion_options).serialized_json
+                        render json: RecipeSerializer.new(recipe, inclusion_options).serializable_hash.to_json
                     }
                 end
             end
@@ -26,7 +26,7 @@ module Api
                     format.html { html_disallowed_response }
                     format.json {
                         recipes = Recipe.where(featured: true)
-                        render json: RecipeSerializer.new(recipes, inclusion_options).serialized_json
+                        render json: RecipeSerializer.new(recipes, inclusion_options).serializable_hash.to_json
                     }
                 end
             end
@@ -174,7 +174,7 @@ module Api
             end
 
             def render_serialized_json (values)
-                render json: RecipeSerializer.new(values).serialized_json
+                render json: RecipeSerializer.new(values).serializable_hash.to_json
             end
         end
     end

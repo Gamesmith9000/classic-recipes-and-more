@@ -1,5 +1,5 @@
 class PhotoSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attributes :file, :recipe_id, :tag, :title
   belongs_to :recipe
 end

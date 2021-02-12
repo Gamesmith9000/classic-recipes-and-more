@@ -1,5 +1,5 @@
 class InstructionSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attributes :content, :ordinal, :recipe_id
   belongs_to :recipe
 end

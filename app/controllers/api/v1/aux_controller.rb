@@ -82,7 +82,7 @@ class Api::V1::AuxController < ApplicationController
     end
 
     def render_serialized_json (values)
-        render json: AuxDataSerializer.new(values).serialized_json
+        render json: AuxDataSerializer.new(values).serializable_hash.to_json
     end
 
     def video_params

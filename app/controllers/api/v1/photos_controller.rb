@@ -85,7 +85,7 @@ module Api
             end
 
             def render_serialized_json (values)
-                render json: PhotoSerializer.new(values).serialized_json
+                render json: PhotoSerializer.new(values).serializable_hash.to_json
             end
         end
     end
