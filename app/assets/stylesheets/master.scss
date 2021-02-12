@@ -1,3 +1,5 @@
+$navbar-logo-width: 30vw;
+
 body {
     background-color: darkgray;
     font-family: 'Lato', sans-serif;
@@ -37,11 +39,14 @@ body {
 .navbar {
     background: grey;
     display: grid;
-    grid-template-columns: 32% 68%;
+    grid-template-columns: $navbar-logo-width calc(100vw - #{$navbar-logo-width});
 
     &-link {
         align-self: center;
+        color: white;
+        font-size: 1.75vw;
         text-align: center;
+        text-decoration-style: double;
     }
 
     &-links-section {
@@ -50,9 +55,10 @@ body {
     }
 
     &-title {
+        align-self: center;
         color: white;
         font-family: 'Parisienne', cursive;
-        font-size: 3.5rem;
+        font-size: calc(#{$navbar-logo-width} / 10);
         font-weight: bold;
         text-shadow: 1px 1px 3px black;
     }

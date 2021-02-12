@@ -2,7 +2,7 @@ import React from 'react'
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 
 function RecipeDisplay (props) {
-    const { allowUnfeatured, description, featured, ingredients, instructions, photo, photoVersion, previewPhotoUrl, title } = props;
+    const { allowUnfeatured, description, featured, ingredients, instructions, photo, photoVersion, title } = props;
 
     if(featured === false && allowUnfeatured !== true) { return null; }
 
@@ -23,7 +23,7 @@ function RecipeDisplay (props) {
         <div className="recipe-display">
             <h1>{title}</h1>
             <VersionedPhoto  
-                uploadedFileData={previewPhotoUrl}
+                uploadedFileData={photo.file}
                 uploadedFileVersionName={photoVersion}
                 renderNullWithoutUrl={true}
             />

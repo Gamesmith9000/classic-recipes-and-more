@@ -9,13 +9,10 @@ class Navbar extends React.Component {
                 <Link to="/about" className="navbar-link">About</Link>
                 <Link to="/cookbook" className="navbar-link">Cookbook</Link>
                 <Link to="/photo-gallery" className="navbar-link">Photo Gallery</Link>
-                <Link to="/featured-recipes" className="navbar-link">Featured/Seasonal Recipes</Link>
+                <Link to="/featured-recipes" className="navbar-link">Featured Recipes</Link>
                 <Link to="/shop" className="navbar-link">Shop</Link>
-                <Link to="/cooking-videos" className="navbar-link">Videos</Link>
-                
-                <Link to="/content" className="navbar-link">CONTENT MANAGER HOME</Link>
+                <Link to="/cooking-videos" className="navbar-link">Videos</Link>                
             </div>;
-
 
         return (
             <nav className="navbar">
