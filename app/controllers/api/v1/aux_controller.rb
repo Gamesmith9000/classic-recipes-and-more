@@ -52,19 +52,6 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
-    def remove_photo_id_instances
-        return if photo_id_removal_params.has_key?(:id) == false
-
-        idParam = photo_id_removal_params[:id]
-        q = "'" + idParam.to_s  + "' = ANY (photo_page_ordered_ids)"
-        instances = AuxData.where(q)
-
-        instances.each do |i|
-            updatedArray = i.photo_page_ordered_ids.select {|p| p != idParam}
-            i.update(photo_page_ordered_ids: updatedArray)
-        end
-    end
-
     private
 
     def aux_data_params

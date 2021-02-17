@@ -119,18 +119,6 @@ module Api
                 end
             end
 
-            def remove_photo_id_instances
-                # [NOTE][REFACTOR] This section/method (and calls) will need to be either updated or removed 
-                return if photo_id_removal_params.has_key?(:id) == false
-
-                idParam = photo_id_removal_params[:id]
-                instances = Recipe.where(photo_id: idParam)
-        
-                instances.each do |i|
-                    i.update(photo_id: nil)
-                end
-            end
-
             private
 
             def checked_instruction_content (content_value)
