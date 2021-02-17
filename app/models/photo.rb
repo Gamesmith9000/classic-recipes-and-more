@@ -1,7 +1,6 @@
 class Photo < ApplicationRecord
-    has_many :ordered_photos
+    has_many :ordered_photos #, dependent: :destroy
     has_many :recipes
-    # has_many :aux_datas, though: :ordered_photos
 
     validates :file, :tag, :title, presence: true
     validates_length_of :tag, minimum: 1, maximum: 40, allow_blank: false
