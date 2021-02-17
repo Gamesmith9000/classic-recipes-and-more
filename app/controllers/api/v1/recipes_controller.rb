@@ -136,10 +136,6 @@ module Api
                 return options
             end
 
-            def photo_id_removal_params
-                params.require(:photo).permit(:id)
-            end
-
             def recipe_params
                 params.require(:recipe).permit(
                     :description,
