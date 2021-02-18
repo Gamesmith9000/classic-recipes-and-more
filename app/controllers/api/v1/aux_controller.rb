@@ -62,7 +62,7 @@ class Api::V1::AuxController < ApplicationController
     def get_aux_data_instance
         #   [DESIGN] The record with the lowest id is used as the sole instance
         #   [DESIGN] Creation and deletion must be done via console
-        return aux_data.first
+        return AuxData.first
     end
 
     def html_disallowed_response

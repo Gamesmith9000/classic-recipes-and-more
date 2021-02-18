@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_17_210102) do
+ActiveRecord::Schema.define(version: 2021_02_18_202638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_210102) do
   end
 
   create_table "ordered_photos", force: :cascade do |t|
-    t.integer "ordinal", default: 0
+    t.integer "ordinal"
     t.bigint "aux_data_id"
     t.bigint "instruction_id"
     t.bigint "photo_id"

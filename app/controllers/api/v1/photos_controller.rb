@@ -25,11 +25,7 @@ module Api
                 respond_to do |format|
                     format.html { html_disallowed_response }
                     format.json {
-                        if multi_photos_params[:ids]
-                            photos = Photo.find(multi_photos_params[:ids].values)
-                        else
-                            photos = Photo.all
-                        end
+                        photos = multi_photos_params.key?(:ids) ? Photo.find(multi_photos_params[:ids].values) : nil
                         render_serialized_json(photos)
                     }
                 end                
@@ -57,23 +53,10 @@ module Api
 
             def destroy
                 photo = Photo.find_by_id(params[:id])
-
                 associated_ordered_photos = photo.ordered_photos
-                associated_recipes = photo.recipes
-                
+
                 if photo.destroy
                     associated_ordered_photos.each do |o|
-                        aux_datas = o.aux_datas
-                        instructions = o.instructions
-
-                        aux_datas.each do |a|
-                            a.ordered_photos.delete(o)
-                        end
-
-                        instructions.each do |a|
-                            a.ordered_photos.delete(o)
-                        end
-
                         destroy(o)
                     end
 
