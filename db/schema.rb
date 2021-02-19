@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_18_202638) do
+ActiveRecord::Schema.define(version: 2021_02_19_223330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,8 +40,6 @@ ActiveRecord::Schema.define(version: 2021_02_18_202638) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "ordinal"
     t.bigint "recipe_id"
-    t.bigint "ordered_photo_id"
-    t.index ["ordered_photo_id"], name: "index_instructions_on_ordered_photo_id"
     t.index ["recipe_id"], name: "index_instructions_on_recipe_id"
   end
 
@@ -63,9 +61,7 @@ ActiveRecord::Schema.define(version: 2021_02_18_202638) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "tag"
-    t.bigint "ordered_photo_id"
     t.bigint "recipe_id"
-    t.index ["ordered_photo_id"], name: "index_photos_on_ordered_photo_id"
     t.index ["recipe_id"], name: "index_photos_on_recipe_id"
   end
 
@@ -77,8 +73,6 @@ ActiveRecord::Schema.define(version: 2021_02_18_202638) do
     t.boolean "featured", default: false
     t.string "description", default: ""
     t.bigint "photo_id"
-    t.bigint "instruction_id"
-    t.index ["instruction_id"], name: "index_recipes_on_instruction_id"
     t.index ["photo_id"], name: "index_recipes_on_photo_id"
   end
 
