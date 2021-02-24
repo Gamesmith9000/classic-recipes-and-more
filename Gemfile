@@ -31,7 +31,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'aws-sdk-rails'
 gem 'carrierwave-aws'
 gem 'devise'
-# gem 'fast_jsonapi'
 gem 'figaro'
 gem 'jsonapi-serializer'
 gem 'mini_magick'
