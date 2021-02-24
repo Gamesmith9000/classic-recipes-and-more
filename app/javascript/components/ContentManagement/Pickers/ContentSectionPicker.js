@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 
 function ContentSectionPicker (props) {
-    const { allSectionNames, changeContentSection, dashboardContext, contentSectionOpen, closeContentSection, selectedContentSection } = props;
+    const { allSectionNames, changeContentSection, dashboardContext, contentSectionIsOpen, closeContentSection, selectedContentSection } = props;
 
     const handleChangeOrClose = (event, action) => {
         event.preventDefault();
@@ -10,7 +10,7 @@ function ContentSectionPicker (props) {
     }
 
     const mapSectionButtons = () => {
-        const isOpenSection = (sectionName) => { return (contentSectionOpen === true && allSectionNames[selectedContentSection] === sectionName) };
+        const isOpenSection = (sectionName) => { return (contentSectionIsOpen === true && allSectionNames[selectedContentSection] === sectionName) };
 
         return allSectionNames.map((value, index) => {
             return (
@@ -25,7 +25,7 @@ function ContentSectionPicker (props) {
         <div className="section-picker">
             <div>Manage Resource:</div>
             <Fragment>{ mapSectionButtons() }</Fragment>
-            { contentSectionOpen === true &&
+            { contentSectionIsOpen === true &&
                 <button onClick={(event) => handleChangeOrClose(event, closeContentSection)}>Close</button>
             }
         </div>

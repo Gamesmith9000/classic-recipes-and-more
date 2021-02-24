@@ -20,7 +20,7 @@ class ContentDashboard extends React.Component {
                 unsavedChanges: false
             },
             componentHasMounted: false,
-            contentSectionOpen: false,
+            contentSectionIsOpen: false,
             pageSectionIsOpen: false,
             selectedContentSection: 0,
             selectedPageSection: 0
@@ -29,7 +29,7 @@ class ContentDashboard extends React.Component {
 
     changeContentSection = (newSectionIdentifier) => {
         this.setState({
-            contentSectionOpen: true,
+            contentSectionIsOpen: true,
             selectedContentSection: newSectionIdentifier
         });
     }
@@ -42,7 +42,7 @@ class ContentDashboard extends React.Component {
     }
     
     closeContentSection = () => {
-        this.setState({ contentSectionOpen: false });
+        this.setState({ contentSectionIsOpen: false });
     }
 
     closePageSection = () => {
@@ -76,13 +76,13 @@ class ContentDashboard extends React.Component {
     }
 
     persistantFields = {
-        contentSectionOpen: {
+        contentSectionIsOpen: {
             getValue () {
-                const storedValue = localStorage.getItem('contentSectionOpen');
+                const storedValue = localStorage.getItem('contentSectionIsOpen');
                 if(storedValue === 'true' || storedValue === 'false') { return storedValue === 'true' ? true : false; }
                 else { return null; }
             },
-            hasValue () { return existsInLocalStorage('contentSectionOpen') === true; }
+            hasValue () { return existsInLocalStorage('contentSectionIsOpen') === true; }
         },
         pageSectionIsOpen: {
             getValue () {
@@ -158,11 +158,13 @@ class ContentDashboard extends React.Component {
                         { this.state.componentHasMounted &&
                             <ContentSectionManager
                                 changeContentSection={this.changeContentSection}
-                                // changePage={this.changePage}
-                                closeContentSection={this.closeContentSection}      
-                                contentSectionOpen={this.state.contentSectionOpen}
-                                selectedPageSection={this.state.contentSectionOpen}
+                                changePageSection={this.changePageSection}
+                                closeContentSection={this.closeContentSection}
+                                closePageSection={this.closePageSection}
+                                contentSectionIsOpen={this.state.contentSectionIsOpen}
+                                pageSectionIsOpen={this.state.pageSectionIsOpen}
                                 selectedContentSection={this.state.selectedContentSection}
+                                selectedPageSection={this.state.selectedPageSection}
                             />
                         }
                     </div>
