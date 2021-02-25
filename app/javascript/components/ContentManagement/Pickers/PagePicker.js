@@ -1,62 +1,35 @@
 import React, { Fragment } from 'react'
-import AboutPageForm from '../Forms/AboutPageForm'
-import PhotoGalleryPageForm from '../Forms/PhotoGalleryPageForm'
 
-class PagePicker extends React.Component {
-    constructor () {
-        super();
-        this.state = {
-            selectedPage: 0
-        }
+function PagePicker (props) {
+    const { allPageNames, changePageSection, closePageSection, dashboardContext, pageSectionIsOpen, selectedPageSection } = props;
+
+    const handleChangeOrClose = (event, action) => {
+        event.preventDefault();
+        if(dashboardContext?.unsavedChanges !== true) { action(); }
+        else { window.alert("Your form has unsaved data. You must close it before you can exit this manager."); }
     }
 
-    changeSelectedPage = (newSelectedPageIdentifier) => {
-        // [NOTE][REFACTOR] The max identifier number is hard coded here:
-        if (!Number.isInteger(newSelectedPageIdentifier) || newSelectedPageIdentifier < 0 || newSelectedPageIdentifier > 1 || newSelectedPageIdentifier === this.state.selectedPage) {
-            return;
-        }
-        this.setState({
-            selectedPage: newSelectedPageIdentifier
+    const mapPageButtons = () => {
+        const isOpenPage = (pageName) => { return (pageSectionIsOpen === true && allPageNames[selectedPageSection] === pageName) };
+
+        return allPageNames.map((value, index) => {
+            return (
+                <button disabled={isOpenPage(value) === true} key={value} onClick={(event) => handleChangeOrClose(event, () => changePageSection(index))}>
+                    {value}
+                </button>
+            );
         });
     }
 
-    pageButton = (pageIdentifierNumber, buttonText) => {
-        return(
-            <button onClick={() => this.changeSelectedPage(pageIdentifierNumber)}>
-                {buttonText}
-            </button>
-        );
-    }
-
-    renderPageComponent = () => {
-        let renderedItem;
-        switch(this.state.selectedPage){
-            case 0:
-                renderedItem = <AboutPageForm />;
-                break;
-            case 1:
-                renderedItem = <PhotoGalleryPageForm imageDisplaySize="small"/>
-                break;
+    return (
+        <div className="page-picker">
+        <div>Manage Page Resources:</div>
+        <Fragment>{ mapPageButtons() }</Fragment>
+        { pageSectionIsOpen === true &&
+            <button onClick={(event) => handleChangeOrClose(event, closePageSection)}>Close</button>
         }
-        return renderedItem;
-    }
-
-    render() {
-        return (
-            <div className="page-manager">
-                <h1>Page Manager</h1>
-                <div className="page-selector">
-                    <div>Manage Page:</div>
-                    <Fragment>
-                        {this.pageButton(0, "About")}
-                        {this.pageButton(1, "Photo Gallery")}
-                    </Fragment>
-                </div>
-                <hr />
-                <Fragment>{this.renderPageComponent()}</Fragment>
-            </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default PagePicker
