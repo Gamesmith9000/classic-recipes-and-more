@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_19_223330) do
+ActiveRecord::Schema.define(version: 2021_02_26_174917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "about_sections", force: :cascade do |t|
+    t.text "content", default: ""
+    t.integer "ordinal", default: 0
+    t.bigint "aux_data_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aux_data_id"], name: "index_about_sections_on_aux_data_id"
+  end
 
   create_table "admins", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -76,6 +85,7 @@ ActiveRecord::Schema.define(version: 2021_02_19_223330) do
     t.index ["photo_id"], name: "index_recipes_on_photo_id"
   end
 
+  add_foreign_key "about_sections", "aux_datas"
   add_foreign_key "instructions", "recipes"
   add_foreign_key "ordered_photos", "aux_datas"
   add_foreign_key "ordered_photos", "instructions"
