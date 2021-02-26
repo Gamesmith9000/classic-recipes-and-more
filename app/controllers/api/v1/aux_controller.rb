@@ -5,7 +5,7 @@ class Api::V1::AuxController < ApplicationController
     def get_gallery_ordered_photos
         respond_to do |format|
             format.html { html_disallowed_response }
-            format.json { render_serialized_json(get_aux_data_instance.ordered_photos) }
+            format.json { render_serialized_json(aux_data_instance.ordered_photos) }
         end
     end
 
@@ -39,40 +39,42 @@ class Api::V1::AuxController < ApplicationController
     def show
         respond_to do |format|
             format.html { html_disallowed_response }
-            format.json { render_serialized_json(get_aux_data_instance) }
+            format.json { render_serialized_json(aux_data_instance) }
         end
     end
 
     def update
-        aux_data = get_aux_data_instance
+        aux_data = aux_data_instance
 
         if aux_data.update(aux_data_params)
             render_serialized_json(aux_data)   
         else
-            render json: { error: aux_data.errors.messages }, status: 422
+            render_error(aux_data.errors.messages)
         end
     end
 
     private
 
-    def aux_data_params
-        params.require(:aux_data).permit(:photo_page_ordered_ids =>[], :about_page_sections =>[])
-    end
-
-    def get_aux_data_instance
+    def aux_data_instance
         #   [DESIGN] The record with the lowest id is used as the sole instance
         #   [DESIGN] Creation and deletion must be done via console
         return AuxData.first
     end
 
-    def html_disallowed_response
-        # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
-        # [NOTE][DRY] This method is repeated across other API controllers
-        redirect_back(fallback_location: root_path)
+    def aux_data_params
+        params.require(:aux_data).permit(
+            :photo_page_ordered_ids =>[], :about_page_sections =>[],
+            :about_sections, :ordered_photos)
+    end
+
+    def inclusion_options
+        options = {}
+        options[:include] = [:about_sections, :ordered_photos]
+        return options
     end
 
     def render_serialized_json (values)
-        render json: AuxDataSerializer.new(values).serializable_hash.to_json
+        render json: AuxDataSerializer.new(values, inclusion_options).serializable_hash.to_json
     end
 
     def video_params

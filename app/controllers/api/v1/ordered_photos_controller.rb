@@ -88,11 +88,6 @@ module Api
 
             private
 
-            def html_disallowed_response
-                # [NOTE][DRY] This is a direct copy of method code from aux_controller
-                redirect_back(fallback_location: root_path)
-            end
-
             def inclusion_options
                 options = {}
                 options[:include] = [:photo]
@@ -107,16 +102,8 @@ module Api
                 params.require(:ordered_photo).permit(:ordinal, :aux_data_id, :instruction_id, :photo_id)
             end
 
-            def render_error (error_messages)
-                render json: { error: error_messages }, status: 422
-            end
-
-            def render_serialized_json (values, inclusion_options_h = nil)
-                if inclusion_options_h.nil?
-                    render json: OrderedPhotoSerializer.new(values).serializable_hash.to_json
-                else
-                    render json: OrderedPhotoSerializer.new(values, inclusion_options_h).serializable_hash.to_json
-                end
+            def render_serialized_json (values)
+                render json: OrderedPhotoSerializer.new(values, inclusion_options).serializable_hash.to_json
             end
         end
     end

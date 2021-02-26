@@ -16,7 +16,7 @@ module Api
                     format.html { html_disallowed_response }
                     format.json {
                         recipe = Recipe.find_by_id(params[:id])
-                        render json: RecipeSerializer.new(recipe, inclusion_options).serializable_hash.to_json
+                        render_serialized_json(recipe)
                     }
                 end
             end
@@ -26,7 +26,7 @@ module Api
                     format.html { html_disallowed_response }
                     format.json {
                         recipes = Recipe.where(featured: true)
-                        render json: RecipeSerializer.new(recipes, inclusion_options).serializable_hash.to_json
+                        render_serialized_json(recipes)
                     }
                 end
             end
@@ -47,6 +47,7 @@ module Api
                     else
                         Instruction.create(:recipe_id => recipe.id, :content => "", :ordinal => 0)
                     end
+                    
                     render_serialized_json(recipe)
                 else
                     render_error(recipe.errors.messages)
@@ -125,11 +126,6 @@ module Api
                 return content_value.nil? == true ? "" : content_value 
             end
 
-            def html_disallowed_response
-                # [NOTE][DRY] This is a direct copy of method code from aux_controller
-                redirect_back(fallback_location: root_path)
-            end
-
             def inclusion_options
                 options = {}
                 options[:include] = [:instructions, :photo]
@@ -147,12 +143,8 @@ module Api
                 )
             end
 
-            def render_error (error_messages)
-                render json: { error: error_messages }, status: 422
-            end
-
             def render_serialized_json (values)
-                render json: RecipeSerializer.new(values).serializable_hash.to_json
+                render json: RecipeSerializer.new(values, inclusion_options).serializable_hash.to_json
             end
         end
     end

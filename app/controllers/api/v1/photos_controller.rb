@@ -72,21 +72,12 @@ module Api
 
             private
 
-            def html_disallowed_response
-                # [NOTE][DRY] This is a direct copy of method code from aux_controller
-                redirect_back(fallback_location: root_path)
-            end
-
             def multi_photos_params
                 params.require(:photos).permit(:ids => {})
             end
 
             def photo_params
                 params.require(:photo).permit(:file, :tag, :title)
-            end
-
-            def render_error (error_messages)
-                render json: { error: error_messages }, status: 422
             end
 
             def render_serialized_json (values)
