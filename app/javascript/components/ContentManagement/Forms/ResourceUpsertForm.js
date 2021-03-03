@@ -158,7 +158,7 @@ class ResourceUpsertForm extends React.Component {
     handleFormSubmitResponse = (res) => {
         if(res?.status === 200 && res.data?.data?.type === snakeCase(this.props.itemName)) {
             if(this.state.isExistingItem === false) { this.props.onCreateAndClose(res.data.data.id); }
-            else { this.initializeComponentState(); }
+            else { this.initializeComponentState(res); }
         }
         else {
             const additional = this.props.preSubmit?.useProcessingSubmissionMessage === true ?  { submissionIsProcessingWithMessage: false } : { };
@@ -270,48 +270,61 @@ class ResourceUpsertForm extends React.Component {
         this.handleUpdateCurrent(event, event.target?.[propertyOfEventTarget], propertyName, propertyPath);
     }
 
-    initializeComponentState () {
+    initializeComponentState (customResponseData = null) {
         const { itemName, selectedItemId, atResponseConversion } = this.props;
-        const getUrl = `/api/v1/${snakeCase(itemName + 's')}`;
+        
+        // If specified item is new (unsaved):
 
-        if(isValuelessFalsey(selectedItemId) === false) {
-            axios.get(`${getUrl}/${selectedItemId}.json`)
-            .then(res => {
-                // [NOTE][OPTIMIZE]: convertResponseForState function is called up to 4 times.
-                //                      The calls are separate to prevent 'current' and 'prior' from being the same object
-                
-                let assocPropNames = convertResponseForState(res.data).associationPropertyNames;
-
-                const currentItemState = () => { 
-                    const newState = convertResponseForState(res.data);
-                    delete newState.associationPropertyNames; 
-
-                    if(atResponseConversion?.additionalItemResponseModification) { 
-                        return atResponseConversion?.additionalItemResponseModification(newState, res.data.data);
-                    }
-                    else { return newState; }
-                }
-
-                const otherStateChanges = atResponseConversion?.additionalStateModification 
-                    ? atResponseConversion?.additionalStateModification(currentItemState(), res.data.data) 
-                    : { }
-                ;
-
-                this.setState({
-                    ...otherStateChanges,
-                    associationPropertyNames: assocPropNames,
-                    current: currentItemState(),
-                    isExistingItem: true,
-                    prior: currentItemState(),
-                });
-            })
-            .catch(err => console.log(err));
-        }
-        else {
+        if(isValuelessFalsey(selectedItemId) === true) {
             const { dashboardContext } = this.props;
             if(dashboardContext && dashboardContext.unsavedChanges === false) {
                 dashboardContext.updateProperty('unsavedChanges', true);
             }
+            return;
+        }
+
+        // If item is existing (freshly created items automatically exit the form)
+
+        const processResponse = (responseData) => {
+            // [NOTE][OPTIMIZE]: convertResponseForState function is called up to 4 times.
+            //                      The calls are separate to prevent 'current' and 'prior' from being the same object
+            
+            let assocPropNames = convertResponseForState(responseData.data).associationPropertyNames;
+
+            const currentItemState = () => { 
+                const newState = convertResponseForState(responseData.data);
+                delete newState.associationPropertyNames; 
+
+                if(atResponseConversion?.additionalItemResponseModification) { 
+                    return atResponseConversion?.additionalItemResponseModification(newState, responseData.data.data);
+                }
+                else { return newState; }
+            }
+
+            const otherStateChanges = atResponseConversion?.additionalStateModification 
+                ? atResponseConversion?.additionalStateModification(currentItemState(), responseData.data.data) 
+                : { }
+            ;
+
+            this.setState({
+                ...otherStateChanges,
+                associationPropertyNames: assocPropNames,
+                current: currentItemState(),
+                isExistingItem: true,
+                prior: currentItemState(),
+            });
+        }
+
+        const useCustomResponseData = customResponseData ? true : false;
+
+        if(useCustomResponseData === true) {
+            processResponse(customResponseData);
+        }
+        else {
+            const getUrl = `/api/v1/${snakeCase(itemName + 's')}`;
+            axios.get(`${getUrl}/${selectedItemId}.json`)
+            .then(res => processResponse(res))
+            .catch(err => console.log(err));
         }
     }
 

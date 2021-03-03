@@ -1,10 +1,15 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
-    before_action :authenticate_admin!, except: [:show, :youtube_video_data]
+    before_action :authenticate_admin!, except: [:show, :get_gallery_ordered_photos, :youtube_video_data]
     
-    # General API methods
-    
-    def youtube_video_data
+    def get_gallery_ordered_photos
+        respond_to do |format|
+            format.html { html_disallowed_response }
+            format.json { render_serialized_json(aux_data_instance.ordered_photos) }
+        end
+    end
+
+    def get_youtube_video_data
         respond_to do |format|
             format.html { html_disallowed_response }
             format.json {
@@ -31,58 +36,44 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
-    # AuxData methods
-    #   [DESIGN] The record with the lowest id is used as the sole instance
-    #   [DESIGN] Creation and deletion must be done via console
-
     def show
         respond_to do |format|
             format.html { html_disallowed_response }
-            format.json { render_serialized_json(AuxData.first) }
+            format.json { render_serialized_json(aux_data_instance) }
         end
     end
 
     def update
-        aux_data = AuxData.first
+        aux_data = aux_data_instance
 
         if aux_data.update(aux_data_params)
             render_serialized_json(aux_data)   
         else
-            render json: { error: aux_data.errors.messages }, status: 422
-        end
-    end
-
-    def remove_photo_id_instances
-        return if photo_id_removal_params.has_key?(:id) == false
-
-        idParam = photo_id_removal_params[:id]
-        q = "'" + idParam.to_s  + "' = ANY (photo_page_ordered_ids)"
-        instances = AuxData.where(q)
-
-        instances.each do |i|
-            updatedArray = i.photo_page_ordered_ids.select {|p| p != idParam}
-            i.update(photo_page_ordered_ids: updatedArray)
+            render_error(aux_data.errors.messages)
         end
     end
 
     private
 
+    def aux_data_instance
+        #   [DESIGN] The record with the lowest id is used as the sole instance
+        #   [DESIGN] Creation and deletion must be done via console
+        return AuxData.first
+    end
+
     def aux_data_params
-        params.require(:aux_data).permit(:photo_page_ordered_ids =>[], :about_page_sections =>[])
+        params.require(:aux_data).permit(:about_sections, :ordered_photos,
+            :photo_page_ordered_ids =>[], :about_page_sections =>[])
     end
 
-    def html_disallowed_response
-        # [NOTE] When someone visits one of the request pages that are only meant for API purposes, this is the response. Consider a 403 response
-        # [NOTE][DRY] This method is repeated across other API controllers
-        redirect_back(fallback_location: root_path)
-    end
-
-    def photo_id_removal_params
-        params.require(:photo).permit(:id)
+    def inclusion_options
+        options = {}
+        options[:include] = [:about_sections, :ordered_photos]
+        return options
     end
 
     def render_serialized_json (values)
-        render json: AuxDataSerializer.new(values).serializable_hash.to_json
+        render json: AuxDataSerializer.new(values, inclusion_options).serializable_hash.to_json
     end
 
     def video_params

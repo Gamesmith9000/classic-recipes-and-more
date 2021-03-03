@@ -20,47 +20,77 @@ class ContentDashboard extends React.Component {
                 unsavedChanges: false
             },
             componentHasMounted: false,
-            contentSectionOpen: false,
-            selectedContentSection: 0
+            contentSectionIsOpen: false,
+            pageSectionIsOpen: false,
+            selectedContentSection: 0,
+            selectedPageSection: 0
         });
     }
 
     changeContentSection = (newSectionIdentifier) => {
         this.setState({
-            contentSectionOpen: true,
+            contentSectionIsOpen: true,
             selectedContentSection: newSectionIdentifier
+        });
+    }
+
+    changePageSection = (newSectionIdentifier) => {
+        this.setState({
+            pageSectionIsOpen: true,
+            selectedPageSection: newSectionIdentifier
         });
     }
     
     closeContentSection = () => {
-        this.setState({ contentSectionOpen: false });
+        this.setState({ contentSectionIsOpen: false });
+    }
+
+    closePageSection = () => {
+        this.setState({ pageSectionIsOpen: false });
     }
 
     createNewStateToMatchLocalStorage = (changedMountedStateToTrue = false) => {
-        const fields = ['contentSectionOpen', 'selectedContentSection'];
+        const fields = Object.keys(this.persistantFields);
         const newState = {};
 
         for(let i = 0; i < fields.length; i++) {
-            newState[fields[i]] = this.localStorageValues[fields[i]].getValue();
+            newState[fields[i]] = this.persistantFields[fields[i]].getValue();
         }
 
         if(changedMountedStateToTrue === true) { newState.componentHasMounted = true; }
         return { ...newState };
     }
 
-    localStorageValues = {
-        allValuesAreValid () {
-            if(this.contentSectionOpen.hasValue() === false) { return false; }
-            if(this.selectedContentSection.hasValue() === false) { return false; }
-            return true;
-        },
-        contentSectionOpen: {
+    localStorageMatchesState = () => {
+        const fields = Object.keys(this.persistantFields);
+        const storageValues = {};
+        const stateValues = {};
+
+        for(let i = 0; i < fields.length; i++) {
+            const field = fields[i];
+            storageValues[field] = this.persistantFields[field]?.getValue();
+            stateValues[field] = this.state[field];
+        }
+
+        return objectsHaveMatchingValues(stateValues, storageValues) === true;
+    }
+
+    persistantFields = {
+        contentSectionIsOpen: {
             getValue () {
-                const storedValue = localStorage.getItem('contentSectionOpen');
+                const storedValue = localStorage.getItem('contentSectionIsOpen');
                 if(storedValue === 'true' || storedValue === 'false') { return storedValue === 'true' ? true : false; }
                 else { return null; }
             },
-            hasValue () { return existsInLocalStorage('contentSectionOpen') === true; }
+            hasValue () { return existsInLocalStorage('contentSectionIsOpen') === true; }
+        },
+        pageSectionIsOpen: {
+            getValue () {
+                const storedValue = localStorage.getItem('pageSectionIsOpen');
+                if(storedValue === 'true' || storedValue === 'false') { return storedValue === 'true' ? true : false; }
+                else { return null; }
+            },
+            hasValue () { return existsInLocalStorage('pageSectionIsOpen') === true; }
         },
         selectedContentSection: {
             getValue () {
@@ -68,24 +98,19 @@ class ContentDashboard extends React.Component {
                 return Number.isInteger(storedValue) === true ? storedValue : null;
             },
             hasValue () { return existsInLocalStorage('selectedContentSection') === true; }
+        },
+        selectedPageSection: {
+            getValue () {
+                const storedValue = parseInt(localStorage.getItem('selectedPageSection'));
+                return Number.isInteger(storedValue) === true ? storedValue : null;
+            },
+            hasValue () { return existsInLocalStorage('selectedPageSection') === true; }
         }
-    }
-    
-    localStorageMatchesState = () => {
-        const storageValues = {};
-        storageValues.contentSectionOpen = this.localStorageValues.contentSectionOpen.getValue();
-        storageValues.selectedContentSection = this.localStorageValues.selectedContentSection.getValue();
-
-        const stateValues = {};
-        stateValues.contentSectionOpen = this.state.contentSectionOpen;
-        stateValues.selectedContentSection = this.state.selectedContentSection;
-
-        return objectsHaveMatchingValues(stateValues, storageValues) === true;
     }
 
     updateLocalStorageToMatchState = () => {
         if(this.state.componentHasMounted === false) { return; }
-        const fields = ['contentSectionOpen', 'selectedContentSection'];
+        const fields = Object.keys(this.persistantFields);
 
         for(let i = 0; i < fields.length; i++) {
             localStorage.setItem(fields[i], String(this.state[fields[i]]));
@@ -102,7 +127,17 @@ class ContentDashboard extends React.Component {
             }
         }
 
-        const newState = this.localStorageValues.allValuesAreValid() === true && this.localStorageMatchesState() === false
+        const allLocalStorageValuesAreValid = () => {
+            const fields = Object.keys(this.persistantFields);
+            for(let i = 0; i < fields.length; i++) {
+                const field = fields[i];
+                if(this.persistantFields[field].hasValue() === false) { return false; }
+            }
+
+            return true;
+        }
+
+        const newState = allLocalStorageValuesAreValid() === true && this.localStorageMatchesState() === false
             ? this.createNewStateToMatchLocalStorage(true)
             : { componentHasMounted: true }
         ;
@@ -123,9 +158,13 @@ class ContentDashboard extends React.Component {
                         { this.state.componentHasMounted &&
                             <ContentSectionManager
                                 changeContentSection={this.changeContentSection}
-                                closeContentSection={this.closeContentSection}      
-                                contentSectionOpen={this.state.contentSectionOpen}
+                                changePageSection={this.changePageSection}
+                                closeContentSection={this.closeContentSection}
+                                closePageSection={this.closePageSection}
+                                contentSectionIsOpen={this.state.contentSectionIsOpen}
+                                pageSectionIsOpen={this.state.pageSectionIsOpen}
                                 selectedContentSection={this.state.selectedContentSection}
+                                selectedPageSection={this.state.selectedPageSection}
                             />
                         }
                     </div>

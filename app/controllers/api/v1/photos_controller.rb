@@ -25,11 +25,7 @@ module Api
                 respond_to do |format|
                     format.html { html_disallowed_response }
                     format.json {
-                        if multi_photos_params[:ids]
-                            photos = Photo.find(multi_photos_params[:ids].values)
-                        else
-                            photos = Photo.all
-                        end
+                        photos = multi_photos_params.key?(:ids) ? Photo.find(multi_photos_params[:ids].values) : nil
                         render_serialized_json(photos)
                     }
                 end                
@@ -57,8 +53,18 @@ module Api
 
             def destroy
                 photo = Photo.find_by_id(params[:id])
+                associated_ordered_photos = photo.ordered_photos
+                associated_recipes = photo.recipes
 
                 if photo.destroy
+                    associated_ordered_photos.each do |o|
+                        destroy(o)
+                    end
+
+                    associated_recipes.each do |r|
+                        r.update(:photo_id => nil)
+                    end
+
                     head :no_content
                 else
                     render_error(photo.errors.messages)
@@ -67,21 +73,12 @@ module Api
 
             private
 
-            def html_disallowed_response
-                # [NOTE][DRY] This is a direct copy of method code from aux_controller
-                redirect_back(fallback_location: root_path)
-            end
-
             def multi_photos_params
                 params.require(:photos).permit(:ids => {})
             end
 
             def photo_params
                 params.require(:photo).permit(:file, :tag, :title)
-            end
-
-            def render_error (error_messages)
-                render json: { error: error_messages }, status: 422
             end
 
             def render_serialized_json (values)

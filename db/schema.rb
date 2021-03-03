@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_09_170823) do
+ActiveRecord::Schema.define(version: 2021_02_26_174917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "about_sections", force: :cascade do |t|
+    t.text "content", default: ""
+    t.integer "ordinal", default: 0
+    t.bigint "aux_data_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aux_data_id"], name: "index_about_sections_on_aux_data_id"
+  end
 
   create_table "admins", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -35,11 +44,24 @@ ActiveRecord::Schema.define(version: 2021_02_09_170823) do
   end
 
   create_table "instructions", force: :cascade do |t|
-    t.integer "recipe_id"
     t.text "content", default: ""
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "ordinal"
+    t.bigint "recipe_id"
+    t.index ["recipe_id"], name: "index_instructions_on_recipe_id"
+  end
+
+  create_table "ordered_photos", force: :cascade do |t|
+    t.integer "ordinal"
+    t.bigint "aux_data_id"
+    t.bigint "instruction_id"
+    t.bigint "photo_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aux_data_id"], name: "index_ordered_photos_on_aux_data_id"
+    t.index ["instruction_id"], name: "index_ordered_photos_on_instruction_id"
+    t.index ["photo_id"], name: "index_ordered_photos_on_photo_id"
   end
 
   create_table "photos", force: :cascade do |t|
@@ -48,7 +70,8 @@ ActiveRecord::Schema.define(version: 2021_02_09_170823) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "tag"
-    t.integer "recipe_id"
+    t.bigint "recipe_id"
+    t.index ["recipe_id"], name: "index_photos_on_recipe_id"
   end
 
   create_table "recipes", force: :cascade do |t|
@@ -58,7 +81,13 @@ ActiveRecord::Schema.define(version: 2021_02_09_170823) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "featured", default: false
     t.string "description", default: ""
-    t.integer "photo_id"
+    t.bigint "photo_id"
+    t.index ["photo_id"], name: "index_recipes_on_photo_id"
   end
 
+  add_foreign_key "about_sections", "aux_datas"
+  add_foreign_key "instructions", "recipes"
+  add_foreign_key "ordered_photos", "aux_datas"
+  add_foreign_key "ordered_photos", "instructions"
+  add_foreign_key "ordered_photos", "photos"
 end

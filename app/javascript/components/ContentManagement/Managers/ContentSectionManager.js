@@ -16,13 +16,28 @@ import BackendConstants from  '../../Utilities/BackendConstants'
 import { NestedPhotoPickerTarget, TextSectionWithId } from '../../Utilities/Constructors'
 
 export function ContentSectionManager(props) {
-    const { changeContentSection, closeContentSection, contentSectionOpen, selectedContentSection} = props;
+    const { changeContentSection, closeContentSection, contentSectionIsOpen, selectedContentSection } = props;
+    const { changePageSection, closePageSection, pageSectionIsOpen, selectedPageSection } = props;
 
     const tryChangeContentSection = (newSectionIdentifier) => {
         const newSectionId = parseInt(newSectionIdentifier);
         if(ContentSectionsInfo.isValidSectionId(newSectionId) === false) { return; } 
 
         changeContentSection(newSectionId);
+    }
+
+    const tryChangePageSection = (newSectionIdentifier) => {
+        const newSectionId = parseInt(newSectionIdentifier);
+        console.log("WARNING: tryChangePageSection does not yet check for valid page section ID");
+        changePageSection(newSectionId);
+    }
+
+    let pageProps = {};
+    if(ContentSectionsInfo.isValidSectionId(selectedContentSection) === true && ContentSectionsInfo.sections[selectedContentSection].name === 'Pages') {
+        pageProps.changePageSection = changePageSection;
+        pageProps.closePageSection = closePageSection;
+        pageProps.pageSectionIsOpen = pageSectionIsOpen;
+        pageProps.selectedPageSection = selectedPageSection;
     }
 
     return (
@@ -32,15 +47,17 @@ export function ContentSectionManager(props) {
                     <ContentSectionPicker 
                         allSectionNames={ContentSectionsInfo.allSectionNames()}
                         changeContentSection={(newSectionId) => tryChangeContentSection(newSectionId)}
+                        changePageSection={(newSectionId) => tryChangePageSection(newSectionId)}
                         closeContentSection={closeContentSection}
+                        closePageSection={closePageSection}
                         dashboardContext={value}
-                        contentSectionOpen={contentSectionOpen}
+                        contentSectionIsOpen={contentSectionIsOpen}
                         selectedContentSection={selectedContentSection}
                     />
                     <hr />
-                    { contentSectionOpen === true &&
+                    { contentSectionIsOpen === true &&
                         <Fragment>
-                            { ContentSectionsInfo.sections[selectedContentSection].renderComponent({ dashboardContext: value }) }
+                            { ContentSectionsInfo.sections[selectedContentSection].renderComponent({ ...pageProps, dashboardContext: value }) }
                         </Fragment>
                     }
                 </Fragment>

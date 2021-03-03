@@ -8,19 +8,17 @@ Rails.application.routes.draw do
 
       get 'aux/main', :to => 'aux#show'
       patch 'aux/main', :to => 'aux#update'
-      patch 'aux/remove_photo_id_instances', :to => 'aux#remove_photo_id_instances'
-      get 'aux/youtube_video_data', :to => 'aux#youtube_video_data'
+
+      get 'aux/gallery_ordered_photos', :to => 'aux#get_gallery_ordered_photos'
+      get 'aux/youtube_video_data', :to => 'aux#get_youtube_video_data'
+
+      get 'ordered_photos/multi', :to => 'ordered_photos#show_multi'
+      resources :ordered_photos, only: [:index, :show, :create, :update, :destroy]
 
       get 'photos/multi', :to => 'photos#show_multi'
       resources :photos, only: [:index, :show, :create, :update, :destroy]
 
-      get 'product_photos/multi', :to => 'product_photos#show_multi'
-      resources :product_photos, only: [:index, :show, :create, :update, :destroy]
-
-      resources :products, only: [:index]
-
       get 'recipes/featured', :to => 'recipes#show_featured'
-      patch 'recipes/remove_photo_id_instances', :to => 'recipes#remove_photo_id_instances'
       resources :recipes, only: [:index, :show, :create, :update, :destroy]
     end
   end

@@ -1,62 +1,41 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import AboutPageForm from '../Forms/AboutPageForm'
 import PhotoGalleryPageForm from '../Forms/PhotoGalleryPageForm'
+import PagePicker from '../Pickers/PagePicker';
 
-class PageManager extends React.Component {
-    constructor () {
-        super();
-        this.state = {
-            selectedPage: 0
-        }
-    }
 
-    changeSelectedPage = (newSelectedPageIdentifier) => {
-        // [NOTE][REFACTOR] The max identifier number is hard coded here:
-        if (!Number.isInteger(newSelectedPageIdentifier) || newSelectedPageIdentifier < 0 || newSelectedPageIdentifier > 1 || newSelectedPageIdentifier === this.state.selectedPage) {
-            return;
-        }
-        this.setState({
-            selectedPage: newSelectedPageIdentifier
-        });
-    }
+function PageManager (props) { 
+    const { pageSectionIsOpen, selectedPageSection } = props;
+    const isValidSectionId = (newSectionIdentifier) => PageSectionsInfo.isValidSectionId(newSectionIdentifier);
 
-    pageButton = (pageIdentifierNumber, buttonText) => {
-        return(
-            <button onClick={() => this.changeSelectedPage(pageIdentifierNumber)}>
-                {buttonText}
-            </button>
-        );
-    }
-
-    renderPageComponent = () => {
-        let renderedItem;
-        switch(this.state.selectedPage){
-            case 0:
-                renderedItem = <AboutPageForm />;
-                break;
-            case 1:
-                renderedItem = <PhotoGalleryPageForm imageDisplaySize="small"/>
-                break;
-        }
-        return renderedItem;
-    }
-
-    render() {
-        return (
-            <div className="page-manager">
-                <h1>Page Manager</h1>
-                <div className="page-selector">
-                    <div>Manage Page:</div>
-                    <Fragment>
-                        {this.pageButton(0, "About")}
-                        {this.pageButton(1, "Photo Gallery")}
-                    </Fragment>
-                </div>
-                <hr />
-                <Fragment>{this.renderPageComponent()}</Fragment>
-            </div>
-        )
-    }
+    return (
+        <div className="page-manager">
+            <h1>Page Manager</h1>
+            <PagePicker {...props} allPageNames={PageSectionsInfo.allSectionNames()} isValidSectionId={isValidSectionId} />
+            <hr />
+            { pageSectionIsOpen === true &&
+                PageSectionsInfo.pages[selectedPageSection].renderComponent()
+            }
+        </div>
+    )
 }
 
 export default PageManager
+
+const PageSectionsInfo = {
+    allSectionNames: function () {
+        const mappedNames = PageSectionsInfo.pages.map(function(item) { return item.name } );
+        return mappedNames;
+    },
+    isValidSectionId: function (newSectionIdentifier) {
+        if(Number.isInteger(newSectionIdentifier) === false || newSectionIdentifier < 0 || newSectionIdentifier > this.pages.length -1) {
+            return false
+        }
+        else { return true; }
+    },
+    // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
+    pages: [
+        { name: 'Pages',            renderComponent: function (props) { return <AboutPageForm           {...props} /> } },
+        { name: 'Photo Gallery',    renderComponent: function (props) { return <PhotoGalleryPageForm    {...props} /> } }
+    ]
+}
