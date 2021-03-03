@@ -54,6 +54,7 @@ module Api
             def destroy
                 photo = Photo.find_by_id(params[:id])
                 associated_ordered_photos = photo.ordered_photos
+                associated_recipes = photo.recipes
 
                 if photo.destroy
                     associated_ordered_photos.each do |o|

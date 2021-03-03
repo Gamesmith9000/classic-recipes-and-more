@@ -62,9 +62,8 @@ class Api::V1::AuxController < ApplicationController
     end
 
     def aux_data_params
-        params.require(:aux_data).permit(
-            :photo_page_ordered_ids =>[], :about_page_sections =>[],
-            :about_sections, :ordered_photos)
+        params.require(:aux_data).permit(:about_sections, :ordered_photos,
+            :photo_page_ordered_ids =>[], :about_page_sections =>[])
     end
 
     def inclusion_options
