@@ -33,7 +33,6 @@ function App (props) {
         :
             <Route 
                 component={ () => {
-                        // [NOTE] Verify security of this approach, history (back button, etc) seems to work well enough
                         window.location.replace(loginRelativeUrl);
                         return null;
                     }
