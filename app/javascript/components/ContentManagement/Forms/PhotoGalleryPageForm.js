@@ -130,8 +130,8 @@ class PhotoGalleryPageForm extends React.Component {
         return orderedPhotoIdDataList.map((element, index) => {
             if(isValuelessFalsey(element.photoId)) { console.log('Display (and submission) must be able to compensate for entries without photos.'); }
             const arrayIndex = this.getIndexFromState(element.localId);
-            if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
-            
+            if(isValuelessFalsey(arrayIndex) === true || arrayIndex === -1) { return; }
+
             return (
                 <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
                     { (provided) => (
@@ -175,7 +175,10 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     renderPhotoControl = (photoIdData, photoUploaderVersionName) => {
-        if(!photoIdData || !this.props.imageDisplaySize) { return; }
+        if(!photoIdData || !this.props.imageDisplaySize) {
+            console.warn('imageDisplaySize prop is required to render photo controls. Example: imageDisplaySize="small"')
+            return; 
+        }
 
         const hasPhotoId = isValuelessFalsey(photoIdData.photoId) === false;
         const localId = photoIdData.localId;
@@ -256,6 +259,7 @@ class PhotoGalleryPageForm extends React.Component {
         .then(res => {
             console.log(res);
             console.log('There needs to be a button allowing clearing of all blank entries. Also need to compensate for situation where only entry is blank');
+            console.log('Need to clearly telegraph to user what is going on during all of this mentioned situations');
 
             const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
 
@@ -282,7 +286,7 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     render() {
-        const hasOrderedPhotoIdState = Boolean(this.state.orderedPhotoIdData);
+        const hasOrderedPhotoIdState = Boolean(this.state.orderedPhotoIdData); // [NOTE] This line needs to be double checked for intended meaning
         const hasUnsavedChanges = (hasOrderedPhotoIdState === true && !objectsHaveMatchingValues(this.state.orderedPhotoIdData, this.state.priorOrderedPhotoIdData));
         if(this.state.orderedPreviewUrlsNeedUpdate === true) { this.updatePreviewUrls(); }
 

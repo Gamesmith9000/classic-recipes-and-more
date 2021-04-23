@@ -34,8 +34,9 @@ const PageSectionsInfo = {
         else { return true; }
     },
     // [NOTE][OPTIMIZE] Verify performance of below items. Might need optimization
+    // [NOTE][HARD CODED] imageDisplaySize is hard-coded here. When not included as a prop, PhotoGalleryPageForm ceases to function properly
     pages: [
         { name: 'Pages',            renderComponent: function (props) { return <AboutPageForm           {...props} /> } },
-        { name: 'Photo Gallery',    renderComponent: function (props) { return <PhotoGalleryPageForm    {...props} /> } }
+        { name: 'Photo Gallery',    renderComponent: function (props) { return <PhotoGalleryPageForm    {...props}  imageDisplaySize="small" /> } }
     ]
 }
