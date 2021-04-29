@@ -22,8 +22,8 @@ function ContentSectionPicker (props) {
     }
 
     return (
-        <div className="section-picker">
-            <div>Manage Resource:</div>
+        <div className="content-section-picker">
+            <label>Select Resource:</label>
             <Fragment>{ mapSectionButtons() }</Fragment>
             { contentSectionIsOpen === true &&
                 <button onClick={(event) => handleChangeOrClose(event, closeContentSection)}>Close</button>

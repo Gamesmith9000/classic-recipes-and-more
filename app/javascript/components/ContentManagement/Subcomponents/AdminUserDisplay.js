@@ -10,12 +10,8 @@ function AdminUserDisplay (props) {
         setAxiosCsrfToken();
         
         axios.get('/admins/sign_out')
-        .then(res => {
-            setLoggingOut(true);
-        })
-        .catch(err => {
-            setLoggingOut(true);
-        });
+        .then (res => { setLoggingOut(true); })
+        .catch(err => { setLoggingOut(true); });
     }
 
     return (
@@ -23,7 +19,8 @@ function AdminUserDisplay (props) {
             { loggingOut === false 
             ?
                 <div className="admin-user-display">
-                    <div>{`User: ${props.displayName}`}</div>
+                    <label>{'User:'}</label>
+                    <label>{props.displayName}</label>
                     <button onClick={handleLogout}>Logout</button>
                 </div>
             :

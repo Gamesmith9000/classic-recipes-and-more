@@ -54,7 +54,6 @@ export function ContentSectionManager(props) {
                         contentSectionIsOpen={contentSectionIsOpen}
                         selectedContentSection={selectedContentSection}
                     />
-                    <hr />
                     { contentSectionIsOpen === true &&
                         <Fragment>
                             { ContentSectionsInfo.sections[selectedContentSection].renderComponent({ ...pageProps, dashboardContext: value }) }

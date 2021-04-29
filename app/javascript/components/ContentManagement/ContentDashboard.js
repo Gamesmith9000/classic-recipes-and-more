@@ -152,9 +152,10 @@ class ContentDashboard extends React.Component {
             <ContentDashboardContext.Provider value={this.state.dashboardContext}>
                 <ContentOptionsContext.Provider value={this.state.contentContext}>
                     <div className="content-dashboard">
-                        <h1>Content Dashboard</h1>
-                        <AdminUserDisplay displayName={userDisplay} />
-                        <hr />
+                        <header>
+                            <h1>Content Dashboard</h1>
+                            <AdminUserDisplay displayName={userDisplay} />
+                        </header>
                         { this.state.componentHasMounted &&
                             <ContentSectionManager
                                 changeContentSection={this.changeContentSection}

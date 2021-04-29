@@ -6,7 +6,45 @@ $modal-border: $modal-background-color groove .25rem;
 
 $recipe-preview-grid-template-columns: 1fr 6fr 10fr 3fr;
 
+$upper-section-background-color: grey;
+
 .content-dashboard {
+    header {
+        border-bottom: 0;
+        border-top-width: .15rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    header, .content-section-picker {
+        background-color: $upper-section-background-color;
+        border-style: solid;
+        border-left-width: 0;
+        border-right-width: 0;
+
+        button {
+            font-size: .9rem;        // default is .8rem
+        }
+
+        label {
+            font-size: 1.05rem;     // default is 1 rem
+            padding-right: .5rem;
+            padding-left: .25rem;
+        }
+    }
+
+    .admin-user-display {
+        align-self: center;
+    }
+
+    .content-section-picker {
+        border-top-width: 0;
+        border-bottom-width: .15rem;
+        padding-bottom: .75rem;
+    }
+
+
+
     li.item-preview {
         border: 1px solid;
         display: grid;

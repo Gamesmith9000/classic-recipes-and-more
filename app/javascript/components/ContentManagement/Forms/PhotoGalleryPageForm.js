@@ -136,10 +136,8 @@ class PhotoGalleryPageForm extends React.Component {
                 <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
                     { (provided) => (
                         <li {...provided.dragHandleProps} {...provided.draggableProps} className="ordered-photo-edits" ref={provided.innerRef}>
-                            <label>Photo {arrayIndex + 1}/{orderedPhotoIdDataList.length}</label>
-                            <br />
-                            <label>ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</label>
-                            <br />
+                            <div>{arrayIndex + 1}/{orderedPhotoIdDataList.length}</div>
+                            <div>Photo ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</div>
                             { this.renderPhotoControl(element, this.props.imageDisplaySize) }
                             { this.state.orderedPhotoIdData.length > 1 &&
                                 <button 
@@ -192,7 +190,7 @@ class PhotoGalleryPageForm extends React.Component {
 
         return (
             <Fragment>
-                {photo}
+                <div>{photo}</div>
                 <button onClick={(event) => this.handlePhotoPickerOpen(event, localId)}>
                     { hasPhotoId === true ? 'Change' : 'Select' }
                 </button>
