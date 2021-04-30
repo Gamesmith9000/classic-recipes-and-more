@@ -57,22 +57,37 @@ class PhotoGalleryPageForm extends React.Component {
         : true;
 
         if(confirmedClose === true) {
-            let updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
-            updatedPhotoIdData.splice(sectionIndex, 1);
+            const newState = {};
+            let updatedPhotoIdData;
+            let updatedPreviewUrls;
 
-            let updatedPreviewUrls = this.state.orderedPreviewUrls.slice();
-            updatedPreviewUrls.splice(sectionIndex, 1);
+            if(this.state.orderedPhotoIdData.length > 1) {
+                updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
+                updatedPhotoIdData.splice(sectionIndex, 1);
 
-            this.setState({
-                orderedPhotoIdData: updatedPhotoIdData,
-                orderedPreviewUrls: updatedPreviewUrls
-            });
+                updatedPreviewUrls = this.state.orderedPreviewUrls.slice();
+                updatedPreviewUrls.splice(sectionIndex, 1);
+            }
+            else {
+                newState.nextUniqueLocalId = 1;
+                updatedPhotoIdData = [new PhotoGalleryPageFormPhotoInfo(0, null)];
+                updatedPreviewUrls = [null];
+            }
+
+            newState.orderedPhotoIdData = updatedPhotoIdData;
+            newState.orderedPreviewUrls = updatedPreviewUrls;
+
+            this.setState(newState);
         }
     }
 
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
+
+        console.log('After form submission, code similar to that in componentDidMount needs to occur (but only if there were 1+ blank entries at submit time)');
+        console.log('For a mix of valid and blank entries, this will automatically remove any blank entries');
+        console.log('For only blank entries (1+), a single blank entry will show up (all IDs will be reset');
 
         const outgoingPhotoIdData = this.state.orderedPhotoIdData.map((element) => { return element.photoId; });
         axios.patch('/api/v1/aux/main.json', { aux_data: { photo_page_ordered_ids: outgoingPhotoIdData } })
@@ -139,14 +154,12 @@ class PhotoGalleryPageForm extends React.Component {
                             <div>{arrayIndex + 1}/{orderedPhotoIdDataList.length}</div>
                             <div>Photo ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</div>
                             { this.renderPhotoControl(element, this.props.imageDisplaySize) }
-                            { this.state.orderedPhotoIdData.length > 1 &&
-                                <button 
-                                    className="delete-item" 
-                                    onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
-                                >
-                                    Remove
-                                </button>
-                            }
+                            <button 
+                                className="delete-item" 
+                                onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
+                            >
+                                Remove
+                            </button>
                         </li>
                     )}
                 </Draggable>
@@ -204,7 +217,10 @@ class PhotoGalleryPageForm extends React.Component {
 
         let targetData = [];
         for(let i = 0; i < orderedPhotoIdData.length; i++) {
-            if(isValuelessFalsey(orderedPreviewUrls[i]) === true || orderedPreviewUrls[i] === '') {
+            const hasPhotoId = (isValuelessFalsey(orderedPhotoIdData[i].photoId) === false);
+            const missingUrl = (isValuelessFalsey(orderedPreviewUrls[i]) === true || orderedPreviewUrls[i] === '');
+            
+            if(hasPhotoId === true && missingUrl === true) {
                 targetData.push(orderedPhotoIdData[i]);
             }
         }
@@ -249,16 +265,8 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     componentDidMount () {
-        console.log('When there are blank entries, have a display message at bottom and disable submit button');
-        console.log('When there are duplicate entries, have a display message at bottom and disable submit button');
-        console.log('Except when all entries are blank, then page will ask you if you are okay clearing entire list to have no entries');
-
         axios.get('/api/v1/aux/main.json')
         .then(res => {
-            console.log(res);
-            console.log('There needs to be a button allowing clearing of all blank entries. Also need to compensate for situation where only entry is blank');
-            console.log('Need to clearly telegraph to user what is going on during all of this mentioned situations');
-
             const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
 
             if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) {
@@ -299,7 +307,7 @@ class PhotoGalleryPageForm extends React.Component {
                             ?
                                 <Fragment>
                                     <DragDropContext onDragEnd={this.onDragEnd}>
-                                        <Droppable droppableId="photo-id-editor">
+                                        <Droppable droppableId="photo-id-editor" direction="horizontal">
                                             { (provided) => (
                                                 <ul {...provided.droppableProps} className="photo-id-editor" ref={provided.innerRef}>
                                                     { this.mapPhotoIdInputs(this.state.orderedPhotoIdData) }
