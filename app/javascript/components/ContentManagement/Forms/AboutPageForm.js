@@ -122,7 +122,7 @@ class AboutPageForm extends React.Component {
 
     render() {
         const hasSectionsState = Boolean(this.state.sections);
-        const hasUnsavedChanges = (hasSectionsState === true && !objectsHaveMatchingValues(this.state.sections, this.state.priorSectionsState));
+        const hasUnsavedChanges = (hasSectionsState === true && objectsHaveMatchingValues(this.state.sections, this.state.priorSectionsState) === false);
 
         return (
             <div className="about-page-editor">

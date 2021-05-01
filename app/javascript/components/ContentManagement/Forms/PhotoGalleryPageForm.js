@@ -26,6 +26,13 @@ class PhotoGalleryPageForm extends React.Component {
         }
     }
 
+    hasUnsavedChangesCheck = () => {
+        const currentPhotoIdData = this.state.orderedPhotoIdData.filter(item => isValuelessFalsey(item.photoId) === false);
+        const priorPhotoIdData = this.state.priorOrderedPhotoIdData.filter(item => isValuelessFalsey(item.photoId) === false);
+
+        return !objectsHaveMatchingValues(currentPhotoIdData, priorPhotoIdData);
+    }
+
     getIndexFromState = (localId) => {
         for(let i = 0; i < this.state.orderedPhotoIdData.length; i++) {
             if(this.state.orderedPhotoIdData[i]?.localId === localId) { return i; }
@@ -69,7 +76,6 @@ class PhotoGalleryPageForm extends React.Component {
                 updatedPreviewUrls.splice(sectionIndex, 1);
             }
             else {
-                newState.nextUniqueLocalId = 1;
                 updatedPhotoIdData = [new PhotoGalleryPageFormPhotoInfo(0, null)];
                 updatedPreviewUrls = [null];
             }
@@ -85,13 +91,17 @@ class PhotoGalleryPageForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        console.log('After form submission, code similar to that in componentDidMount needs to occur (but only if there were 1+ blank entries at submit time)');
-        console.log('For a mix of valid and blank entries, this will automatically remove any blank entries');
-        console.log('For only blank entries (1+), a single blank entry will show up (all IDs will be reset');
-
         const outgoingPhotoIdData = this.state.orderedPhotoIdData.map((element) => { return element.photoId; });
         axios.patch('/api/v1/aux/main.json', { aux_data: { photo_page_ordered_ids: outgoingPhotoIdData } })
-        .then(res => this.setState({ priorOrderedPhotoIdData: this.state.orderedPhotoIdData.slice() }))
+        .then(res => {
+            const filteredOrderedPhotoIdData = this.state.orderedPhotoIdData.filter(item => isValuelessFalsey(item.photoId) === false);
+            const filteredDataHasEntries = (filteredOrderedPhotoIdData.length > 0);
+
+            this.setState({
+                orderedPhotoIdData: filteredDataHasEntries === true ? filteredOrderedPhotoIdData : [new PhotoGalleryPageFormPhotoInfo(0, null)],
+                priorOrderedPhotoIdData: filteredDataHasEntries === true ? filteredOrderedPhotoIdData.slice() : [new PhotoGalleryPageFormPhotoInfo(0, null)],
+            });
+        })
         .catch(err => console.log(err));
     }
 
@@ -139,11 +149,34 @@ class PhotoGalleryPageForm extends React.Component {
         });
     }
 
+    initializeComponentStateFromResponse = (res) => {
+        const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
+
+        if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) {
+            this.setState({
+                nextUniqueLocalId: 1, 
+                orderedPhotoIdData: [new PhotoGalleryPageFormPhotoInfo(0, null)],
+                orderedPreviewUrls: [null],
+                orderedPreviewUrlsNeedUpdate: false,
+                priorOrderedPhotoIdData: [new PhotoGalleryPageFormPhotoInfo(0, null)]
+            });
+        }
+        else {
+            this.setState({
+                nextUniqueLocalId: photoPageOrderedIds.length, 
+                orderedPhotoIdData: photoPageOrderedIds.map((element, index) => (new PhotoGalleryPageFormPhotoInfo(index, element))),
+                orderedPreviewUrls: new Array(photoPageOrderedIds.length),
+                orderedPreviewUrlsNeedUpdate: true,
+                priorOrderedPhotoIdData: photoPageOrderedIds.map((element, index) => (new PhotoGalleryPageFormPhotoInfo(index, element)))
+            });
+        }
+    }
+
     mapPhotoIdInputs = (orderedPhotoIdDataList) => {
+        const soleListItem = this.state.orderedPhotoIdData.length === 1;
         const nullValuePlaceholder = '...';
 
         return orderedPhotoIdDataList.map((element, index) => {
-            if(isValuelessFalsey(element.photoId)) { console.log('Display (and submission) must be able to compensate for entries without photos.'); }
             const arrayIndex = this.getIndexFromState(element.localId);
             if(isValuelessFalsey(arrayIndex) === true || arrayIndex === -1) { return; }
 
@@ -156,6 +189,7 @@ class PhotoGalleryPageForm extends React.Component {
                             { this.renderPhotoControl(element, this.props.imageDisplaySize) }
                             <button 
                                 className="delete-item" 
+                                disabled={soleListItem === true && isValuelessFalsey(element.photoId) === true}
                                 onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
                             >
                                 Remove
@@ -266,34 +300,13 @@ class PhotoGalleryPageForm extends React.Component {
 
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
-        .then(res => {
-            const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
-
-            if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) {
-                this.setState({
-                    nextUniqueLocalId: 1, 
-                    orderedPhotoIdData: [new PhotoGalleryPageFormPhotoInfo(0, null)],
-                    orderedPreviewUrls: [null],
-                    orderedPreviewUrlsNeedUpdate: false,
-                    priorOrderedPhotoIdData: [new PhotoGalleryPageFormPhotoInfo(0, null)]
-                });
-            }
-            else {
-                this.setState({
-                    nextUniqueLocalId: photoPageOrderedIds.length, 
-                    orderedPhotoIdData: photoPageOrderedIds.map((element, index) => (new PhotoGalleryPageFormPhotoInfo(index, element))),
-                    orderedPreviewUrls: new Array(photoPageOrderedIds.length),
-                    orderedPreviewUrlsNeedUpdate: true,
-                    priorOrderedPhotoIdData: photoPageOrderedIds.map((element, index) => (new PhotoGalleryPageFormPhotoInfo(index, element)))
-                });
-            }
-        })
+        .then(res => this.initializeComponentStateFromResponse(res))
         .catch(err => console.log(err));
     }
 
     render() {
         const hasOrderedPhotoIdState = Boolean(this.state.orderedPhotoIdData); // [NOTE] This line needs to be double checked for intended meaning
-        const hasUnsavedChanges = (hasOrderedPhotoIdState === true && !objectsHaveMatchingValues(this.state.orderedPhotoIdData, this.state.priorOrderedPhotoIdData));
+        const hasUnsavedChanges = hasOrderedPhotoIdState === true ? this.hasUnsavedChangesCheck() : false;
         if(this.state.orderedPreviewUrlsNeedUpdate === true) { this.updatePreviewUrls(); }
 
         return (
