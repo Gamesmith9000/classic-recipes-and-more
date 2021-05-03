@@ -25,34 +25,11 @@ class PhotoGalleryPageForm extends React.Component {
         }
     }
 
-    hasUnsavedChangesCheck = () => {
-        const currentPhotoIdData = this.state.orderedPhotoIdData.filter(item => isValuelessFalsey(item.photoId) === false);
-        const priorPhotoIdData = this.state.priorOrderedPhotoIdData.filter(item => isValuelessFalsey(item.photoId) === false);
-
-        return !objectsHaveMatchingValues(currentPhotoIdData, priorPhotoIdData);
-    }
-
     getIndexFromState = (localId) => {
         for(let i = 0; i < this.state.orderedPhotoIdData.length; i++) {
             if(this.state.orderedPhotoIdData[i]?.localId === localId) { return i; }
         }
         return -1;
-    }
-
-    handleAddPhotoIdData = (event) => {
-        event.preventDefault();
-
-        const nextId = this.state.nextUniqueLocalId;
-        let updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
-        updatedPhotoIdData.push(new PhotoGalleryPageFormPhotoInfo(nextId, null));
-        let previewUrls = this.state.orderedPreviewUrls.slice();
-        previewUrls.push(null);
-
-        this.setState({
-            nextUniqueLocalId: nextId + 1,
-            orderedPhotoIdData: updatedPhotoIdData,
-            orderedPreviewUrls: previewUrls
-        });
     }
 
     handleDeletePhotoIdData = (event, sectionIndex, skipConfirmation = false) => {
@@ -249,12 +226,6 @@ class PhotoGalleryPageForm extends React.Component {
         .catch(err => console.log(err));
     }
 
-    updateStateOfPhotoPicker = (newValue, propertyName) => {
-        let newPhotoPickerState = this.state.photoPicker;
-        newPhotoPickerState[propertyName] = newValue;
-        this.setState({ photoPicker: newPhotoPickerState });
-    }
-
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
         .then(res => this.initializeComponentStateFromResponse(res))
@@ -293,7 +264,6 @@ class PhotoGalleryPageForm extends React.Component {
                                 </Fragment>
                             :
                                 <NestedPhotoPicker 
-                                    changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
                                     containingResourceName="gallery"
                                     onCancelAndExit={this.handlePhotoPickerClose}
                                     onPhotoChosenForExport={photoData => this.handlePhotoChosen(photoData)}
