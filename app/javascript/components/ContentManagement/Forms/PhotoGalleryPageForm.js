@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import qs from 'qs'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
-import PhotoPicker from '../Pickers/PhotoPicker'
+import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
 
 import VersionedPhoto from '../../Misc/VersionedPhoto'
 import { UnsavedChangesDisplay } from '../../Utilities/ComponentHelpers'
@@ -64,26 +64,19 @@ class PhotoGalleryPageForm extends React.Component {
         : true;
 
         if(confirmedClose === true) {
-            const newState = {};
-            let updatedPhotoIdData;
-            let updatedPreviewUrls;
+            let updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
+            updatedPhotoIdData.splice(sectionIndex, 1);
 
-            if(this.state.orderedPhotoIdData.length > 1) {
-                updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
-                updatedPhotoIdData.splice(sectionIndex, 1);
-
-                updatedPreviewUrls = this.state.orderedPreviewUrls.slice();
-                updatedPreviewUrls.splice(sectionIndex, 1);
-            }
-            else {
-                updatedPhotoIdData = [new PhotoGalleryPageFormPhotoInfo(0, null)];
-                updatedPreviewUrls = [null];
-            }
+            let updatedPreviewUrls = this.state.orderedPreviewUrls.slice();
+            updatedPreviewUrls.splice(sectionIndex, 1);
 
             newState.orderedPhotoIdData = updatedPhotoIdData;
             newState.orderedPreviewUrls = updatedPreviewUrls;
 
-            this.setState(newState);
+            this.setState({
+                orderedPhotoIdData: updatedPhotoIdData,
+                orderedPreviewUrls: updatedPreviewUrls
+            });
         }
     }
 
@@ -103,6 +96,10 @@ class PhotoGalleryPageForm extends React.Component {
             });
         })
         .catch(err => console.log(err));
+    }
+
+    handlePhotoChosen = (photoData) => {
+        console.log(photoData);
     }
 
     handlePhotoIdDataChange = (event) => {
@@ -154,11 +151,11 @@ class PhotoGalleryPageForm extends React.Component {
 
         if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) {
             this.setState({
-                nextUniqueLocalId: 1, 
-                orderedPhotoIdData: [new PhotoGalleryPageFormPhotoInfo(0, null)],
-                orderedPreviewUrls: [null],
+                nextUniqueLocalId: 0,
+                orderedPhotoIdData: [],
+                orderedPreviewUrls: [],
                 orderedPreviewUrlsNeedUpdate: false,
-                priorOrderedPhotoIdData: [new PhotoGalleryPageFormPhotoInfo(0, null)]
+                priorOrderedPhotoIdData: []
             });
         }
         else {
@@ -336,12 +333,11 @@ class PhotoGalleryPageForm extends React.Component {
                                     <UnsavedChangesDisplay hasUnsavedChanges={hasUnsavedChanges} />
                                 </Fragment>
                             :
-                                <PhotoPicker 
+                                <NestedPhotoPicker 
                                     changeSelectedPhotoId={(newValue) => this.updateStateOfPhotoPicker(newValue, 'selectedPhotoId')}
-                                    selectedPhotoId={this.state.photoPicker.selectedPhotoId}
-                                    handleCancelForExport={this.handlePhotoPickerClose}
-                                    handleUsePhotoForExport={this.handlePhotoIdDataChange}
-                                    uploaderNamePrefix={'photo'}
+                                    containingResourceName="gallery"
+                                    onCancelAndExit={this.handlePhotoPickerClose}
+                                    onPhotoChosenForExport={photoData => this.handlePhotoChosen(photoData)}
                                 />
                             }
                         </Fragment>
