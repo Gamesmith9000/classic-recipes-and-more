@@ -53,6 +53,11 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
+    def update_ordered_photos
+        # removed?, new, exisiting
+        # make sure removal works properly
+    end
+
     private
 
     def aux_data_instance

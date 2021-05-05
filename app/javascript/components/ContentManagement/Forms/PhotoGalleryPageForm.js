@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
-import qs from 'qs'
+import qs, { parse } from 'qs'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
@@ -17,17 +17,21 @@ class PhotoGalleryPageForm extends React.Component {
         super();
         this.state = {
             nextUniqueLocalId: 0,
-            orderedPhotoIdData: [],
+            orderedPhotoData: [],
             orderedPreviewUrls: [],
             orderedPreviewUrlsNeedUpdate: false,
-            priorOrderedPhotoIdData: [],
+            priorOrderedPhotoData: [],
             photoPicker: new ExportedPhotoPickerState(false, 0, null, null),
         }
     }
 
+    hasUnsavedChangesCheck = () => {
+        return objectsHaveMatchingValues(this.state.orderedPhotoData, this.state.priorOrderedPhotoData) === false;
+    }
+
     getIndexFromState = (localId) => {
-        for(let i = 0; i < this.state.orderedPhotoIdData.length; i++) {
-            if(this.state.orderedPhotoIdData[i]?.localId === localId) { return i; }
+        for(let i = 0; i < this.state.orderedPhotoData.length; i++) {
+            if(this.state.orderedPhotoData[i]?.localId === localId) { return i; }
         }
         return -1;
     }
@@ -40,16 +44,9 @@ class PhotoGalleryPageForm extends React.Component {
         : true;
 
         if(confirmedClose === true) {
-            let updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
-            updatedPhotoIdData.splice(sectionIndex, 1);
-
-            let updatedPreviewUrls = this.state.orderedPreviewUrls.slice();
-            updatedPreviewUrls.splice(sectionIndex, 1);
-
-            this.setState({
-                orderedPhotoIdData: updatedPhotoIdData,
-                orderedPreviewUrls: updatedPreviewUrls
-            });
+            let updatedPhotoData = this.state.orderedPhotoData.slice();
+            updatedPhotoData.splice(sectionIndex, 1);
+            this.setState({ orderedPhotoData: updatedPhotoData });
         }
     }
 
@@ -100,17 +97,49 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     initializeComponentStateFromResponse = (res) => {
-        const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
+        const orderedPhotos = res.data.included.filter(element => element.type === "ordered_photo");
 
-        if(photoPageOrderedIds && photoPageOrderedIds.length > 0) {
-            this.setState({
-                nextUniqueLocalId: photoPageOrderedIds.length, 
-                orderedPhotoIdData: photoPageOrderedIds.map((element, index) => (new PhotoGalleryPageFormPhotoInfo(index, element))),
-                orderedPreviewUrls: new Array(photoPageOrderedIds.length),
-                orderedPreviewUrlsNeedUpdate: true,
-                priorOrderedPhotoIdData: photoPageOrderedIds.map((element, index) => (new PhotoGalleryPageFormPhotoInfo(index, element)))
-            });
+        const mapOrderedPhotoData = function (element, index) {
+            const newItem = {};
+            newItem.id = parseInt(element.id);
+            newItem.url = null;
+            newItem.localId = index;
+            newItem.photoId = parseInt(element.relationships.photo.data.id);
+            return newItem;
         }
+
+        if(!orderedPhotos || orderedPhotos.length <= 0) { return; }
+
+        const targetIds = orderedPhotos.map(mapOrderedPhotoData).map((value) => { return value.photoId; });
+        const config = {
+            params: { photos: { ids: targetIds } },
+            paramsSerializer: (params) => { return qs.stringify(params); }
+        }
+
+        const newState = {
+            nextUniqueLocalId: orderedPhotos.length, 
+            orderedPhotoData: orderedPhotos.map(mapOrderedPhotoData),
+            priorOrderedPhotoData: orderedPhotos.map(mapOrderedPhotoData),
+        }
+
+        axios.get('/api/v1/photos/multi.json', config)
+        .then(photosRes => {
+            for(let i = 0; i < newState.orderedPhotoData.length; i++) {
+                const photoIndex = photosRes.data.data.findIndex(item => parseInt(item.id) === newState.orderedPhotoData[i].photoId);
+                if(photoIndex > -1 && photosRes.data.data[photoIndex]) {
+                    const { imageDisplaySize } = this.props;
+                    const url = imageDisplaySize ? photosRes.data.data[i].attributes.file[imageDisplaySize]?.url : photosRes.data.data[i].attributes.file.url;
+
+                    newState.orderedPhotoData[i].url = url;
+                    newState.priorOrderedPhotoData[i].url = url;
+                }
+            }
+            this.setState(newState);
+        })
+        .catch(photosErr => {
+            console.log(photosErr);
+            this.setState(newState);
+        });
     }
 
     mapPhotoIdInputs = (orderedPhotoIdDataList) => {
@@ -170,7 +199,7 @@ class PhotoGalleryPageForm extends React.Component {
         const localId = photoIdData.localId;
 
         const photo = <VersionedPhoto 
-            uploadedFileData={this.state.orderedPreviewUrls[this.getIndexFromState(localId)]}
+            uploadedFileData={this.state.orderedPreviewUrls?.[this.getIndexFromState(localId)]}
             uploadedFileVersionName={photoUploaderVersionName}
             targetClassName={`chosen-photo${hasPhotoId === false ? " placeholder" : ""}`}
             textDisplayForNoPhoto="(No photo chosen)"
@@ -233,7 +262,7 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     render() {
-        const hasUnsavedChanges = objectsHaveMatchingValues(this.state.orderedPhotoIdData, this.state.priorOrderedPhotoIdData) === false;
+        const hasUnsavedChanges = this.hasUnsavedChangesCheck();
         if(this.state.orderedPreviewUrlsNeedUpdate === true) { this.updatePreviewUrls(); }
 
         return (
