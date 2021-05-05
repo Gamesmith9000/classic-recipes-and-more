@@ -18,8 +18,6 @@ class PhotoGalleryPageForm extends React.Component {
         this.state = {
             nextUniqueLocalId: 0,
             orderedPhotoData: [],
-            orderedPreviewUrls: [],
-            orderedPreviewUrlsNeedUpdate: false,
             priorOrderedPhotoData: [],
             photoPicker: new ExportedPhotoPickerState(false, 0, null, null),
         }
@@ -36,7 +34,7 @@ class PhotoGalleryPageForm extends React.Component {
         return -1;
     }
 
-    handleDeletePhotoIdData = (event, sectionIndex, skipConfirmation = false) => {
+    handleDeletePhotoData = (event, sectionIndex, skipConfirmation = false) => {
         event.preventDefault();
 
         const confirmedClose = skipConfirmation === false 
@@ -60,23 +58,24 @@ class PhotoGalleryPageForm extends React.Component {
         .catch(err => console.log(err));
     }
 
-    handlePhotoChosen = (photoData) => {
-        const selectedPhotoId = parseInt(photoData.id);
+    handlePhotoChosen = (chosenPhotoData) => {
         const { nextUniqueLocalId } = this.state;
         const newPhotoPickerState = new ExportedPhotoPickerState(false, null, null, null);
 
-        const updatedPhotoIdData = this.state.orderedPhotoIdData.slice();
-        updatedPhotoIdData.push(new PhotoGalleryPageFormPhotoInfo(nextUniqueLocalId, selectedPhotoId));
+        const updatedPhotoData = this.state.orderedPhotoData.slice();
+        const newItem = {
+            id: null,
+            localId: nextUniqueLocalId,
+            photoId: parseInt(chosenPhotoData.id),
+            url: this.responseFileAttributeToUrl(chosenPhotoData.attributes.file)
+        };
 
-        const updatedOrderedPreviewUrls = this.state.orderedPreviewUrls.slice();
-        updatedOrderedPreviewUrls.push(null);
+        updatedPhotoData.push(newItem);
 
         this.setState({
             nextUniqueLocalId: nextUniqueLocalId + 1,
-            orderedPhotoIdData: updatedPhotoIdData,
-            orderedPreviewUrlsNeedUpdate: true,
+            orderedPhotoData: updatedPhotoData,
             photoPicker: newPhotoPickerState,
-            orderedPreviewUrls: updatedOrderedPreviewUrls
         });
     }
 
@@ -100,11 +99,12 @@ class PhotoGalleryPageForm extends React.Component {
         const orderedPhotos = res.data.included.filter(element => element.type === "ordered_photo");
 
         const mapOrderedPhotoData = function (element, index) {
-            const newItem = {};
-            newItem.id = parseInt(element.id);
-            newItem.url = null;
-            newItem.localId = index;
-            newItem.photoId = parseInt(element.relationships.photo.data.id);
+            const newItem = {
+                id: parseInt(element.id),
+                localId: index,
+                photoId: parseInt(element.relationships.photo.data.id),
+                url: null
+            };
             return newItem;
         }
 
@@ -127,9 +127,7 @@ class PhotoGalleryPageForm extends React.Component {
             for(let i = 0; i < newState.orderedPhotoData.length; i++) {
                 const photoIndex = photosRes.data.data.findIndex(item => parseInt(item.id) === newState.orderedPhotoData[i].photoId);
                 if(photoIndex > -1 && photosRes.data.data[photoIndex]) {
-                    const { imageDisplaySize } = this.props;
-                    const url = imageDisplaySize ? photosRes.data.data[i].attributes.file[imageDisplaySize]?.url : photosRes.data.data[i].attributes.file.url;
-
+                    const url = this.responseFileAttributeToUrl(photosRes.data.data[i].attributes.file, this.props.imageDisplaySize);
                     newState.orderedPhotoData[i].url = url;
                     newState.priorOrderedPhotoData[i].url = url;
                 }
@@ -142,11 +140,10 @@ class PhotoGalleryPageForm extends React.Component {
         });
     }
 
-    mapPhotoIdInputs = (orderedPhotoIdDataList) => {
-        const soleListItem = this.state.orderedPhotoIdData.length === 1;
-        const nullValuePlaceholder = '...';
+    mapPhotoInputs = () => {
+        const orderedPhotoData = this.state.orderedPhotoData;
 
-        return orderedPhotoIdDataList.map((element, index) => {
+        return orderedPhotoData.map((element, index) => {
             const arrayIndex = this.getIndexFromState(element.localId);
             if(isValuelessFalsey(arrayIndex) === true || arrayIndex === -1) { return; }
 
@@ -154,13 +151,11 @@ class PhotoGalleryPageForm extends React.Component {
                 <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
                     { (provided) => (
                         <li {...provided.dragHandleProps} {...provided.draggableProps} className="ordered-photo-edits" ref={provided.innerRef}>
-                            <div>{arrayIndex + 1}/{orderedPhotoIdDataList.length}</div>
-                            <div>Photo ID: { isValuelessFalsey(element.photoId) === true ? nullValuePlaceholder : element.photoId }</div>
-                            { this.renderPhotoControl(element, this.props.imageDisplaySize) }
+                            <div>{arrayIndex + 1}/{orderedPhotoData.length}</div>
+                            { this.renderPhotoControl(element) }
                             <button 
                                 className="delete-item" 
-                                disabled={soleListItem === true && isValuelessFalsey(element.photoId) === true}
-                                onClick={(event) => this.handleDeletePhotoIdData(event, arrayIndex, isValuelessFalsey(element.photoId))}
+                                onClick={(event) => this.handleDeletePhotoData(event, arrayIndex, isValuelessFalsey(element.photoId))}
                             >
                                 Remove
                             </button>
@@ -174,85 +169,33 @@ class PhotoGalleryPageForm extends React.Component {
     onDragEnd = (result) => {
         if(!result.destination) { return; }
 
-        let newOrderedPhotoIdData = this.state.orderedPhotoIdData.slice();
-        let newOrderedPreviewUrls = this.state.orderedPreviewUrls.slice();
-
-        const movedIdData = newOrderedPhotoIdData.splice(result.source.index, 1)[0];
-        const movedUrlData = newOrderedPreviewUrls.splice(result.source.index, 1)[0];
-
-        newOrderedPhotoIdData.splice(result.destination.index, 0, movedIdData);
-        newOrderedPreviewUrls.splice(result.destination.index, 0, movedUrlData);
-
-        this.setState({ 
-            orderedPhotoIdData: newOrderedPhotoIdData,
-            orderedPreviewUrls: newOrderedPreviewUrls 
-        });
+        const newOrderedPhotoData = this.state.orderedPhotoData.slice();
+        const movedData = newOrderedPhotoData.splice(result.source.index, 1)[0];
+        newOrderedPhotoData.splice(result.destination.index, 0, movedData);
+        this.setState({ orderedPhotoData: newOrderedPhotoData });
     }
 
-    renderPhotoControl = (photoIdData, photoUploaderVersionName) => {
-        if(!photoIdData || !this.props.imageDisplaySize) {
+    renderPhotoControl = (photoData) => {
+        if(!photoData || !this.props.imageDisplaySize) {
             console.warn('imageDisplaySize prop is required to render photo controls. Example: imageDisplaySize="small"')
             return; 
         }
 
-        const hasPhotoId = isValuelessFalsey(photoIdData.photoId) === false;
-        const localId = photoIdData.localId;
-
+        // Double check to see if all of these props are really necessary here
         const photo = <VersionedPhoto 
-            uploadedFileData={this.state.orderedPreviewUrls?.[this.getIndexFromState(localId)]}
-            uploadedFileVersionName={photoUploaderVersionName}
-            targetClassName={`chosen-photo${hasPhotoId === false ? " placeholder" : ""}`}
-            textDisplayForNoPhoto="(No photo chosen)"
+            uploadedFileData={photoData.url}
+            uploadedFileVersionName={this.props.imageDisplaySize}
+            targetClassName="chosen-photo"
         />;
 
         return <div>{photo}</div>
     }
 
-    updatePreviewUrls = () => {
-        const { orderedPhotoIdData, orderedPreviewUrls, orderedPreviewUrlsNeedUpdate } = this.state;
-        if(orderedPreviewUrlsNeedUpdate !== true) { return; }
-
-        let targetData = [];
-        for(let i = 0; i < orderedPhotoIdData.length; i++) {
-            const hasPhotoId = (isValuelessFalsey(orderedPhotoIdData[i].photoId) === false);
-            const missingUrl = (isValuelessFalsey(orderedPreviewUrls[i]) === true || orderedPreviewUrls[i] === '');
-            
-            if(hasPhotoId === true && missingUrl === true) {
-                targetData.push(orderedPhotoIdData[i]);
-            }
-        }
-
-        if(targetData.length === 0) {
-            this.setState({ orderedPreviewUrlsNeedUpdate: false });
-            return;
-        }
-
-        const targetIds = targetData.map((value) => { return value.photoId; })
-        let config = {
-            params: { photos: { ids: targetIds } },
-            paramsSerializer: (params) => { return qs.stringify(params); }
-        }
-
-        axios.get('/api/v1/photos/multi.json', config)
-        .then(res => {
-            // [NOTE] This currently assumes that 'targetData' and res.data.data are the same length
-
-            const resData = res.data.data.map((element) => { 
-                return BackendConstants.uploaders.safelyGetUploader('photo').getUrlForVersion(element.attributes.file, this.props.imageDisplaySize);
-            });
-            let orderedUrls = orderedPreviewUrls.slice();
-
-            for(let i = 0; i < orderedPhotoIdData.length; i++) {
-                let indexInRes = targetData.findIndex((element) => element.localId === orderedPhotoIdData[i].localId);
-                if(indexInRes !== -1) { orderedUrls[i] = resData[indexInRes]; }
-            }
-
-            this.setState({
-                orderedPreviewUrls: orderedUrls,
-                orderedPreviewUrlsNeedUpdate: false
-            });
-        })
-        .catch(err => console.log(err));
+    responseFileAttributeToUrl = (fileAttributeData, imageDisplaySize) => {
+        const url = imageDisplaySize 
+        ? fileAttributeData[imageDisplaySize]?.url 
+        : fileAttributeData.url;
+        return url;
     }
 
     componentDidMount () {
@@ -263,14 +206,13 @@ class PhotoGalleryPageForm extends React.Component {
 
     render() {
         const hasUnsavedChanges = this.hasUnsavedChangesCheck();
-        if(this.state.orderedPreviewUrlsNeedUpdate === true) { this.updatePreviewUrls(); }
 
         return (
             <div className="photo-gallery-page-editor">
                 <h2>Editing "Photo Gallery" Page</h2>
                 <form className="photo-gallery-page-form" onSubmit={this.handleFormSubmit}>
                     <h3>Ordered Photos</h3>
-                    { this.state.orderedPhotoIdData && 
+                    { this.state.orderedPhotoData && 
                         <Fragment>
                             { this.state.photoPicker.isOpen === false
                             ?
@@ -279,7 +221,7 @@ class PhotoGalleryPageForm extends React.Component {
                                         <Droppable droppableId="photo-id-editor" direction="horizontal">
                                             { (provided) => (
                                                 <ul {...provided.droppableProps} className="photo-id-editor" ref={provided.innerRef}>
-                                                    { this.mapPhotoIdInputs(this.state.orderedPhotoIdData) }
+                                                    { this.mapPhotoInputs() }
                                                     { provided.placeholder }
                                                 </ul>
                                             )}
