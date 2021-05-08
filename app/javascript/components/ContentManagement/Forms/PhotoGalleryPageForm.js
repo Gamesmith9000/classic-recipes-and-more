@@ -52,6 +52,9 @@ class PhotoGalleryPageForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
+        alert("Pending API updates, submission is currently disabled.");
+        return;
+        
         const outgoingPhotoIdData = this.state.orderedPhotoIdData.map((element) => { return element.photoId; });
         axios.patch('/api/v1/aux/main.json', { aux_data: { photo_page_ordered_ids: outgoingPhotoIdData } })
         .then(res => this.setState({ priorOrderedPhotoIdData: this.state.orderedPhotoIdData.slice() }))
