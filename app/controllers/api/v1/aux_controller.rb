@@ -1,14 +1,7 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
-    before_action :authenticate_admin!, except: [:show, :get_gallery_ordered_photos, :youtube_video_data]
+    before_action :authenticate_admin!, except: [:show, :youtube_video_data]
     
-    def get_gallery_ordered_photos
-        respond_to do |format|
-            format.html { html_disallowed_response }
-            format.json { render_serialized_json(aux_data_instance.ordered_photos) }
-        end
-    end
-
     def get_youtube_video_data
         respond_to do |format|
             format.html { html_disallowed_response }
@@ -67,8 +60,7 @@ class Api::V1::AuxController < ApplicationController
     end
 
     def aux_data_params
-        params.require(:aux_data).permit(:about_sections, :ordered_photos,
-            :photo_page_ordered_ids =>[], :about_page_sections =>[])
+        params.require(:aux_data).permit(:about_sections, :ordered_photos)
     end
 
     def inclusion_options

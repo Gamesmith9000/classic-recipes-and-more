@@ -9,7 +9,6 @@ Rails.application.routes.draw do
       get 'aux/main', :to => 'aux#show'
       patch 'aux/main', :to => 'aux#update'
 
-      get 'aux/gallery_ordered_photos', :to => 'aux#get_gallery_ordered_photos'
       get 'aux/youtube_video_data', :to => 'aux#get_youtube_video_data'
 
       get 'ordered_photos/multi', :to => 'ordered_photos#show_multi'
