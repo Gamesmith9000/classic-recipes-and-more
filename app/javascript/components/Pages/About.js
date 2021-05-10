@@ -12,6 +12,9 @@ class About extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
         .then(res => {
+            console.warn("AuxData's about_page_sections attribute has been phased out");
+            return;
+            
             this.setState({
                 sections: res.data.data.attributes.about_page_sections,
             });

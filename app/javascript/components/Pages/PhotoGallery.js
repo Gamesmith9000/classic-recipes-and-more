@@ -28,6 +28,9 @@ class PhotoGallery extends React.Component {
     componentDidMount () {
         axios.get('api/v1/aux/main.json')
         .then(res => {
+            console.warn("AuxData's photo_page_ordered_ids attribute has been phased out");
+            return;
+            
             const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
             if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) { return; }
             

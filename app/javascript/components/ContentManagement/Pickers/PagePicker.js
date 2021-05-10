@@ -5,7 +5,6 @@ function PagePicker (props) {
 
     const handleChangeOrClose = (event, action, pageSectionId) => {
         event.preventDefault();
-        console.log('handleChangeOrClose');
         if(dashboardContext?.unsavedChanges !== true && isValidSectionId(pageSectionId) === true) { action(); }
         else { window.alert("Your form has unsaved data. You must close it before you can exit this manager."); }
     }
