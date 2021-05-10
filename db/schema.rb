@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_26_174917) do
+ActiveRecord::Schema.define(version: 2021_05_08_174524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,13 +54,12 @@ ActiveRecord::Schema.define(version: 2021_02_26_174917) do
 
   create_table "ordered_photos", force: :cascade do |t|
     t.integer "ordinal"
-    t.bigint "aux_data_id"
-    t.bigint "instruction_id"
     t.bigint "photo_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["aux_data_id"], name: "index_ordered_photos_on_aux_data_id"
-    t.index ["instruction_id"], name: "index_ordered_photos_on_instruction_id"
+    t.string "ordered_imageable_type"
+    t.bigint "ordered_imageable_id"
+    t.index ["ordered_imageable_type", "ordered_imageable_id"], name: "index_ordered_photos_on_ordered_imageable_type_and_id"
     t.index ["photo_id"], name: "index_ordered_photos_on_photo_id"
   end
 
@@ -87,7 +86,5 @@ ActiveRecord::Schema.define(version: 2021_02_26_174917) do
 
   add_foreign_key "about_sections", "aux_datas"
   add_foreign_key "instructions", "recipes"
-  add_foreign_key "ordered_photos", "aux_datas"
-  add_foreign_key "ordered_photos", "instructions"
   add_foreign_key "ordered_photos", "photos"
 end
