@@ -1,6 +1,6 @@
 class Api::V1::AuxController < ApplicationController
     protect_from_forgery with: :null_session
-    before_action :authenticate_admin!, except: [:show, :youtube_video_data]
+    before_action :authenticate_admin!, except: [:show, :show_ordered_photos, :youtube_video_data]
     
     def get_youtube_video_data
         respond_to do |format|
@@ -36,6 +36,16 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
+    def show_ordered_photos
+        respond_to do |format|
+            format.html { html_disallowed_response }
+            format.json { 
+                ordered_photos = aux_data_instance.ordered_photos.order(:ordinal)
+                render json: OrderedPhotoSerializer.new(ordered_photos, ordered_photos_inclusion_options).serializable_hash.to_json
+            }
+        end
+    end
+
     def update
         aux_data = aux_data_instance
 
@@ -66,6 +76,12 @@ class Api::V1::AuxController < ApplicationController
     def inclusion_options
         options = {}
         options[:include] = [:about_sections, :ordered_photos]
+        return options
+    end
+
+    def ordered_photos_inclusion_options
+        options = {}
+        options[:include] = [:photo]
         return options
     end
 

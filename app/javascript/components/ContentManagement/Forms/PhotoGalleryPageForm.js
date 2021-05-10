@@ -99,7 +99,7 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     initializeComponentStateFromResponse = (res) => {
-        const orderedPhotos = res.data.included.filter(element => element.type === "ordered_photo");
+        const orderedPhotos = res.data.data;
 
         const mapOrderedPhotoData = function (element, index) {
             const newItem = {
@@ -202,7 +202,7 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('/api/v1/aux/main.json')
+        axios.get('/api/v1/aux/ordered_photos.json')
         .then(res => this.initializeComponentStateFromResponse(res))
         .catch(err => console.log(err));
     }
