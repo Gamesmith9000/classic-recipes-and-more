@@ -19,6 +19,9 @@ class AboutPageForm extends React.Component {
     componentDidMount () {
         axios.get('/api/v1/aux/main.json')
         .then(res => {
+            console.warn("AuxData's about_page_sections attribute has been phased out");
+            return;
+            
             const aboutPageSections = res.data.data.attributes.about_page_sections;
 
             this.setState({
@@ -63,6 +66,9 @@ class AboutPageForm extends React.Component {
     handleFormSubmit = (event) => {
         event.preventDefault();
         setAxiosCsrfToken();
+
+        alert("Pending API updates, submission is currently disabled.");
+        return;
 
         const outgoingSectionsData = this.state.sections.map((element) => { return element.textContent; });
 

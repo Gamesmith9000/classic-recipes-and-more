@@ -1,6 +1,5 @@
 import axios from 'axios'
 import React, { Fragment } from 'react'
-import qs, { parse } from 'qs'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 import NestedPhotoPicker from '../Pickers/NestedPhotoPicker'
@@ -52,12 +51,18 @@ class PhotoGalleryPageForm extends React.Component {
         event.preventDefault();
         setAxiosCsrfToken();
 
-        alert("Pending API updates, submission is currently disabled.");
-        return;
-        
-        const outgoingPhotoIdData = this.state.orderedPhotoIdData.map((element) => { return element.photoId; });
-        axios.patch('/api/v1/aux/main.json', { aux_data: { photo_page_ordered_ids: outgoingPhotoIdData } })
-        .then(res => this.setState({ priorOrderedPhotoIdData: this.state.orderedPhotoIdData.slice() }))
+        const outgoingData = this.state.orderedPhotoData.map(
+            function (element, index) {
+                return {
+                    id: element.id,
+                    ordinal: index,
+                    photo_id: element.photoId
+                }
+            }
+        );
+
+        axios.patch('/api/v1/aux/ordered_photos.json', { aux_data: { ordered_photos: outgoingData } })
+        .then(res => this.setState({ priorOrderedPhotoData: this.state.orderedPhotoData.slice() }))
         .catch(err => console.log(err));
     }
 
@@ -99,7 +104,7 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     initializeComponentStateFromResponse = (res) => {
-        const orderedPhotos = res.data.included.filter(element => element.type === "ordered_photo");
+        const orderedPhotos = res.data.data;
 
         const mapOrderedPhotoData = function (element, index) {
             const newItem = {
@@ -113,24 +118,18 @@ class PhotoGalleryPageForm extends React.Component {
 
         if(!orderedPhotos || orderedPhotos.length <= 0) { return; }
 
-        const targetIds = orderedPhotos.map(mapOrderedPhotoData).map((value) => { return value.photoId; });
-        const config = {
-            params: { photos: { ids: targetIds } },
-            paramsSerializer: (params) => { return qs.stringify(params); }
-        }
-
         const newState = {
             nextUniqueLocalId: orderedPhotos.length, 
             orderedPhotoData: orderedPhotos.map(mapOrderedPhotoData),
             priorOrderedPhotoData: orderedPhotos.map(mapOrderedPhotoData),
         }
 
-        axios.get('/api/v1/photos/multi.json', config)
+        axios.get('/api/v1/aux/ordered_photos.json')
         .then(photosRes => {
             for(let i = 0; i < newState.orderedPhotoData.length; i++) {
-                const photoIndex = photosRes.data.data.findIndex(item => parseInt(item.id) === newState.orderedPhotoData[i].photoId);
-                if(photoIndex > -1 && photosRes.data.data[photoIndex]) {
-                    const url = this.responseFileAttributeToUrl(photosRes.data.data[i].attributes.file, this.props.imageDisplaySize);
+                const photoIndex = photosRes.data.included.findIndex(item => parseInt(item.id) === newState.orderedPhotoData[i].photoId && item.type === "photo");
+                if(photoIndex > -1 && photosRes.data.included[photoIndex]) {
+                    const url = this.responseFileAttributeToUrl(photosRes.data.included[i].attributes.file, this.props.imageDisplaySize);
                     newState.orderedPhotoData[i].url = url;
                     newState.priorOrderedPhotoData[i].url = url;
                 }
@@ -202,7 +201,7 @@ class PhotoGalleryPageForm extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('/api/v1/aux/main.json')
+        axios.get('/api/v1/aux/ordered_photos.json')
         .then(res => this.initializeComponentStateFromResponse(res))
         .catch(err => console.log(err));
     }
