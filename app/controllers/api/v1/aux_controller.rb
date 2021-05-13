@@ -43,18 +43,6 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
-    def update
-        # [NOTE][DESIGN] aux_data will no longer be directly patched. Targeted properties will have their own patching methods
-
-        aux_data = aux_data_instance
-
-        if aux_data.update(aux_data_params)
-            render_serialized_json(aux_data)   
-        else
-            render_error(aux_data.errors.messages)
-        end
-    end
-
     def update_ordered_photos
         respond_to do |format|
             format.html { html_disallowed_response }
