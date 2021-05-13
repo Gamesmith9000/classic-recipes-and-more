@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import qs from 'qs'
 
 import VersionedPhoto from '../Misc/VersionedPhoto'
 
@@ -15,7 +14,7 @@ class PhotoGallery extends React.Component {
         return this.state.orderedPhotoData.map((element) => {
             return (
                 <VersionedPhoto 
-                    key={element.id}
+                    key={`gallery-photo-${element.id}`}
                     uploadedFileData={element.file}
                     uploadedFileVersionName={photoVersion}
                     renderNullWithoutUrl={true}
@@ -26,29 +25,19 @@ class PhotoGallery extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('api/v1/aux/main.json')
+        axios.get('api/v1/aux/ordered_photos.json')
         .then(res => {
-            console.warn("AuxData's photo_page_ordered_ids attribute has been phased out");
-            return;
-            
-            const photoPageOrderedIds = res.data.data.attributes.photo_page_ordered_ids;
-            if(!photoPageOrderedIds || photoPageOrderedIds.length < 1) { return; }
-            
-            let config = {
-                params: { photos: { ids: photoPageOrderedIds } },
-                paramsSerializer: (params) => { return qs.stringify(params); }
-            }
+            const mappedData = res.data.data.map(function(item){
+                const photoId = item.relationships?.photo?.data?.id;
+                const photoData = res.data?.included.find(element => element.id === photoId && element.type === 'photo');
 
-            axios.get('/api/v1/photos/multi.json', config)
-            .then(res => {
-                this.setState({
-                    orderedPhotoData: res.data.data.map((element)=> {
-                        const { id,  attributes: { file } } = element;
-                        return { id, file };
-                    })
-                });
-            })
-            .catch(err => console.log(err))
+                return {
+                    id: item.id,
+                    file: photoData?.attributes?.file
+                }
+            });
+
+            this.setState({ orderedPhotoData: mappedData });
         })
         .catch(err => console.log(err))
     }
