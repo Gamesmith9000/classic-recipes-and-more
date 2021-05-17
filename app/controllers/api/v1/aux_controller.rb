@@ -36,10 +36,24 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
+    def show_about_sections
+        respond_to do |format|
+            format.html { html_disallowed_response }
+            format.json { render_about_sections }
+        end
+    end
+
     def show_ordered_photos
         respond_to do |format|
             format.html { html_disallowed_response }
             format.json { render_ordered_photos }
+        end
+    end
+
+    def update_about_sections
+        respond_to do |format|
+            format.html { html_disallowed_response }
+            # format.json {  }
         end
     end
 
@@ -115,15 +129,18 @@ class Api::V1::AuxController < ApplicationController
         return options
     end
 
-    def ordered_photos_inclusion_options
+    def render_about_sections
         options = {}
-        options[:include] = [:photo]
-        return options
+        # options[:include] = [:photo]
+        # ordered_photos = aux_data_instance.ordered_photos.order(:ordinal)
+        # render json: OrderedPhotoSerializer.new(ordered_photos, options).serializable_hash.to_json
     end
 
     def render_ordered_photos
+        options = {}
+        options[:include] = [:photo]
         ordered_photos = aux_data_instance.ordered_photos.order(:ordinal)
-        render json: OrderedPhotoSerializer.new(ordered_photos, ordered_photos_inclusion_options).serializable_hash.to_json
+        render json: OrderedPhotoSerializer.new(ordered_photos, options).serializable_hash.to_json
     end
 
     def render_serialized_json (values)

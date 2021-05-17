@@ -8,6 +8,9 @@ Rails.application.routes.draw do
 
       get 'aux/main', :to => 'aux#show'
 
+      get 'aux/about_sections', :to => 'aux#show_about_sections'
+      patch 'aux/about_sections', :to => 'aux#update_about_sections'
+
       get 'aux/ordered_photos', :to => 'aux#show_ordered_photos'
       patch 'aux/ordered_photos', :to => 'aux#update_ordered_photos'
 
