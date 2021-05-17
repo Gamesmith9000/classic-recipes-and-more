@@ -105,40 +105,28 @@ class PhotoGalleryPageForm extends React.Component {
 
     initializeComponentStateFromResponse = (res) => {
         const orderedPhotos = res.data.data;
+        const responseFileAttributeToUrl = this.responseFileAttributeToUrl;
+        const { imageDisplaySize } = this.props;
 
         const mapOrderedPhotoData = function (element, index) {
+            const photoIndex = res.data.included.findIndex(item => item.id === element.relationships.photo.data.id && item.type === "photo");
+            const photoData = res.data.included[photoIndex];
+            
             const newItem = {
                 id: parseInt(element.id),
                 localId: index,
-                photoId: parseInt(element.relationships.photo.data.id),
-                url: null
+                photoId: parseInt(photoData?.id),
+                url: responseFileAttributeToUrl(photoData.attributes.file, imageDisplaySize)
             };
             return newItem;
         }
 
         if(!orderedPhotos || orderedPhotos.length <= 0) { return; }
 
-        const newState = {
+        this.setState ({
             nextUniqueLocalId: orderedPhotos.length, 
             orderedPhotoData: orderedPhotos.map(mapOrderedPhotoData),
             priorOrderedPhotoData: orderedPhotos.map(mapOrderedPhotoData),
-        }
-
-        axios.get('/api/v1/aux/ordered_photos.json')
-        .then(photosRes => {
-            for(let i = 0; i < newState.orderedPhotoData.length; i++) {
-                const photoIndex = photosRes.data.included.findIndex(item => parseInt(item.id) === newState.orderedPhotoData[i].photoId && item.type === "photo");
-                if(photoIndex > -1 && photosRes.data.included[photoIndex]) {
-                    const url = this.responseFileAttributeToUrl(photosRes.data.included[i].attributes.file, this.props.imageDisplaySize);
-                    newState.orderedPhotoData[i].url = url;
-                    newState.priorOrderedPhotoData[i].url = url;
-                }
-            }
-            this.setState(newState);
-        })
-        .catch(photosErr => {
-            console.log(photosErr);
-            this.setState(newState);
         });
     }
 

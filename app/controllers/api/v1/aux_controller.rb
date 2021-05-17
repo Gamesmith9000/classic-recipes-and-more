@@ -131,9 +131,9 @@ class Api::V1::AuxController < ApplicationController
 
     def render_about_sections
         options = {}
-        # options[:include] = [:photo]
-        # ordered_photos = aux_data_instance.ordered_photos.order(:ordinal)
-        # render json: OrderedPhotoSerializer.new(ordered_photos, options).serializable_hash.to_json
+        options[:include] = [:ordered_photos]
+        about_sections = aux_data_instance.about_sections.order(:ordinal)
+        render json: AboutSectionSerializer.new(about_sections, options).serializable_hash.to_json
     end
 
     def render_ordered_photos

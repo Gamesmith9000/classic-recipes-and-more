@@ -1,6 +1,6 @@
 class AboutSectionSerializer
   include JSONAPI::Serializer
-  attributes :content, :ordinal
+  attributes :ordinal, :text_content
   belongs_to :aux_data
   has_many :ordered_photos
 end
