@@ -11,8 +11,8 @@ class AboutPageForm extends React.Component {
         super();
         this.state = {
             nextUniqueLocalId: 0,
-            aboutSectionData: null
-            priorAboutSectionData: null,
+            aboutSectionData: null,
+            priorAboutSectionData: null
         }
     }
 
