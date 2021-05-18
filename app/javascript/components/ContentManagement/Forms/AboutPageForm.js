@@ -11,8 +11,8 @@ class AboutPageForm extends React.Component {
         super();
         this.state = {
             nextUniqueLocalId: 0,
-            priorSectionsState: null,
-            sections: null            
+            aboutSectionData: null
+            priorAboutSectionData: null,
         }
     }
 
@@ -23,8 +23,8 @@ class AboutPageForm extends React.Component {
     }
 
     getSectionIndexFromState = (localId) => {
-        for(let i = 0; i < this.state.sections.length; i++){
-            if(this.state.sections[i]?.localId === localId) { return i; }
+        for(let i = 0; i < this.state.aboutSectionData.length; i++){
+            if(this.state.aboutSectionData[i]?.localId === localId) { return i; }
         }
         return -1;
     }
@@ -33,12 +33,12 @@ class AboutPageForm extends React.Component {
         event.preventDefault();
 
         const nextId = this.state.nextUniqueLocalId;
-        let updatedSectionsState = this.state.sections.slice();
+        let updatedSectionsState = this.state.aboutSectionData.slice();
         updatedSectionsState.push(new TextSectionWithId(nextId, ''));
 
         this.setState({
             nextUniqueLocalId: nextId + 1,
-            sections: updatedSectionsState 
+            aboutSectionData: updatedSectionsState 
         });
     }
 
@@ -46,9 +46,9 @@ class AboutPageForm extends React.Component {
         event.preventDefault();
 
         if(window.confirm("Are you sure you want to delete this section?") === true) {
-            let newSectionsState = this.state.sections.slice();
+            let newSectionsState = this.state.aboutSectionData.slice();
             newSectionsState.splice(sectionIndex, 1);
-            this.setState({ sections: newSectionsState });
+            this.setState({ aboutSectionData: newSectionsState });
         }
     }
 
@@ -59,19 +59,19 @@ class AboutPageForm extends React.Component {
         alert("Pending API updates, submission is currently disabled.");
         return;
 
-        const outgoingSectionsData = this.state.sections.map((element) => { return element.textContent; });
+        const outgoingSectionsData = this.state.aboutSectionData.map((element) => { return element.textContent; });
 
         axios.patch('/api/v1/aux/main.json', { aux_data: { about_page_sections: outgoingSectionsData } })
-        .then(res => this.setState({ priorSectionsState: this.state.sections }))
+        .then(res => this.setState({ priorAboutSectionData: this.state.aboutSectionData }))
         .catch(err => console.log(err));
     }
 
     handleSectionInputChange = (event, sectionIndex) => {
         event.preventDefault();
 
-        let updatedSectionsState = this.state.sections.slice();
+        let updatedSectionsState = this.state.aboutSectionData.slice();
         updatedSectionsState[sectionIndex].textContent = event.target.value;
-        this.setState({ sections: updatedSectionsState });
+        this.setState({ aboutSectionData: updatedSectionsState });
     }
 
     initializeComponentStateFromResponse = (res) => {
@@ -104,8 +104,8 @@ class AboutPageForm extends React.Component {
 
         this.setState ({
             nextUniqueLocalId: aboutSectionsData.length, 
-            sections: aboutSectionsData.map(mapAboutSectionData),
-            priorSectionsState: aboutSectionsData.map(mapAboutSectionData),
+            aboutSectionData: aboutSectionsData.map(mapAboutSectionData),
+            priorAboutSectionData: aboutSectionsData.map(mapAboutSectionData),
         });
     }
 
@@ -122,7 +122,7 @@ class AboutPageForm extends React.Component {
                                 <textarea 
                                     className="section-input"
                                     onChange={(event) => this.handleSectionInputChange(event, arrayIndex)}
-                                    value={this.state.sections[arrayIndex].textContent}
+                                    value={this.state.aboutSectionData[arrayIndex].textContent}
                                 />
                                 { sectionList.length > 1 &&
                                     <button 
@@ -143,16 +143,16 @@ class AboutPageForm extends React.Component {
     onSectionDragEnd = (result) => {
         if(!result.destination) { return; }
 
-        let newSectionsState = this.state.sections.slice();
+        let newSectionsState = this.state.aboutSectionData.slice();
         const movedItem = newSectionsState.splice(result.source.index, 1)[0];
         newSectionsState.splice(result.destination.index, 0, movedItem);
 
-        this.setState({ sections: newSectionsState });
+        this.setState({ aboutSectionData: newSectionsState });
     }
 
     render() {
-        const hasSectionsState = Boolean(this.state.sections);
-        const hasUnsavedChanges = (hasSectionsState === true && objectsHaveMatchingValues(this.state.sections, this.state.priorSectionsState) === false);
+        const hasSectionsState = Boolean(this.state.aboutSectionData);
+        const hasUnsavedChanges = (hasSectionsState === true && objectsHaveMatchingValues(this.state.aboutSectionData, this.state.priorAboutSectionData) === false);
 
         return (
             <div className="about-page-editor">
@@ -165,8 +165,8 @@ class AboutPageForm extends React.Component {
                                     <Droppable droppableId="sections-editor">
                                         { (provided) => (
                                             <ul {...provided.droppableProps} className="sections-editor" ref={provided.innerRef}>
-                                                { this.state.sections &&
-                                                    this.mapSectionInputs(this.state.sections)
+                                                { this.state.aboutSectionData &&
+                                                    this.mapSectionInputs(this.state.aboutSectionData)
                                                 }
                                                 { provided.placeholder }
                                             </ul>
