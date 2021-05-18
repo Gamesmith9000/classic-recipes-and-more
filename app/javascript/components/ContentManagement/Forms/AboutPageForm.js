@@ -17,19 +17,8 @@ class AboutPageForm extends React.Component {
     }
 
     componentDidMount () {
-        axios.get('/api/v1/aux/main.json')
-        .then(res => {
-            console.warn("AuxData's about_page_sections attribute has been phased out");
-            return;
-            
-            const aboutPageSections = res.data.data.attributes.about_page_sections;
-
-            this.setState({
-                nextUniqueLocalId: aboutPageSections.length, 
-                sections: aboutPageSections.map((value, index) => { return new TextSectionWithId (index, value); }),
-                priorSectionsState: aboutPageSections.map((value, index) => { return new TextSectionWithId (index, value); })
-            });
-        })
+        axios.get('/api/v1/aux/about_sections.json')
+        .then(res => this.initializeComponentStateFromResponse(res))
         .catch(err => console.log(err));
     }
 
@@ -83,6 +72,41 @@ class AboutPageForm extends React.Component {
         let updatedSectionsState = this.state.sections.slice();
         updatedSectionsState[sectionIndex].textContent = event.target.value;
         this.setState({ sections: updatedSectionsState });
+    }
+
+    initializeComponentStateFromResponse = (res) => {
+        const aboutSectionsData = res.data.data;
+
+        const mapAboutSectionData = function (element, index) {
+            const includedPhotos = res.data.included.filter(item => item.type === "photo");
+            const includedOrderedPhotos = res.data.included.filter(item => item.type === "ordered_photo");
+
+            const mapOrderedPhotoData = function (orderedPhotoElement) {
+                const photo = includedPhotos.find(item => item.id === orderedPhotoElement.relationships.photo.data.id);
+
+                return {
+                    id: parseInt(photo.id),
+                    file: photo.attributes.file
+                    // 'file' is temporary. Only proper url will be stored in future
+                }
+            }
+            
+            const newItem = {
+                id: parseInt(element.id),
+                localId: index,
+                orderedPhotos: includedOrderedPhotos.map(mapOrderedPhotoData),
+                textContent: element.attributes.text_content ? element.attributes.text_content : ""
+            };
+            return newItem;
+        }
+
+        if(!aboutSectionsData || aboutSectionsData.length <= 0) { return; }
+
+        this.setState ({
+            nextUniqueLocalId: aboutSectionsData.length, 
+            sections: aboutSectionsData.map(mapAboutSectionData),
+            priorSectionsState: aboutSectionsData.map(mapAboutSectionData),
+        });
     }
 
     mapSectionInputs = (sectionList) => {
