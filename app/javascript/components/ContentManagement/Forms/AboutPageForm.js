@@ -52,19 +52,24 @@ class AboutPageForm extends React.Component {
         }
     }
 
-    handleFormSubmit = (event) => {
-        event.preventDefault();
-        setAxiosCsrfToken();
+	handleFormSubmit = (event) => {
+   	event.preventDefault();
+   	setAxiosCsrfToken();
 
-        alert("Pending API updates, submission is currently disabled.");
-        return;
+		const outgoingSectionsData = this.state.aboutSectionData.map(
+			function(element, index) {
+				return {
+					id: element.id,
+					ordinal: index,
+					text_content: element.textContent
+				}
+			}
+		);
 
-        const outgoingSectionsData = this.state.aboutSectionData.map((element) => { return element.textContent; });
-
-        axios.patch('/api/v1/aux/main.json', { aux_data: { about_page_sections: outgoingSectionsData } })
-        .then(res => this.setState({ priorAboutSectionData: this.state.aboutSectionData }))
-        .catch(err => console.log(err));
-    }
+		axios.patch('/api/v1/aux/about_sections.json', { aux_data: { about_sections: outgoingSectionsData } })
+			.then(res => this.setState({ priorAboutSectionData: this.state.aboutSectionData }))
+			.catch(err => console.log(err));
+	}
 
     handleSectionInputChange = (event, sectionIndex) => {
         event.preventDefault();
@@ -113,7 +118,6 @@ class AboutPageForm extends React.Component {
         return sectionList.map((element, index) => {
             const arrayIndex = this.getSectionIndexFromState(element.localId);
             if(isValuelessFalsey(arrayIndex) || arrayIndex === -1) { return; }
-
             return (
                 <Draggable draggableId={element.localId.toString()} index={index} key={element.localId}>
                     { (provided) => (

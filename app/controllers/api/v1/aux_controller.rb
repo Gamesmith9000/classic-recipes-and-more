@@ -50,12 +50,58 @@ class Api::V1::AuxController < ApplicationController
         end
     end
 
-    def update_about_sections
-        respond_to do |format|
-            format.html { html_disallowed_response }
-            # format.json {  }
-        end
-    end
+	def update_about_sections
+   	respond_to do |format|
+   		format.html { html_disallowed_response }
+   		format.json {
+				if update_about_sections_params.has_key?(:about_sections) === false
+					return render_error(['Missing key about_sections'])
+				end
+
+            aux_data = aux_data_instance
+            new_items = []
+            prior_item_ids = []
+                
+            aux_data.about_sections.each do |p|
+            	prior_item_ids.push p.id
+            end
+
+            update_about_sections_params[:about_sections].each do |item|
+               item_id = item.has_key?(:id) == true ? item[:id] : nil
+               existing_item = item_id.nil? ? nil : aux_data.about_sections.find_by_id(item_id)
+
+					if existing_item.nil? == false
+						existing_item.update(:ordinal => item[:ordinal], text_content: item[:text_content])
+						prior_item_ids.delete(item_id)
+					else
+						new_items.push(item)
+					end
+            end
+
+            while new_items.length > prior_item_ids.length
+               new_item = new_items.pop
+                    aux_data.about_sections.create!(:ordinal => new_item[:ordinal], text_content: new_item[:text_content]) # :photo_id => new_item[:photo_id])
+            end
+
+            while new_items.length < prior_item_ids.length
+               item_id = prior_item_ids.pop
+               aux_data.about_sections.destroy(item_id)
+               prior_item_ids.delete(item_id)
+            end
+
+            if(new_items.length === prior_item_ids.length)
+               # repurpose all newly unused items
+               while(new_items.length > 0)
+                  new_item = new_items.pop
+                  id_of_recycled_item = prior_item_ids.pop
+                  AboutSection.update(id_of_recycled_item, :ordinal => new_item[:ordinal], :text_content => new_item[:text_content]) # :photo_id => new_item[:photo_id]) 
+               end
+            end
+
+            render_about_sections
+			}
+   	end
+	end
 
     def update_ordered_photos
         respond_to do |format|
@@ -146,6 +192,10 @@ class Api::V1::AuxController < ApplicationController
     def render_serialized_json (values)
         render json: AuxDataSerializer.new(values, inclusion_options).serializable_hash.to_json
     end
+	 
+	def update_about_sections_params
+		params.require(:aux_data).permit(:about_sections => [ :id, :ordinal, :text_content ])
+	end
 
     def update_ordered_photos_params
         params.require(:aux_data).permit(:ordered_photos => [ :id, :ordinal, :photo_id ])
